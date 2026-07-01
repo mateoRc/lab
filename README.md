@@ -34,3 +34,9 @@ Copy `.env.example` to `.env` to override ports or sibling repository paths.
 `content/` is the single source of truth. Compose mounts it into both
 containers at `/app/content` read-only. Vault loads it as its virtual
 filesystem and Atlas scans it for search requests.
+
+## Documentation
+
+Shared API, command, content, and roadmap documentation lives under
+`content/docs/`. Service-specific implementation details remain in each
+service repository's README.
