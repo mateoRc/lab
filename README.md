@@ -32,6 +32,20 @@ Stop the stack:
 docker compose down
 ```
 
+## Logs
+
+All services write logs to container stdout. Docker rotates each service's
+local JSON logs at 10 MB and retains three files.
+
+```sh
+docker compose logs --tail=100
+docker compose logs -f forge
+docker compose logs -f vault atlas
+```
+
+Logs are local operational output, not Forge telemetry. Forge keeps aggregated
+telemetry counters in memory and does not store application logs.
+
 ## Configuration
 
 Copy `.env.example` to `.env` to override ports or sibling repository paths.
