@@ -1,0 +1,37 @@
+project: Forge
+type: personal project
+status: planned
+
+summary: lightweight telemetry service for Vault and Atlas
+summary: in-memory aggregation with ASCII dashboards
+
+technology: Python
+technology: FastAPI
+technology: Docker
+
+api: POST /events
+api: GET /healthz
+api: GET /summary
+api: GET /dashboard
+
+event_field: service
+event_field: event
+event_field: name
+event_field: duration_ms
+event_field: exit_code
+
+feature: receive telemetry events over HTTP
+feature: aggregate request and error counters in memory
+feature: calculate average request duration
+feature: summarize activity by service and command
+feature: render simple ASCII bar charts
+
+constraint: no Grafana
+constraint: no Prometheus
+constraint: no database
+constraint: no Kafka
+
+goal: make local service activity visible
+goal: keep telemetry infrastructure minimal
+goal: provide a useful dashboard without external dependencies
+
