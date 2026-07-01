@@ -90,9 +90,11 @@ Vault
   └── HTTP ──> Forge
 ```
 
-HTTP is intentionally sufficient for the MVP. There are no queues, Kafka, or
-asynchronous messages. A message broker may replace HTTP event delivery only
-if a concrete future need justifies it.
+HTTP is intentionally sufficient for the MVP. Vault and Atlas enqueue
+telemetry in bounded in-process queues, then background workers deliver it to
+Forge over HTTP. There is no external queue, Kafka, or message broker. A
+durable broker may replace this best-effort delivery only if a concrete future
+need justifies it.
 
 ## External Services
 
