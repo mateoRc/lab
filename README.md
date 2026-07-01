@@ -2,6 +2,10 @@
 
 Local orchestration and shared content for Vault and Atlas.
 
+Each application repository owns its source code, tests, dependencies, and
+Dockerfile. Lab owns shared configuration, content, and Docker Compose
+orchestration only.
+
 ## Prerequisites
 
 Docker Engine or Docker Desktop with Docker Compose v2 is the only local
@@ -40,3 +44,5 @@ filesystem and Atlas scans it for search requests.
 Shared API, command, content, and roadmap documentation lives under
 `content/docs/`. Service-specific implementation details remain in each
 service repository's README.
+
+Start with [the architecture overview](content/docs/architecture.md).
