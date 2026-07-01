@@ -4,10 +4,10 @@
 
 ### Bootstrap
 
-- [ ] FastAPI HTTP service
-- [ ] Docker image
-- [ ] Shared Docker Compose integration in `lab`
-- [ ] `GET /healthz`
+- [x] FastAPI HTTP service
+- [x] Docker image
+- [x] Shared Docker Compose integration in `lab`
+- [x] `GET /healthz`
 
 ### Events
 
@@ -43,9 +43,9 @@
 
 ### Developer Experience
 
-- [ ] Docker-only local setup
-- [ ] Container health check
-- [ ] Document API usage
+- [x] Docker-only local setup
+- [x] Container health check
+- [x] Document API usage
 - [ ] GitHub Actions CI
 
 ## After MVP
@@ -65,4 +65,3 @@
 - Queues
 - Authentication
 - Distributed tracing
-

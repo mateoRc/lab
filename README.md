@@ -1,6 +1,6 @@
 # Backend Lab
 
-Local orchestration and shared content for Vault and Atlas.
+Local orchestration and shared content for Vault, Atlas, and Forge.
 
 Each application repository owns its source code, tests, dependencies, and
 Dockerfile. Lab owns shared configuration, content, and Docker Compose
@@ -22,6 +22,7 @@ Services:
 - Vault: http://localhost:8080
 - Atlas health: http://localhost:8081/healthz
 - Atlas search: http://localhost:8081/search?q=kafka
+- Forge health: http://localhost:8082/healthz
 
 Stop the stack:
 
