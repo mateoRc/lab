@@ -62,6 +62,6 @@
 - Database
 - Persistent metrics
 - Kafka
-- Queues
+- External queues
 - Authentication
 - Distributed tracing

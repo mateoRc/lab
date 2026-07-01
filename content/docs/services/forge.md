@@ -90,6 +90,10 @@ tree    ██ 14
 - Dockerized service
 - Docker-only local development
 
+Vault and Atlas submit telemetry asynchronously through their own bounded
+in-process queues. Their background workers use `POST /events`; Forge does not
+own or run a message broker.
+
 Forge owns its source code, tests, dependencies, and Dockerfile. The `lab`
 repository owns only its Compose configuration, environment configuration,
 shared content, and local orchestration.
@@ -100,8 +104,7 @@ shared content, and local orchestration.
 - No Prometheus
 - No database
 - No persistent metrics
-- No Kafka, queues, or asynchronous transport
+- No Kafka, external queues, or message broker
 - No authentication for the MVP
 
 All counters reset when the Forge process restarts.
-

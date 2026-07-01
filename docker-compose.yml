@@ -8,6 +8,7 @@ services:
       CONTENT_PATH: /app/content
       ATLAS_URL: http://atlas:8080
       FORGE_URL: http://forge:8080
+      TELEMETRY_QUEUE_SIZE: ${TELEMETRY_QUEUE_SIZE:-1000}
     volumes:
       - ./content:/app/content:ro
     healthcheck:
@@ -25,6 +26,7 @@ services:
     environment:
       ATLAS_CONTENT_ROOT: /app/content
       FORGE_URL: http://forge:8080
+      TELEMETRY_QUEUE_SIZE: ${TELEMETRY_QUEUE_SIZE:-1000}
     volumes:
       - ./content:/app/content:ro
     healthcheck:
