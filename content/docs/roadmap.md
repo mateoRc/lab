@@ -134,6 +134,17 @@
 - [ ] Ranking
 - [ ] Query language
 
+## Post-v1 Content
+
+- [ ] Education
+- [ ] Certifications
+- [ ] Achievements
+- [ ] Public contact links
+- [ ] Availability
+- [ ] Additional project profiles
+- [ ] Architecture decisions and technical write-ups
+- [ ] Search-friendly technology and domain synonyms
+
 ## Nice to Have
 
 - [x] Command and path autocomplete
