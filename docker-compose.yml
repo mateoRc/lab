@@ -6,6 +6,8 @@ services:
       - "${VAULT_PORT:-8080}:8080"
     environment:
       CONTENT_PATH: /app/content
+      ATLAS_URL: http://atlas:8080
+      FORGE_URL: http://forge:8080
     volumes:
       - ./content:/app/content:ro
     healthcheck:
@@ -22,6 +24,7 @@ services:
       - "${ATLAS_PORT:-8081}:8080"
     environment:
       ATLAS_CONTENT_ROOT: /app/content
+      FORGE_URL: http://forge:8080
     volumes:
       - ./content:/app/content:ro
     healthcheck:

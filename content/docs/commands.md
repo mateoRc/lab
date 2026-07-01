@@ -21,6 +21,9 @@ the API result. The command's normal text output is unchanged.
 | `sort` | `sort [-r] [file]` | Sort lines |
 | `history` | `history` | List commands from the current session |
 | `clear` | `clear` | Clear the terminal through a backend action |
+| `search` | `search <query>` | Search shared content through Atlas |
+| `metrics` | `metrics` | Show the Forge telemetry summary |
+| `dashboard` | `dashboard` | Show the Forge ASCII dashboard |
 
 Use `help <command>` inside Vaultsh for command-specific usage.
 

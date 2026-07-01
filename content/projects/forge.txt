@@ -1,6 +1,6 @@
 project: Forge
 type: personal project
-status: planned
+status: active
 
 summary: lightweight telemetry service for Vault and Atlas
 summary: in-memory aggregation with ASCII dashboards
@@ -34,4 +34,3 @@ constraint: no Kafka
 goal: make local service activity visible
 goal: keep telemetry infrastructure minimal
 goal: provide a useful dashboard without external dependencies
-

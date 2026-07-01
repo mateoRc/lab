@@ -71,6 +71,16 @@
 - [x] Working directory per session
 - [x] Session expiration and cleanup
 
+### External Services
+
+- [x] Optional Atlas search integration
+- [x] Optional Forge telemetry integration
+- [x] `search` command
+- [x] `metrics` command
+- [x] `dashboard` command
+- [x] Graceful degradation
+- [x] Atlas and Forge frontend status indicators
+
 ## v2
 
 ### Parser
@@ -129,7 +139,7 @@
 
 ### Search
 
-- [ ] Search service
+- [x] Search service
 - [ ] Index
 - [ ] Ranking
 - [ ] Query language

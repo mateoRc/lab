@@ -11,42 +11,42 @@
 
 ### Events
 
-- [ ] `POST /events`
-- [ ] Validate service, event, and name
-- [ ] Accept duration and exit code
-- [ ] Support Vault events
-- [ ] Support Atlas events
+- [x] `POST /events`
+- [x] Validate service, event, and name
+- [x] Accept duration and exit code
+- [x] Support Vault events
+- [x] Support Atlas events
 
 ### Aggregation
 
-- [ ] Store counters in memory
-- [ ] Count total requests
-- [ ] Count errors
-- [ ] Calculate average duration
-- [ ] Aggregate by service
-- [ ] Aggregate by command or operation
+- [x] Store counters in memory
+- [x] Count total requests
+- [x] Count errors
+- [x] Calculate average duration
+- [x] Aggregate by service
+- [x] Aggregate by command or operation
 
 ### Output
 
-- [ ] `GET /summary`
-- [ ] `GET /dashboard`
-- [ ] Render a plain-text dashboard
-- [ ] Render proportional ASCII bars
+- [x] `GET /summary`
+- [x] `GET /dashboard`
+- [x] Render a plain-text dashboard
+- [x] Render proportional ASCII bars
 
 ### Tests
 
-- [ ] Event validation tests
-- [ ] Counter aggregation tests
-- [ ] Average-duration tests
-- [ ] Summary API tests
-- [ ] Dashboard rendering tests
+- [x] Event validation tests
+- [x] Counter aggregation tests
+- [x] Average-duration tests
+- [x] Summary API tests
+- [x] Dashboard rendering tests
 
 ### Developer Experience
 
 - [x] Docker-only local setup
 - [x] Container health check
 - [x] Document API usage
-- [ ] GitHub Actions CI
+- [x] GitHub Actions CI
 
 ## After MVP
 

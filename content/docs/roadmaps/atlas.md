@@ -42,7 +42,8 @@
 
 ## After MVP
 
-- [ ] Vault HTTP integration
+- [x] Vault HTTP integration
+- [x] Forge telemetry
 - [ ] Versioned container images
 
 ## Explicitly Deferred
@@ -56,5 +57,3 @@
 - External search libraries
 - Queues and asynchronous events
 - Anvil integration
-- Forge telemetry
-
