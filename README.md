@@ -49,3 +49,5 @@ Shared API, command, content, and roadmap documentation lives under
 service repository's README.
 
 Start with [the architecture overview](content/docs/architecture.md).
+Telemetry payloads are listed in the
+[event catalog](content/docs/events.md).
