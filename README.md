@@ -23,6 +23,8 @@ Services:
 - Atlas health: http://localhost:8081/healthz
 - Atlas search: http://localhost:8081/search?q=kafka
 - Forge health: http://localhost:8082/healthz
+- Forge summary: http://localhost:8082/summary
+- Forge dashboard: http://localhost:8082/dashboard
 
 Stop the stack:
 

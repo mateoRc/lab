@@ -14,6 +14,23 @@ Successful response:
 ok
 ```
 
+## Service Status
+
+```http
+GET /api/status
+```
+
+Response:
+
+```json
+{
+  "atlas": true,
+  "forge": true
+}
+```
+
+The values report whether Vault can currently reach each optional service.
+
 ## Execute a Command
 
 ```http
