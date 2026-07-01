@@ -1,0 +1,24 @@
+project: Atlas
+type: personal project
+status: active
+
+summary: HTTP search service for Vault
+summary: case-insensitive search across shared plain-text content
+
+technology: Java
+technology: Spring Boot
+technology: Maven
+technology: Docker
+
+feature: JSON search API
+feature: recursive content discovery
+feature: line-by-line text scanning
+feature: file path and line number results
+feature: query validation
+feature: health endpoint
+feature: integration tests
+
+goal: keep search infrastructure minimal
+goal: provide search to Vault over HTTP
+goal: avoid databases and external search engines until required
+

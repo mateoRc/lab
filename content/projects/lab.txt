@@ -1,0 +1,20 @@
+project: Backend Lab
+type: personal project
+status: active
+
+summary: local orchestration for Vault and Atlas
+summary: single source of truth for shared searchable content
+
+technology: Docker
+technology: Docker Compose
+
+feature: multi-service local startup
+feature: shared read-only content mount
+feature: configurable service ports
+feature: centralized content documentation
+feature: Docker-only development workflow
+
+goal: keep service repositories independent
+goal: prevent content duplication
+goal: provide reproducible local orchestration
+
