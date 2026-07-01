@@ -17,6 +17,11 @@ services:
       timeout: 3s
       retries: 10
       start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   atlas:
     build:
@@ -35,6 +40,11 @@ services:
       timeout: 3s
       retries: 10
       start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   forge:
     build:
@@ -47,3 +57,8 @@ services:
       timeout: 3s
       retries: 10
       start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

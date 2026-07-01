@@ -171,3 +171,10 @@ backend-lab/
 Each service repository owns its source code, tests, dependencies, and
 Dockerfile. Lab owns Docker Compose, environment configuration, shared content,
 and local orchestration.
+
+## Local Logs
+
+Services write operational logs to container stdout. Lab configures Docker's
+`json-file` driver with a 10 MB maximum file size and three retained files per
+service. Logs remain separate from Forge telemetry and can be inspected with
+`docker compose logs`.
