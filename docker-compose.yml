@@ -8,6 +8,8 @@ services:
       CONTENT_PATH: /app/content
       ATLAS_URL: http://atlas:8080
       FORGE_URL: http://forge:8080
+      ATLAS_AUTH_TOKEN: ${ATLAS_AUTH_TOKEN:?set ATLAS_AUTH_TOKEN in .env}
+      FORGE_AUTH_TOKEN: ${FORGE_AUTH_TOKEN:?set FORGE_AUTH_TOKEN in .env}
       TELEMETRY_QUEUE_SIZE: ${TELEMETRY_QUEUE_SIZE:-1000}
     volumes:
       - ./content:/app/content:ro
@@ -26,11 +28,11 @@ services:
   atlas:
     build:
       context: ${ATLAS_BUILD_CONTEXT:-../atlas}
-    ports:
-      - "${ATLAS_PORT:-8081}:8080"
     environment:
       ATLAS_CONTENT_ROOT: /app/content
+      ATLAS_AUTH_TOKEN: ${ATLAS_AUTH_TOKEN:?set ATLAS_AUTH_TOKEN in .env}
       FORGE_URL: http://forge:8080
+      FORGE_AUTH_TOKEN: ${FORGE_AUTH_TOKEN:?set FORGE_AUTH_TOKEN in .env}
       TELEMETRY_QUEUE_SIZE: ${TELEMETRY_QUEUE_SIZE:-1000}
     volumes:
       - ./content:/app/content:ro
@@ -49,8 +51,8 @@ services:
   forge:
     build:
       context: ${FORGE_BUILD_CONTEXT:-../forge}
-    ports:
-      - "${FORGE_PORT:-8082}:8080"
+    environment:
+      FORGE_AUTH_TOKEN: ${FORGE_AUTH_TOKEN:?set FORGE_AUTH_TOKEN in .env}
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/healthz')"]
       interval: 5s

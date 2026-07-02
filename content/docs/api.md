@@ -2,6 +2,9 @@
 
 Vaultsh exposes JSON endpoints for command execution and autocomplete.
 
+These browser-facing Vaultsh endpoints remain public. Atlas and Forge are
+private backend services protected by bearer service tokens.
+
 ## Health
 
 ```http
@@ -93,7 +96,7 @@ changing command output:
 
 ```json
 {
-  "line": "cat skills.txt | grep Go --verbose"
+  "line": "cat /cv/skills.txt | grep Go --verbose"
 }
 ```
 

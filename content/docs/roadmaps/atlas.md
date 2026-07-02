@@ -39,6 +39,7 @@
 - [x] Document API usage
 - [x] GitHub Actions CI
 - [x] Shared local deployment for Vault and Atlas
+- [x] Bearer service authentication
 
 ## After MVP
 
@@ -52,7 +53,7 @@
 - Ranking
 - Database
 - Cache
-- Authentication
+- End-user authentication
 - Embeddings
 - External search libraries
 - Queues and asynchronous events

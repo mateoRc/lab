@@ -17,8 +17,8 @@ feature: file path and line number results
 feature: query validation
 feature: health endpoint
 feature: integration tests
+feature: bearer service authentication
 
 goal: keep search infrastructure minimal
 goal: provide search to Vault over HTTP
 goal: avoid databases and external search engines until required
-

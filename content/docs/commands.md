@@ -41,7 +41,7 @@ ls -R experience
 tree
 tree -a
 tree -L 2 /
-cd experience
+cd cv/experience
 cat reversinglabs.txt
 cd ..
 ```
@@ -49,9 +49,9 @@ cd ..
 Paths can be absolute or relative:
 
 ```sh
-cat /about.txt
+cat /cv/about.txt
 cat projects/vaultsh.txt
-cd /experience
+cd /cv/experience
 cd ..
 ```
 
@@ -65,8 +65,8 @@ cat file\ with\ spaces.txt
 Number file or pipeline lines:
 
 ```sh
-cat -n education.txt
-cat education.txt | cat -n
+cat -n /cv/about.txt
+cat /cv/about.txt | cat -n
 ```
 
 ## Pipelines
@@ -77,25 +77,25 @@ a stage returns a non-zero exit code.
 List programming languages alphabetically:
 
 ```sh
-cat skills.txt | grep "^language:" | sort
+cat /cv/skills.txt | grep "^language:" | sort
 ```
 
 Show the first three ReversingLabs highlights:
 
 ```sh
-cat experience/reversinglabs.txt | grep "^highlight:" | head -n 3
+cat /cv/experience/reversinglabs.txt | grep "^highlight:" | head -n 3
 ```
 
 Count A1 stack groups:
 
 ```sh
-cat experience/a1.txt | grep "^stack:" | wc -l
+cat /cv/experience/a1.txt | grep "^stack:" | wc -l
 ```
 
 Show numbered, case-insensitive matches:
 
 ```sh
-cat skills.txt | grep -in "python"
+cat /cv/skills.txt | grep -in "python"
 ```
 
 Display the five most recent history entries:
@@ -107,22 +107,22 @@ history | tail -n 5
 Reverse-sort backend skills:
 
 ```sh
-cat skills.txt | grep "^backend:" | sort -r
+cat /cv/skills.txt | grep "^skill:" | sort -r
 ```
 
 Commands that accept `[file]` can read a virtual file directly or consume
 pipeline input:
 
 ```sh
-head -n 5 skills.txt
-cat skills.txt | head -n 5
+head -n 5 /cv/skills.txt
+cat /cv/skills.txt | head -n 5
 ```
 
 More pipeline examples:
 
 ```sh
-cat skills.txt | grep "^language:" | sort | head -n 5
-cat experience/reversinglabs.txt | grep "^stack:" | wc -l
+cat /cv/skills.txt | grep "^language:" | sort | head -n 5
+cat /cv/experience/reversinglabs.txt | grep "^technology:" | wc -l
 tree | grep ".txt" | sort
 ```
 
@@ -134,8 +134,8 @@ tree | grep ".txt" | sort
 Autocomplete uses the current session directory:
 
 ```text
-cat exp<Tab>       -> cat experience/
-cd experience
+cat cv/exp<Tab>    -> cat cv/experience/
+cd cv/experience
 cat rev<Tab>       -> cat reversinglabs.txt
 ```
 
