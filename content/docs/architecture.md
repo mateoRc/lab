@@ -184,3 +184,13 @@ Services write operational logs to container stdout. Lab configures Docker's
 `json-file` driver with a 10 MB maximum file size and three retained files per
 service. Logs remain separate from Forge telemetry and can be inspected with
 `docker compose logs`.
+
+## Production Boundary
+
+The production stack places Caddy on the public frontend network. Vaultsh is
+reachable from Caddy but has no published host port. Atlas and Forge exist only
+on an internal backend network, which Vaultsh joins for service calls.
+
+Caddy owns HTTPS certificate management. Vaultsh owns API rate limits, request
+and command size limits, active-session capacity, and HTTP timeouts. Compose
+applies container resource and privilege restrictions.

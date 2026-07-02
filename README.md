@@ -29,6 +29,24 @@ Stop the stack:
 docker compose down
 ```
 
+For an internet-facing HTTPS deployment, use the hardened production stack:
+
+```sh
+docker compose -f docker-compose.prod.yml up --build -d --wait
+```
+
+See the [production deployment guide](content/docs/deployment.md) before
+exposing the service.
+
+For an internet-facing HTTPS deployment, use the hardened production stack:
+
+```sh
+docker compose -f docker-compose.prod.yml up --build -d --wait
+```
+
+See the [production deployment guide](content/docs/deployment.md) before
+exposing the service.
+
 ## Logs
 
 All services write logs to container stdout. Docker rotates each service's
