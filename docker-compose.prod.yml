@@ -1,0 +1,133 @@
+services:
+  ingress:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - frontend
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 128m
+    cpus: 0.25
+    pids_limit: 100
+    depends_on:
+      vault:
+        condition: service_healthy
+
+  vault:
+    build:
+      context: ${VAULT_BUILD_CONTEXT:-../vaultsh}
+    restart: unless-stopped
+    expose:
+      - "8080"
+    environment:
+      CONTENT_PATH: /app/content
+      ATLAS_URL: http://atlas:8080
+      FORGE_URL: http://forge:8080
+      ATLAS_AUTH_TOKEN: ${ATLAS_AUTH_TOKEN:?set ATLAS_AUTH_TOKEN in .env}
+      FORGE_AUTH_TOKEN: ${FORGE_AUTH_TOKEN:?set FORGE_AUTH_TOKEN in .env}
+      TELEMETRY_QUEUE_SIZE: ${TELEMETRY_QUEUE_SIZE:-1000}
+      SESSION_LIMIT: ${SESSION_LIMIT:-5000}
+      TRUST_PROXY_HEADERS: "true"
+    volumes:
+      - ./content:/app/content:ro
+    networks:
+      - frontend
+      - backend
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    cpus: 0.50
+    pids_limit: 100
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  atlas:
+    build:
+      context: ${ATLAS_BUILD_CONTEXT:-../atlas}
+    restart: unless-stopped
+    expose:
+      - "8080"
+    environment:
+      ATLAS_CONTENT_ROOT: /app/content
+      ATLAS_AUTH_TOKEN: ${ATLAS_AUTH_TOKEN:?set ATLAS_AUTH_TOKEN in .env}
+      FORGE_URL: http://forge:8080
+      FORGE_AUTH_TOKEN: ${FORGE_AUTH_TOKEN:?set FORGE_AUTH_TOKEN in .env}
+      TELEMETRY_QUEUE_SIZE: ${TELEMETRY_QUEUE_SIZE:-1000}
+    volumes:
+      - ./content:/app/content:ro
+    networks:
+      - backend
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    cpus: 1.0
+    pids_limit: 150
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  forge:
+    build:
+      context: ${FORGE_BUILD_CONTEXT:-../forge}
+    restart: unless-stopped
+    expose:
+      - "8080"
+    environment:
+      FORGE_AUTH_TOKEN: ${FORGE_AUTH_TOKEN:?set FORGE_AUTH_TOKEN in .env}
+    networks:
+      - backend
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    cpus: 0.50
+    pids_limit: 100
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/healthz')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+networks:
+  frontend:
+  backend:
+    internal: true
+
+volumes:
+  caddy_data:
+  caddy_config:

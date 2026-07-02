@@ -1,0 +1,22 @@
+{$DOMAIN} {
+	encode zstd gzip
+
+	request_body {
+		max_size 16KB
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	reverse_proxy vault:8080 {
+		transport http {
+			dial_timeout 2s
+			response_header_timeout 15s
+		}
+	}
+}

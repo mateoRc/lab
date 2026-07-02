@@ -1,3 +1,5 @@
 I prefer calling it eventual consistency, rather than data loss.
+
 SLA only applies when its being measured.
+
 Kubernetes saves us so much money, we can almost afford a team that runs it.

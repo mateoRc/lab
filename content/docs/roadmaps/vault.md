@@ -135,6 +135,16 @@
 - [ ] Benchmarks
 - [ ] Profiling
 
+### Production Hardening
+
+- [x] API request and command size limits
+- [x] Per-client API rate limits
+- [x] Active session cap
+- [x] HTTP server timeouts
+- [x] Browser security headers
+- [x] HTTPS reverse proxy deployment
+- [x] Container resource and privilege limits
+
 ## v4
 
 ### Search
