@@ -20,7 +20,7 @@ feature: command history
 feature: tokenizer
 feature: lexer
 feature: parser
-feature: static test UI
+feature: browser terminal
 
 goal: explore shell engine design
 goal: keep frontend minimal
