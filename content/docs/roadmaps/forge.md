@@ -50,10 +50,10 @@
 
 ## After MVP
 
-- [ ] Configurable dashboard width
-- [ ] Event filtering
-- [ ] Graceful handling of unknown event names
-- [ ] Versioned container images
+- [x] Configurable dashboard width
+- [x] Event filtering
+- [x] Graceful handling of unknown event names
+- [x] Versioned container images
 
 ## Explicitly Deferred
 
