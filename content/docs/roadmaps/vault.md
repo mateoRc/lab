@@ -6,7 +6,7 @@
 
 - [x] Containerized Go HTTP server
 - [x] Docker Compose
-- [x] Disposable test UI
+- [x] Browser terminal
 - [x] Health endpoint
 
 ### HTTP API
