@@ -25,7 +25,7 @@ Vault owns the user experience. It does not own search or telemetry logic.
 
 ### Atlas
 
-Atlas is a lightweight search service.
+Atlas is the portfolio's lightweight search engine.
 
 Responsibilities:
 
@@ -55,7 +55,7 @@ Future ideas:
 
 ### Forge
 
-Forge is a telemetry and event-processing service.
+Forge is the portfolio's telemetry analytics and event-processing service.
 
 Responsibilities:
 
