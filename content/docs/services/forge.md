@@ -56,10 +56,24 @@ GET /summary
 Returns structured JSON containing request totals, error totals, average
 duration, and counts grouped by service and operation.
 
+Filter results by exact field values using any combination of `service`,
+`event`, and `name`:
+
+```sh
+curl "http://localhost:8082/summary?service=vault"
+curl "http://localhost:8082/summary?event=search.executed&name=search"
+```
+
 ### Dashboard
 
 ```http
 GET /dashboard
+```
+
+Set proportional bar width from 1 through 100 and apply the same filters:
+
+```sh
+curl "http://localhost:8082/dashboard?width=30&service=vault"
 ```
 
 Returns a plain-text dashboard:
@@ -108,3 +122,13 @@ shared content, and local orchestration.
 - No authentication for the MVP
 
 All counters reset when the Forge process restarts.
+
+Unknown event types are accepted and aggregated. This permits producers to
+introduce telemetry before Forge is redeployed.
+
+Images accept a version at build time and expose it through the standard OCI
+image label:
+
+```sh
+docker build --build-arg VERSION=1.0.0 --tag forge:1.0.0 .
+```
