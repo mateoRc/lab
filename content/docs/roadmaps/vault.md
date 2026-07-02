@@ -106,7 +106,6 @@
 ### Command Options
 
 - [x] `ls -a`, `ls -l`, and combined forms
-- [ ] File timestamps and `ls -t`
 - [x] `ls -R [path]`
 - [x] `tree -L <depth> [path]`
 - [x] `tree -a` includes hidden entries
@@ -117,6 +116,10 @@
 - [x] Verbose output (`--verbose`) returned with command results
 
 ## v3
+
+### Command Options
+
+- [ ] File timestamps and `ls -t`
 
 ### Storage
 
