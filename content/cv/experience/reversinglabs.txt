@@ -11,15 +11,19 @@ technology: Flask
 technology: Git
 technology: Docker
 technology: Kubernetes
+technology: RabbitMQ
+technology: Kafka
+technology: Scylla
+technology: ClickHouse
 
 focus: distributed systems
 focus: event-driven systems
 focus: backend services
 focus: processing pipelines
-focus: third-party integrations
+focus: third-party integrations API
 focus: internal frameworks
 focus: shared backend components
-focus: search functionality
+focus: search API
 focus: query processing
 
 responsibility: planning

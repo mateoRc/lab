@@ -9,6 +9,8 @@ summary: backend development for a financial services platform
 technology: Java
 technology: Git
 technology: Docker
+technology: OracleDB
+technology: MongoDB
 
 focus: backend services
 focus: financial services platform

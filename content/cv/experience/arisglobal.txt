@@ -11,6 +11,7 @@ technology: JSP
 technology: Spring
 technology: C#
 technology: Git
+technology: Jenkins
 
 focus: enterprise document management
 focus: monolithic systems
