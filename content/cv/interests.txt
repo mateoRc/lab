@@ -7,9 +7,6 @@ interest: code quality
 interest: maintainability
 
 learning: Go
-learning: shell internals
-learning: parsers
-learning: virtual filesystems
 
 outside: coffee
 outside: travel
