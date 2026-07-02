@@ -46,6 +46,7 @@ Content-Type: application/json
 ```
 
 Forge validates the event and updates its in-memory counters.
+The request must include `Authorization: Bearer <FORGE_AUTH_TOKEN>`.
 
 ### Summary
 
@@ -60,8 +61,10 @@ Filter results by exact field values using any combination of `service`,
 `event`, and `name`:
 
 ```sh
-curl "http://localhost:8082/summary?service=vault"
-curl "http://localhost:8082/summary?event=search.executed&name=search"
+curl -H "Authorization: Bearer $FORGE_AUTH_TOKEN" \
+  "http://localhost:8082/summary?service=vault"
+curl -H "Authorization: Bearer $FORGE_AUTH_TOKEN" \
+  "http://localhost:8082/summary?event=search.executed&name=search"
 ```
 
 ### Dashboard
@@ -73,7 +76,8 @@ GET /dashboard
 Set proportional bar width from 1 through 100 and apply the same filters:
 
 ```sh
-curl "http://localhost:8082/dashboard?width=30&service=vault"
+curl -H "Authorization: Bearer $FORGE_AUTH_TOKEN" \
+  "http://localhost:8082/dashboard?width=30&service=vault"
 ```
 
 Returns a plain-text dashboard:
@@ -119,7 +123,7 @@ shared content, and local orchestration.
 - No database
 - No persistent metrics
 - No Kafka, external queues, or message broker
-- No authentication for the MVP
+- No end-user authentication; internal APIs use bearer service tokens
 
 All counters reset when the Forge process restarts.
 

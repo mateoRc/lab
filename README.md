@@ -20,11 +20,8 @@ docker compose up --build
 Services:
 
 - Vault: http://localhost:8080
-- Atlas health: http://localhost:8081/healthz
-- Atlas search: http://localhost:8081/search?q=kafka
-- Forge health: http://localhost:8082/healthz
-- Forge summary: http://localhost:8082/summary
-- Forge dashboard: http://localhost:8082/dashboard
+- Atlas: private Compose network only
+- Forge: private Compose network only
 
 Stop the stack:
 
@@ -48,7 +45,19 @@ telemetry counters in memory and does not store application logs.
 
 ## Configuration
 
-Copy `.env.example` to `.env` to override ports or sibling repository paths.
+Copy `.env.example` to `.env`, then generate independent service tokens:
+
+```sh
+openssl rand -hex 32
+openssl rand -hex 32
+```
+
+Set the results as `ATLAS_AUTH_TOKEN` and `FORGE_AUTH_TOKEN`. Compose refuses
+to start when either token is missing. Do not commit `.env`.
+
+Only Vault publishes a host port. Atlas and Forge are reachable exclusively
+through the private Compose network and require bearer authentication on all
+non-health endpoints.
 
 ## Shared content
 

@@ -25,12 +25,11 @@ Vault owns the user experience. It does not own search or telemetry logic.
 
 ### Atlas
 
-Atlas is a lightweight indexing and search service.
+Atlas is a lightweight search service.
 
 Responsibilities:
 
-- Load plain-text and Markdown documents
-- Build an in-memory representation
+- Read UTF-8 text documents from shared storage
 - Search documents
 - Return matching files and lines
 
@@ -138,13 +137,20 @@ Internally, these commands call Atlas and Forge over HTTP. Direct API access
 remains available for debugging:
 
 ```sh
-curl "http://localhost:8081/search?q=kafka"
-curl http://localhost:8081/healthz
-curl http://forge/summary
-curl http://forge/dashboard
+docker compose exec vault wget -qO- \
+  --header="Authorization: Bearer $ATLAS_AUTH_TOKEN" \
+  "http://atlas:8080/search?q=kafka"
+docker compose exec vault wget -qO- http://atlas:8080/healthz
+docker compose exec vault wget -qO- \
+  --header="Authorization: Bearer $FORGE_AUTH_TOKEN" \
+  http://forge:8080/summary
 ```
 
 Commands are the product interface. HTTP requests are the debugging interface.
+
+Only Vault publishes a host port. Atlas and Forge are private Compose services.
+Their non-health endpoints require independent bearer service tokens. TLS must
+terminate at the deployment ingress so browser traffic to Vault is encrypted.
 
 ## Design Principles
 

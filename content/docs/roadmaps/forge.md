@@ -47,6 +47,7 @@
 - [x] Container health check
 - [x] Document API usage
 - [x] GitHub Actions CI
+- [x] Bearer service authentication
 
 ## After MVP
 
@@ -63,5 +64,5 @@
 - Persistent metrics
 - Kafka
 - External queues
-- Authentication
+- End-user authentication
 - Distributed tracing

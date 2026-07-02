@@ -4,6 +4,9 @@ Vault and Atlas send best-effort telemetry events to Forge over HTTP. Events
 are queued temporarily in each producer's memory and delivered by a background
 worker using `POST /events`.
 
+Forge requires `Authorization: Bearer <FORGE_AUTH_TOKEN>` for event ingestion
+and metrics reads. Its health endpoint is intentionally unauthenticated.
+
 ## Event Schema
 
 ```json
