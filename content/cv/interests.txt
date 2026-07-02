@@ -1,6 +1,5 @@
 interest: backend systems
 interest: distributed systems
-interest: shell interfaces
 interest: developer tooling
 interest: system reliability
 interest: code quality
