@@ -138,6 +138,16 @@
 - [ ] Benchmarks
 - [ ] Profiling
 
+### Deployment Visibility
+
+- [ ] Add recent deployments to the dashboard
+- [ ] Fetch workflow runs and commit metadata from the GitHub API
+- [ ] Return a small, sanitized response through the backend
+- [ ] Cache responses briefly and handle GitHub rate limits
+- [ ] Keep the GitHub token server-side for the private Lab repository
+- [ ] Link each deployment to its workflow run and commit
+- [ ] Show the currently deployed commit and service health
+
 ### Production Hardening
 
 - [x] API request and command size limits
