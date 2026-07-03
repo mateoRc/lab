@@ -11,8 +11,10 @@ services:
       ATLAS_AUTH_TOKEN: ${ATLAS_AUTH_TOKEN:?set ATLAS_AUTH_TOKEN in .env}
       FORGE_AUTH_TOKEN: ${FORGE_AUTH_TOKEN:?set FORGE_AUTH_TOKEN in .env}
       TELEMETRY_QUEUE_SIZE: ${TELEMETRY_QUEUE_SIZE:-1000}
+      DEPLOYMENT_METADATA_PATH: /app/runtime/deployment.json
     volumes:
       - ./content:/app/content:ro
+      - ./runtime:/app/runtime:ro
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--spider", "http://localhost:8080/healthz"]
       interval: 5s
@@ -34,8 +36,10 @@ services:
       FORGE_URL: http://forge:8080
       FORGE_AUTH_TOKEN: ${FORGE_AUTH_TOKEN:?set FORGE_AUTH_TOKEN in .env}
       TELEMETRY_QUEUE_SIZE: ${TELEMETRY_QUEUE_SIZE:-1000}
+      DEPLOYMENT_METADATA_PATH: /app/runtime/deployment.json
     volumes:
       - ./content:/app/content:ro
+      - ./runtime:/app/runtime:ro
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--spider", "http://localhost:8080/healthz"]
       interval: 5s

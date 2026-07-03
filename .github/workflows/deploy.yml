@@ -59,6 +59,7 @@ jobs:
           rsync --archive --delete \
             --exclude '.env' \
             --exclude '.git' \
+            --exclude 'runtime' \
             ./ deploy@"$SERVER_HOST":/home/deploy/backend_lab/lab/
 
       - name: Upload production configuration
@@ -80,7 +81,29 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
           ssh deploy@"$SERVER_HOST" \
-            'cd /home/deploy/backend_lab/lab && docker compose -f docker-compose.prod.yml config --quiet && docker compose -f docker-compose.prod.yml up --build -d --wait'
+            'cd /home/deploy/backend_lab/lab && install -d -m 755 runtime && docker compose -f docker-compose.prod.yml config --quiet && docker compose -f docker-compose.prod.yml up --build -d --wait'
 
       - name: Verify
         run: curl --fail --show-error --silent --retry 12 --retry-delay 5 https://mateolabs.dev/healthz
+
+      - name: Publish deployment status
+        if: always()
+        env:
+          DEPLOYMENT_STATUS: ${{ job.status }}
+          DEPLOYMENT_VERSION: deploy-${{ github.run_number }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        run: |
+          deployed_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          ssh deploy@"$SERVER_HOST" bash -s -- \
+            "$DEPLOYMENT_STATUS" "$DEPLOYMENT_VERSION" "$deployed_at" <<'SCRIPT'
+          set -euo pipefail
+          status="$1"
+          version="$2"
+          deployed_at="$3"
+          directory=/home/deploy/backend_lab/lab/runtime
+          install -d -m 755 "$directory"
+          printf '{"status":"%s","version":"%s","deployed_at":"%s"}\n' \
+            "$status" "$version" "$deployed_at" > "$directory/deployment.json.tmp"
+          chmod 644 "$directory/deployment.json.tmp"
+          mv "$directory/deployment.json.tmp" "$directory/deployment.json"
+          SCRIPT
