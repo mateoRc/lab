@@ -8,8 +8,8 @@ orchestration only.
 
 ## Prerequisites
 
-Docker Engine or Docker Desktop with Docker Compose v2 is the only local
-dependency. Clone `lab`, `vaultsh`, and `atlas` as sibling directories.
+Install Docker Engine or Docker Desktop with Docker Compose v2. Clone `lab`,
+`vaultsh`, `atlas`, and `forge` as sibling directories.
 
 ## Run
 
@@ -37,11 +37,17 @@ docker run --rm cloudflare/cloudflared:latest tunnel --url http://host.docker.in
 
 Open the `trycloudflare.com` URL printed by the command.
 
-## Server access
+## Production
 
-```powershell
-ssh -i C:\dev\backend_lab\keys\ssh-key-2026-07-02.key root@<server-ip>
+Pushes to `main` deploy to [mateolabs.dev](https://mateolabs.dev) through
+GitHub Actions. To access the server:
+
+```sh
+ssh -i <private-key> deploy@<server-ip>
 ```
+
+See the [deployment guide](content/docs/deployment.md) for the server layout,
+security controls, and manual recovery commands.
 
 ## Logs
 
@@ -81,10 +87,6 @@ filesystem and Atlas scans it for search requests.
 
 ## Documentation
 
-Shared API, command, content, and roadmap documentation lives under
-`content/docs/`. Service-specific implementation details remain in each
-service repository's README.
-
-Start with [the architecture overview](content/docs/architecture.md).
-Telemetry payloads are listed in the
+Shared documentation lives under `content/docs/`. Start with the
+[architecture overview](content/docs/architecture.md) or
 [event catalog](content/docs/events.md).
