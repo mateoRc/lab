@@ -29,23 +29,13 @@ Stop the stack:
 docker compose down
 ```
 
-For an internet-facing HTTPS deployment, use the hardened production stack:
+To get a temporary public URL for the local app:
 
 ```sh
-docker compose -f docker-compose.prod.yml up --build -d --wait
+docker run --rm cloudflare/cloudflared:latest tunnel --url http://host.docker.internal:8080
 ```
 
-See the [production deployment guide](content/docs/deployment.md) before
-exposing the service.
-
-For an internet-facing HTTPS deployment, use the hardened production stack:
-
-```sh
-docker compose -f docker-compose.prod.yml up --build -d --wait
-```
-
-See the [production deployment guide](content/docs/deployment.md) before
-exposing the service.
+Open the `trycloudflare.com` URL printed by the command.
 
 ## Logs
 
