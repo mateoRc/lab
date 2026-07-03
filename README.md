@@ -37,6 +37,12 @@ docker run --rm cloudflare/cloudflared:latest tunnel --url http://host.docker.in
 
 Open the `trycloudflare.com` URL printed by the command.
 
+## Server access
+
+```powershell
+ssh -i C:\dev\backend_lab\keys\ssh-key-2026-07-02.key root@<server-ip>
+```
+
 ## Logs
 
 All services write logs to container stdout. Docker rotates each service's
