@@ -14,6 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - name: Check out lab
+        uses: actions/checkout@v4
+
       - name: Configure SSH
         env:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
@@ -26,13 +29,13 @@ jobs:
           test "$(ssh-keygen -lf ~/.ssh/known_hosts -E sha256 | awk '{print $2}')" = \
             "SHA256:ScA4PoeUfbgh+A4EpGlLpUqbETbwaoXTHRCI/s+NGXc"
 
-      - name: Update repositories
+      - name: Update public repositories
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
           ssh deploy@"$SERVER_HOST" 'bash -se' <<'SCRIPT'
           set -euo pipefail
-          install -d /home/deploy/backend_lab
+          install -d /home/deploy/backend_lab/lab
           cd /home/deploy/backend_lab
 
           sync_repo() {
@@ -44,11 +47,19 @@ jobs:
             fi
           }
 
-          sync_repo lab
           sync_repo vaultsh
           sync_repo atlas
           sync_repo forge
           SCRIPT
+
+      - name: Upload lab repository
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        run: |
+          rsync --archive --delete \
+            --exclude '.env' \
+            --exclude '.git' \
+            ./ deploy@"$SERVER_HOST":/home/deploy/backend_lab/lab/
 
       - name: Upload production configuration
         env:
