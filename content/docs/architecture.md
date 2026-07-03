@@ -1,9 +1,6 @@
 # Backend Lab
 
-The Backend Lab is a collection of small, focused backend services built
-mostly by one developer. The goal is not to create microservices for their own
-sake, but to make each project solve one problem well and remain independently
-useful.
+Backend Lab consists of three services and one orchestration repository.
 
 ## Projects
 
@@ -25,7 +22,7 @@ Vault owns the user experience. It does not own search or telemetry logic.
 
 ### Atlas
 
-Atlas is the portfolio's lightweight search engine.
+Atlas searches the shared content.
 
 Responsibilities:
 
@@ -35,24 +32,6 @@ Responsibilities:
 
 Atlas reads the shared content mounted by the Backend Lab.
 
-Initial implementation:
-
-- Plain-text and Markdown documents
-- Case-insensitive line search
-- HTTP API
-- In-memory only
-- No persistence
-
-Future ideas:
-
-- Inverted index
-- Ranking
-- Prefix search
-- Fuzzy search
-- Stemming
-- Synonyms
-- Caching
-
 ### Forge
 
 Forge is the portfolio's telemetry analytics and event-processing service.
@@ -61,25 +40,8 @@ Responsibilities:
 
 - Receive events from backend services
 - Aggregate metrics
-- Produce simple operational insights
+- Produce operational summaries
 - Render terminal-friendly ASCII dashboards
-
-Initial implementation:
-
-- HTTP event ingestion
-- In-memory counters
-- Average latency
-- Error count
-- Command distribution
-- ASCII dashboard
-
-Future ideas:
-
-- Rolling windows
-- Histograms
-- Percentiles
-- Event streaming
-- Prometheus exporter
 
 ## Communication
 
@@ -89,11 +51,9 @@ Vault
   └── HTTP ──> Forge
 ```
 
-HTTP is intentionally sufficient for the MVP. Vault and Atlas enqueue
-telemetry in bounded in-process queues, then background workers deliver it to
-Forge over HTTP. There is no external queue, Kafka, or message broker. A
-durable broker may replace this best-effort delivery only if a concrete future
-need justifies it.
+Vault and Atlas enqueue telemetry in bounded in-process queues. Background
+workers deliver it to Forge over HTTP. Delivery is best-effort and uses no
+external message broker.
 
 ## External Services
 
