@@ -41,7 +41,8 @@ jobs:
           sync_repo() {
             name="$1"
             if [ -d "$name/.git" ]; then
-              git -C "$name" pull --ff-only
+              git -C "$name" fetch --prune origin main
+              git -C "$name" reset --hard origin/main
             else
               git clone "https://github.com/mateoRc/$name.git"
             fi
