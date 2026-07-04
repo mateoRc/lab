@@ -28,6 +28,10 @@ Backend Lab runs containerized tests, Compose validation, repository secret and
 dependency scanning, container-image scanning, security-header policy, and
 internal-network policy. Third-party scanner actions are pinned to full commit
 SHAs. Detailed scanner output is not published to the public dashboard.
+The public assessment contains bounded counts, vulnerability identifiers,
+package names, installed and fixed versions, and deterministic remediation
+actions. Secret values and raw scanner reports are deleted before artifacts
+are published.
 
 ### Policy Engine
 

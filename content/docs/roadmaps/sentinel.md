@@ -37,6 +37,7 @@
 - [ ] Verify request limits, rate limits, headers, and internal-port isolation
 - [x] Verify configured security headers and internal-network isolation
 - [x] Ingest dependency, container, and secret-scanning results
+- [x] Publish sanitized findings and deterministic remediation actions
 
 ## Version 1.0
 

@@ -175,6 +175,16 @@ jobs:
                   vulnerabilities = sum(
                       len(item.get("Vulnerabilities") or []) for item in results
                   )
+                  examples = []
+                  for item in results:
+                      for finding in item.get("Vulnerabilities") or []:
+                          identifier = clean(finding.get("VulnerabilityID", "unknown"), 40)
+                          package = clean(finding.get("PkgName", "unknown"), 50)
+                          installed = clean(finding.get("InstalledVersion", "unknown"), 40)
+                          fixed = clean(finding.get("FixedVersion") or "no fix", 40)
+                          examples.append(
+                              f"{identifier} {package} {installed} -> {fixed}"
+                          )
                   secrets = sum(len(item.get("Secrets") or []) for item in results)
                   misconfigurations = sum(
                       len(item.get("Misconfigurations") or []) for item in results
@@ -183,11 +193,16 @@ jobs:
                       f"{vulnerabilities} high/critical vulnerabilities, "
                       f"{secrets} secrets, {misconfigurations} misconfigurations"
                   )
+                  if examples:
+                      check["evidence"] += "; " + "; ".join(examples[:3])
               except (OSError, json.JSONDecodeError, AttributeError):
                   check["evidence"] = "scanner report was unavailable or invalid"
               finally:
                   report.unlink(missing_ok=True)
               return check
+
+          def clean(value, limit):
+              return " ".join(str(value).split())[:limit]
 
           plan = {
               "project": "backend-lab",
@@ -299,16 +314,27 @@ jobs:
           source = json.loads(
               Path("sentinel-report/assessment.json").read_text(encoding="utf-8")
           )
+          def public_text(value, limit=240):
+              return " ".join(str(value).split())[:limit]
+
           public = {
               "commit": source["commit"],
               "analyzed_at": source["analyzed_at"],
               "risk": source["risk"],
               "decision": source["decision"],
               "checks": [
-                  {"name": check["name"], "status": check["status"]}
+                  {
+                      "name": public_text(check["name"], 80),
+                      "status": check["status"],
+                      "source": public_text(check["source"], 80),
+                      "evidence": public_text(check["evidence"]),
+                  }
                   for check in source["checks"]
               ],
-              "summary": source["summary"],
+              "summary": public_text(source["summary"]),
+              "actions": [
+                  public_text(action) for action in source.get("actions", [])[:5]
+              ],
               "provider": source["provider"],
           }
           Path("sentinel-report/sentinel.json").write_text(
