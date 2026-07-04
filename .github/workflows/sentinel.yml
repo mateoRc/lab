@@ -86,9 +86,66 @@ jobs:
       - name: Publish summary
         run: cat sentinel-report/assessment.md >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Create public status
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          source = json.loads(
+              Path("sentinel-report/assessment.json").read_text(encoding="utf-8")
+          )
+          public = {
+              "commit": source["commit"],
+              "analyzed_at": source["analyzed_at"],
+              "risk": source["risk"],
+              "checks": [
+                  {"name": check["name"], "status": check["status"]}
+                  for check in source["checks"]
+              ],
+              "summary": source["summary"],
+              "provider": source["provider"],
+          }
+          Path("sentinel-report/sentinel.json").write_text(
+              json.dumps(public, separators=(",", ":")) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
       - name: Upload report
         uses: actions/upload-artifact@v4
         with:
           name: sentinel-assessment
           path: sentinel-report/
           retention-days: 14
+
+      - name: Configure deployment SSH
+        if: github.event_name == 'push'
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -t ed25519 "$SERVER_HOST" > ~/.ssh/known_hosts
+          test "$(ssh-keygen -lf ~/.ssh/known_hosts -E sha256 | awk '{print $2}')" = \
+            "SHA256:ScA4PoeUfbgh+A4EpGlLpUqbETbwaoXTHRCI/s+NGXc"
+
+      - name: Publish dashboard status
+        if: github.event_name == 'push'
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        run: |
+          scp sentinel-report/sentinel.json \
+            deploy@"$SERVER_HOST":/tmp/sentinel-"$GITHUB_RUN_ID".json
+          ssh deploy@"$SERVER_HOST" bash -s -- "$GITHUB_RUN_ID" <<'SCRIPT'
+          set -euo pipefail
+          run_id="$1"
+          source="/tmp/sentinel-$run_id.json"
+          directory=/home/deploy/backend_lab/lab/runtime
+          install -d -m 755 "$directory"
+          install -m 644 "$source" "$directory/sentinel.json.tmp"
+          mv "$directory/sentinel.json.tmp" "$directory/sentinel.json"
+          rm "$source"
+          SCRIPT

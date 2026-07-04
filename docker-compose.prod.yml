@@ -42,6 +42,7 @@ services:
       SESSION_LIMIT: ${SESSION_LIMIT:-5000}
       TRUST_PROXY_HEADERS: "true"
       DEPLOYMENT_METADATA_PATH: /app/runtime/deployment.json
+      SENTINEL_METADATA_PATH: /app/runtime/sentinel.json
     volumes:
       - ./content:/app/content:ro
       - ./runtime:/app/runtime:ro

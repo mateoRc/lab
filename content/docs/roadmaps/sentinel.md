@@ -54,7 +54,7 @@
 - [ ] Publish step summaries, report artifacts, and updated PR comments
 - [ ] Use protected environments for high-risk release approval
 - [ ] Dogfood Sentinel on Vaultsh, Atlas, Forge, and Lab
-- [ ] Expose sanitized status in the existing deployment dashboard
+- [x] Expose sanitized status in the existing deployment dashboard
 
 ## Explicitly Deferred
 

@@ -33,6 +33,11 @@ recommends actions using diff and check evidence.
 Produces Markdown and JSON reports. Reports distinguish facts, policy
 decisions, and agent inferences.
 
+On `main`, CI also publishes a reduced assessment containing risk, check
+statuses, provider, commit, timestamp, and summary. Vaultsh reads this file
+through Lab's existing read-only runtime mount and shows the last assessment
+without treating Sentinel as an online service.
+
 ## Flow
 
 ```text
