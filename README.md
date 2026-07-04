@@ -6,6 +6,53 @@ Each application repository owns its source code, tests, dependencies, and
 Dockerfile. Lab owns shared configuration, content, and Docker Compose
 orchestration only.
 
+## Architecture
+
+```mermaid
+flowchart LR
+    User[Browser] -->|HTTPS| Caddy
+
+    subgraph Frontend["frontend network"]
+        Caddy[Caddy ingress]
+        Vaultsh[Vaultsh<br/>Go shell engine]
+        Caddy -->|HTTP| Vaultsh
+    end
+
+    subgraph Backend["internal backend network"]
+        Atlas[Atlas<br/>Java search]
+        Forge[Forge<br/>Python telemetry]
+    end
+
+    Content[(Shared content<br/>read-only)] -.->|Read-only mount| Vaultsh
+    Content -.->|Read-only mount| Atlas
+
+    Vaultsh -->|Search · HTTP + bearer token| Atlas
+    Vaultsh -->|Events and analytics · HTTP + bearer token| Forge
+    Atlas -->|Search events · HTTP + bearer token| Forge
+
+    Actions[GitHub Actions] -->|SSH · rsync · Docker Compose| Host[Hetzner host]
+    Host -.-> Caddy
+```
+
+- Caddy is the only internet-facing container.
+- Vaultsh owns the user experience and degrades gracefully when Atlas or Forge
+  is unavailable.
+- Atlas and Forge are reachable only through the internal backend network.
+- Vaultsh and Atlas consume the same read-only content.
+
+## Testing
+
+| Layer | Coverage |
+| --- | --- |
+| Vaultsh unit tests | Tokenizer, lexer, parser, commands, virtual filesystem, sessions, completion, HTTP limits, and telemetry dispatch |
+| Atlas unit and integration tests | Search behavior, HTTP controller, health endpoint, authentication, and telemetry dispatch |
+| Forge unit and API tests | Event validation, aggregation, filtering, authentication, health, summaries, and dashboard rendering |
+| Container tests | Every service image builds and runs its test suite before producing the runtime image |
+| Deployment verification | Compose waits for service health checks, then CI verifies the public HTTPS health endpoint |
+
+Tests run in each service repository's CI workflow. Production deployment runs
+only from Lab and publishes sanitized deployment status to Vaultsh.
+
 ## Prerequisites
 
 Install Docker Engine or Docker Desktop with Docker Compose v2. Clone `lab`,
