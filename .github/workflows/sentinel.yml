@@ -283,6 +283,7 @@ jobs:
           sentinel assess \
             --provider mock \
             --input sentinel-report/evidence.json \
+            --config lab/sentinel.yml \
             --json-output sentinel-report/assessment.json \
             --markdown-output sentinel-report/assessment.md
 
@@ -302,6 +303,7 @@ jobs:
               "commit": source["commit"],
               "analyzed_at": source["analyzed_at"],
               "risk": source["risk"],
+              "decision": source["decision"],
               "checks": [
                   {"name": check["name"], "status": check["status"]}
                   for check in source["checks"]

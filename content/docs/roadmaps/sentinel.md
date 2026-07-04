@@ -11,15 +11,15 @@
 - [x] Mock analysis provider
 - [x] Markdown and JSON reports
 - [x] Advisory Backend Lab workflow
-- [ ] Strict configuration validation
+- [x] Strict configuration validation
 - [x] Extensible check-adapter registry
 - [x] Source metadata for every evidence item
 
 ### Deterministic Checks
 
 - [x] Run allowlisted commands with timeouts and output limits
-- [ ] Apply policy to test, security, and deployment results
-- [ ] Fail closed on invalid configuration or missing required evidence
+- [x] Apply policy to test, security, and deployment results
+- [x] Fail closed on invalid configuration or missing required evidence
 - [ ] Redact secrets from logs and reports
 
 ### Regression Analysis

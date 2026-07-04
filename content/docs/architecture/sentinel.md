@@ -80,3 +80,7 @@ is read-only, secrets are redacted, and production changes require approval.
 Backend Lab owns the versioned policy in `lab/sentinel.yml`. Unknown or missing
 required fields will fail validation, agent capabilities are advisory, and
 secrets must come from CI rather than YAML.
+
+The current policy uses `advisory_only: true`. Changing it to `false` makes
+blocked and approval-required decisions fail the Sentinel CI step; this switch
+will remain advisory until the check set is proven stable.
