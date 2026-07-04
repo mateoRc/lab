@@ -1,4 +1,4 @@
-# Backend Lab
+# Backend Lab Architecture
 
 Backend Lab consists of three runtime services, one CI/CD analysis tool, and
 one orchestration repository.

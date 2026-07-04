@@ -139,8 +139,7 @@ filesystem and Atlas scans it for search requests.
 ## Documentation
 
 Shared documentation lives under `content/docs/`. Start with the
-[architecture overview](content/docs/architecture.md) or
+[architecture overview](content/docs/architecture/overview.md) or
 [event catalog](content/docs/events.md). Sentinel has separate
-[architecture](content/docs/sentinel-architecture.md),
-[configuration](content/docs/sentinel-configuration.md), and
+[architecture](content/docs/architecture/sentinel.md) and
 [roadmap](content/docs/roadmaps/sentinel.md) documents.

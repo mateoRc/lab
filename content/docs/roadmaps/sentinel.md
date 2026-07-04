@@ -1,15 +1,19 @@
 # Sentinel Roadmap
 
-## MVP
+## Pre-1.0
 
 ### Bootstrap
 
 - [x] Python package and CLI entry point
 - [x] Unit-test and GitHub Actions foundation
 - [x] Initial Backend Lab configuration
+- [x] Normalized check and assessment models
+- [x] Mock analysis provider
+- [x] Markdown and JSON reports
+- [x] Advisory Backend Lab workflow
 - [ ] Strict configuration validation
-- [ ] Normalized check, evidence, finding, and risk models
-- [ ] Markdown and JSON reports
+- [ ] Extensible check-adapter registry
+- [ ] Source metadata for every evidence item
 
 ### Deterministic Checks
 
@@ -32,19 +36,21 @@
 - [ ] Verify request limits, rate limits, headers, and internal-port isolation
 - [ ] Ingest dependency, container, and secret-scanning results
 
-## After MVP
+## Version 1.0
 
 ### Agent Analysis
 
 - [ ] Add a provider-independent analysis interface
+- [ ] Integrate a production LLM provider
 - [ ] Restrict context to diffs, configuration, and check evidence
 - [ ] Require file, line, check, or log references for findings
 - [ ] Defend against prompt injection in repository content and logs
 - [ ] Explain failures, release risk, and missing verification
+- [ ] Replace the mock provider in the release workflow
 
-### GitHub Integration
+### Release Integration
 
-- [ ] Run on pull requests and releases
+- [x] Run an advisory mock assessment on pull requests and `main`
 - [ ] Publish step summaries, report artifacts, and updated PR comments
 - [ ] Use protected environments for high-risk release approval
 - [ ] Dogfood Sentinel on Vaultsh, Atlas, Forge, and Lab

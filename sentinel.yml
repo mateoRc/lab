@@ -28,7 +28,8 @@ policy:
   require_approval_for_high_risk: true
 
 agent:
-  enabled: false
+  enabled: true
+  provider: mock
   advisory_only: true
   allow_repository_writes: false
   allow_deployment: false

@@ -14,6 +14,10 @@ Identifies affected repositories, services, files, and configuration surfaces.
 Executes deterministic regression, security, build, and deployment checks.
 Every check produces a status, structured evidence, and logs.
 
+Checks use adapters that convert tool-specific output into one normalized
+result contract. Adding a scanner or test suite should require a new adapter,
+not changes to policy, agent, or reporting code.
+
 ### Policy Engine
 
 Applies explicit rules to deterministic results. It owns the release gate and
@@ -48,3 +52,15 @@ Git change
 Repository files, diffs, and logs are untrusted input. Sentinel must not execute
 instructions found inside them. Tool access is allowlisted, repository access
 is read-only, secrets are redacted, and production changes require approval.
+
+## Decisions
+
+- Deterministic evidence and policy are the authoritative product core.
+- Check adapters are extensible; policy depends only on normalized results.
+- LLM providers explain evidence and context but never decide check outcomes.
+- Sentinel runs as an ephemeral CI CLI and stores no database initially.
+- Repository writes and deployments require separate human-controlled tooling.
+
+Backend Lab owns the versioned policy in `lab/sentinel.yml`. Unknown or missing
+required fields will fail validation, agent capabilities are advisory, and
+secrets must come from CI rather than YAML.

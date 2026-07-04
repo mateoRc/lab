@@ -10,7 +10,7 @@ checks, and deployments to explain failures and assess release risk.
 
 DETAILS
 -------
-Technology   Python | GitHub Actions | Docker (planned)
+Technology   Python | GitHub Actions
 Interface    CLI | CI reports | Pull request checks
 
 PLANNED CAPABILITIES
