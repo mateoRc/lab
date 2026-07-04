@@ -1,12 +1,7 @@
-interest: backend systems
-interest: distributed systems
-interest: developer tooling
-interest: system reliability
-interest: code quality
-interest: maintainability
+INTERESTS
+=========
 
-learning: Go
-
-outside: coffee
-outside: travel
-outside: fitness
+Engineering   Backend systems | Distributed systems | Developer tooling
+              System reliability | Code quality | Maintainability
+Learning      Go
+Outside       Coffee | Travel | Fitness

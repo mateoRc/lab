@@ -1,27 +1,22 @@
-company: Intellexi
-role: Software Developer
-period: 2023-02 to 2023-12
-location: Croatia, hybrid
-industry: financial services
+INTELLEXI
+=========
 
-summary: backend development for a financial services platform
+Software Developer | 2023-02 to 2023-12
+Croatia, hybrid | Financial services
 
-technology: Java
-technology: Git
-technology: Docker
-technology: OracleDB
-technology: MongoDB
+SUMMARY
+-------
+Backend development for a financial services platform under evolving
+requirements, external dependencies, and strict delivery deadlines.
 
-focus: backend services
-focus: financial services platform
-focus: evolving requirements
-focus: external dependencies
-focus: data protection
-focus: security requirements
+DETAILS
+-------
+Technology   Java | Git | Docker | OracleDB | MongoDB
+Focus        Backend services | Financial platforms | Data protection
+             Security requirements | External dependencies
 
-responsibility: backend implementation
-responsibility: delivery under tight deadlines
-responsibility: client stakeholder collaboration
-responsibility: collaboration with system architect
-responsibility: technical decision-making
-responsibility: core functionality delivery
+RESPONSIBILITIES
+----------------
+- Implemented core backend functionality under tight deadlines.
+- Collaborated with client stakeholders and the system architect.
+- Contributed to technical decisions as requirements evolved.

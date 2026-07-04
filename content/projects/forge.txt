@@ -1,40 +1,27 @@
-project: Forge
-type: personal project
-status: active
+FORGE
+=====
 
-summary: lightweight telemetry service for Vault and Atlas
-summary: in-memory aggregation with ASCII dashboards
+Personal project | Active
 
-technology: Python
-technology: FastAPI
-technology: Docker
+SUMMARY
+-------
+A lightweight telemetry service for Vaultsh and Atlas with in-memory
+aggregation and terminal-friendly activity dashboards.
 
-api: POST /events
-api: GET /healthz
-api: GET /summary
-api: GET /dashboard
+DETAILS
+-------
+Technology   Python | FastAPI | Docker
+API          POST /events | GET /healthz | GET /summary | GET /dashboard
+Event        Service | Event | Name | Duration | Exit code
 
-event_field: service
-event_field: event
-event_field: name
-event_field: duration_ms
-event_field: exit_code
+FEATURES
+--------
+- Request, error, latency, service, and command aggregation
+- Filtered summaries and configurable ASCII dashboards
+- Bearer service authentication
+- Version-labeled container images
 
-feature: receive telemetry events over HTTP
-feature: aggregate request and error counters in memory
-feature: calculate average request duration
-feature: summarize activity by service and command
-feature: render simple ASCII bar charts
-feature: bearer service authentication
-feature: filter metrics by service, event, and operation
-feature: configurable dashboard width
-feature: version-labeled container images
-
-constraint: no Grafana
-constraint: no Prometheus
-constraint: no database
-constraint: no Kafka
-
-goal: make local service activity visible
-goal: keep telemetry infrastructure minimal
-goal: provide a useful dashboard without external dependencies
+DECISIONS
+---------
+- Keep live telemetry in memory and accept reset-on-redeploy behavior.
+- Avoid Grafana, Prometheus, Kafka, and a database until persistence is needed.

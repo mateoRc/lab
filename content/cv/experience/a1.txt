@@ -1,31 +1,23 @@
-company: A1 Hrvatska
-role: Software Developer
-period: 2021-10 to 2023-01
-location: Croatia, hybrid
-industry: telecom
+A1 HRVATSKA
+===========
 
-summary: backend development for cloud-based microservices and internal tooling
+Software Developer | 2021-10 to 2023-01
+Croatia, hybrid | Telecom
 
-technology: Node.js
-technology: TypeScript
-technology: Java
-technology: AWS
-technology: Docker
-technology: Kubernetes
-technology: OpenShift
-technology: Git
-technology: RabbitMQ
+SUMMARY
+-------
+Backend development for cloud-based microservices, integrations, and internal
+tooling supporting customer journeys and marketing automation.
 
-focus: cloud-based microservices
-focus: backend development
-focus: Salesforce integrations
-focus: customer journeys
-focus: custom actions
-focus: internal tools
-focus: marketing automation
-focus: operational reliability
+DETAILS
+-------
+Technology   Node.js | TypeScript | Java | AWS | Docker | Kubernetes
+             OpenShift | Git | RabbitMQ
+Focus        Cloud microservices | Backend development | Salesforce integrations
+             Customer journeys | Internal tools | Operational reliability
 
-responsibility: building backend microservices
-responsibility: maintaining integrated services
-responsibility: automating manual processes
-responsibility: improving operational efficiency
+RESPONSIBILITIES
+----------------
+- Built and maintained backend microservices and integrated services.
+- Automated manual processes and improved operational efficiency.
+- Delivered custom actions supporting customer and marketing workflows.

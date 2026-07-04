@@ -1,35 +1,23 @@
-company: ReversingLabs
-role: Software Developer
-period: 2024-present
-location: Croatia, remote
-industry: cybersecurity
+REVERSINGLABS
+=============
 
-summary: backend work on distributed event-driven production systems
+Software Developer | 2024-present
+Croatia, remote | Cybersecurity
 
-technology: Python
-technology: Flask
-technology: Git
-technology: Docker
-technology: Kubernetes
-technology: RabbitMQ
-technology: Kafka
-technology: Scylla
-technology: ClickHouse
+SUMMARY
+-------
+Backend work on distributed, event-driven production systems and shared
+components used across processing and search workflows.
 
-focus: distributed systems
-focus: event-driven systems
-focus: backend services
-focus: processing pipelines
-focus: third-party integrations API
-focus: internal frameworks
-focus: shared backend components
-focus: search API
-focus: query processing
+DETAILS
+-------
+Technology   Python | Flask | Git | Docker | Kubernetes | RabbitMQ | Kafka
+             ScyllaDB | ClickHouse
+Focus        Distributed systems | Event-driven systems | Backend services
+             Processing pipelines | Integrations | Search and query processing
 
-responsibility: planning
-responsibility: implementation
-responsibility: deployment
-responsibility: technical ownership
-responsibility: code review
-responsibility: mentoring
-responsibility: cross-team collaboration
+RESPONSIBILITIES
+----------------
+- Own work from planning through implementation and deployment.
+- Build internal frameworks, integrations, and shared backend components.
+- Review code, mentor engineers, and collaborate across teams.

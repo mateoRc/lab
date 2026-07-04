@@ -1,31 +1,20 @@
-Vault: cv
+CV
+==
 
-This vault contains a structured, read-only version of my professional profile.
+A structured, read-only professional profile.
+Employer and project details are intentionally high-level.
 
-Start here:
+START HERE
+----------
 cat about.txt
 cat skills.txt
-ls experience
+tree experience
 cat experience/reversinglabs.txt
 cat contact.txt
 
-Projects:
-cd ../projects
-cat vaultsh.txt
-
-Useful commands:
-help
-pwd
-ls
-cd
-cat
-tree
-grep
-history
-clear
-
-Example:
-cat skills.txt | grep backend
-
-Note:
-Employer details are intentionally high-level.
+EXPLORE
+-------
+grep -i "languages" skills.txt
+grep -i "focus" about.txt
+search "distributed systems"
+cat ../projects/vaultsh.txt

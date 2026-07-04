@@ -1,27 +1,26 @@
-project: Vaultsh
-type: personal project
-status: active
+VAULTSH
+========
 
-summary: read-only virtual shell engine
-summary: backend-first terminal interface for structured content
+Personal project | Active
 
-technology: Go
-technology: Docker
-technology: JavaScript
-technology: HTML
-technology: CSS
+SUMMARY
+-------
+A read-only virtual shell engine and backend-first terminal interface for
+exploring structured professional and project content.
 
-feature: HTTP execution API
-feature: session state
-feature: command registry
-feature: virtual filesystem
-feature: path resolution
-feature: command history
-feature: tokenizer
-feature: lexer
-feature: parser
-feature: browser terminal
+DETAILS
+-------
+Technology   Go | Docker | JavaScript | HTML | CSS
+API          POST /api/exec | POST /api/complete | GET /api/status
 
-goal: explore shell engine design
-goal: keep frontend minimal
-goal: lean Go
+FEATURES
+--------
+- Tokenizer, lexer, parser, AST, and pipeline execution
+- Session-isolated virtual filesystem, paths, history, and autocomplete
+- Atlas search and Forge telemetry integrations with graceful degradation
+- Rate limits, size limits, security headers, and deployment visibility
+
+DECISIONS
+---------
+- Keep the frontend small and ship it with the Go service.
+- Never execute host commands or expose the host filesystem.

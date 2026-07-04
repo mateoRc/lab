@@ -22,23 +22,33 @@ the directory read-only into Vault and Atlas at `/app/content`.
 ## Format
 
 - Use UTF-8 plain text with LF line endings.
-- Write one lowercase `key: value` pair per line.
-- Repeat keys when a field has multiple values.
-- Use blank lines to separate sections.
+- Use uppercase document and section headings with `=` and `-` separators.
+- Prefer short prose for summaries and bullets for responsibilities or features.
+- Use one aligned category line for values that should be searchable together.
+- Wrap long category values on an indented continuation line.
 - Do not use Markdown.
 - Do not include confidential or sensitive employer or project details.
 
 Example:
 
 ```text
-company: Example
-role: Backend Engineer
+EXAMPLE
+========
 
-focus: backend services
-focus: distributed systems
+Backend Engineer | 2024-present
 
-technology: Go
-technology: Docker
+SUMMARY
+-------
+Backend work on a distributed production system.
+
+DETAILS
+-------
+Focus       Backend services | Distributed systems
+Technology  Go | Docker
+
+RESPONSIBILITIES
+----------------
+- Delivered features from design through deployment.
 ```
 
 Vault and Atlas read the same files directly; no copy or synchronization step

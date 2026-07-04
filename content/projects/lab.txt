@@ -1,20 +1,26 @@
-project: Backend Lab
-type: personal project
-status: active
+BACKEND LAB
+===========
 
-summary: local orchestration for Vault and Atlas
-summary: single source of truth for shared searchable content
+Personal project | Active
 
-technology: Docker
-technology: Docker Compose
+SUMMARY
+-------
+The integration and deployment repository for Vaultsh, Atlas, and Forge.
+It is the single source of truth for shared searchable portfolio content.
 
-feature: multi-service local startup
-feature: shared read-only content mount
-feature: configurable service ports
-feature: centralized content documentation
-feature: Docker-only development workflow
+DETAILS
+-------
+Technology   Docker | Docker Compose | Caddy | GitHub Actions
+Services     Vaultsh | Atlas | Forge
 
-goal: keep service repositories independent
-goal: prevent content duplication
-goal: provide reproducible local orchestration
+FEATURES
+--------
+- Reproducible multi-service local and production startup
+- Shared read-only content mounts and isolated service networking
+- HTTPS ingress, health checks, resource limits, and deployment metadata
+- Automated deployment to Hetzner through GitHub Actions
 
+DECISIONS
+---------
+- Keep service repositories independent.
+- Centralize orchestration without duplicating content.

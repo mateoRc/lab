@@ -1,24 +1,27 @@
-project: Atlas
-type: personal project
-status: active
+ATLAS
+=====
 
-summary: HTTP search service for Vault
-summary: case-insensitive search across shared plain-text content
+Personal project | Active
 
-technology: Java
-technology: Spring Boot
-technology: Maven
-technology: Docker
+SUMMARY
+-------
+An authenticated HTTP search service that performs case-insensitive search
+across the shared portfolio content used by Vaultsh.
 
-feature: JSON search API
-feature: recursive content discovery
-feature: line-by-line text scanning
-feature: file path and line number results
-feature: query validation
-feature: health endpoint
-feature: integration tests
-feature: bearer service authentication
+DETAILS
+-------
+Technology   Java | Spring Boot | Maven | Docker
+API          GET /search | GET /healthz
 
-goal: keep search infrastructure minimal
-goal: provide search to Vault over HTTP
-goal: avoid databases and external search engines until required
+FEATURES
+--------
+- Recursive UTF-8 content discovery and line-by-line scanning
+- File path and line number results
+- Query validation and integration tests
+- Bearer service authentication
+- Best-effort telemetry delivery to Forge
+
+DECISIONS
+---------
+- Keep search infrastructure minimal for the current content size.
+- Avoid a database or external search engine until indexing is justified.

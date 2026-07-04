@@ -74,22 +74,22 @@ cat /cv/about.txt | cat -n
 Each pipeline stage receives the previous stage's output. Execution stops when
 a stage returns a non-zero exit code.
 
-List programming languages alphabetically:
+Show programming languages:
 
 ```sh
-cat /cv/skills.txt | grep "^language:" | sort
+cat /cv/skills.txt | grep "^Languages"
 ```
 
-Show the first three ReversingLabs highlights:
+Show the first three ReversingLabs responsibilities:
 
 ```sh
-cat /cv/experience/reversinglabs.txt | grep "^highlight:" | head -n 3
+cat /cv/experience/reversinglabs.txt | grep "^-" | head -n 3
 ```
 
-Count A1 stack groups:
+Count A1 responsibilities:
 
 ```sh
-cat /cv/experience/a1.txt | grep "^stack:" | wc -l
+cat /cv/experience/a1.txt | grep "^-" | wc -l
 ```
 
 Show numbered, case-insensitive matches:
@@ -104,10 +104,10 @@ Display the five most recent history entries:
 history | tail -n 5
 ```
 
-Reverse-sort backend skills:
+Reverse-sort Vaultsh feature and decision bullets:
 
 ```sh
-cat /cv/skills.txt | grep "^skill:" | sort -r
+cat /projects/vaultsh.txt | grep "^-" | sort -r
 ```
 
 Commands that accept `[file]` can read a virtual file directly or consume
@@ -121,8 +121,9 @@ cat /cv/skills.txt | head -n 5
 More pipeline examples:
 
 ```sh
-cat /cv/skills.txt | grep "^language:" | sort | head -n 5
-cat /cv/experience/reversinglabs.txt | grep "^technology:" | wc -l
+cat /cv/skills.txt | grep "^Languages"
+cat /cv/experience/reversinglabs.txt | grep "^Technology"
+search "Technology" | grep "/projects/"
 tree | grep ".txt" | sort
 ```
 

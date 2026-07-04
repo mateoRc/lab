@@ -96,13 +96,13 @@ changing command output:
 
 ```json
 {
-  "line": "cat /cv/skills.txt | grep Go --verbose"
+  "line": "cat /cv/skills.txt | grep Languages --verbose"
 }
 ```
 
 ```json
 {
-  "output": "language: Go",
+  "output": "Languages       Python | Java | JavaScript | TypeScript | Go | C#",
   "exit_code": 0,
   "verbose": "pipeline=cat,grep; stages=2; completed=2",
   "session_id": "<session-id>"

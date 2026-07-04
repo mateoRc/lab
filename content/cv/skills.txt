@@ -1,40 +1,12 @@
-skill: backend services
-skill: distributed systems
-skill: API development
-skill: internal tools
-skill: shared libraries
-skill: production systems
-skill: code review
-skill: mentoring
+SKILLS
+======
 
-language: Python
-language: Java
-language: JavaScript
-language: TypeScript
-language: Go
-language: C#
-
-framework: Flask
-framework: Spring
-framework: Spring Boot
-framework: JSP
-
-infrastructure: Docker
-infrastructure: Kubernetes
-infrastructure: OpenShift
-infrastructure: ArgoCD
-infrastructure: AWS
-
-database: OracleDB
-database: MongoDB
-database: PostgreSQL
-database: ClickHouse
-database: ScyllaDB
-database: Solr
-
-messaging: Kafka
-messaging: RabbitMQ
-
-tooling: Git
-tooling: Grafana
-tooling: Sentry
+Engineering     Backend services | Distributed systems | API development
+                Internal tools | Shared libraries | Production systems
+                Code review | Mentoring
+Languages       Python | Java | JavaScript | TypeScript | Go | C#
+Frameworks      Flask | Spring | Spring Boot | JSP
+Infrastructure  Docker | Kubernetes | OpenShift | ArgoCD | AWS
+Databases       OracleDB | MongoDB | PostgreSQL | ClickHouse | ScyllaDB | Solr
+Messaging       Kafka | RabbitMQ
+Tooling         Git | Grafana | Sentry

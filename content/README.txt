@@ -1,36 +1,22 @@
-Vaultsh
+VAULTSH
+========
 
-A read-only virtual shell engine.
+A read-only virtual shell for exploring backend work and project documentation.
+Commands operate on mounted portfolio content, never on the host operating system.
 
-Everything in this environment is virtual.
-Commands operate on mounted content vaults rather than a real operating system.
+VAULTS
+------
+cv/        Professional profile, skills, and experience
+projects/  Project summaries and engineering decisions
+docs/      Architecture, APIs, commands, deployment, and roadmaps
 
-Mounted vaults:
+START HERE
+----------
+tree /cv
+cat /cv/about.txt
+cat /cv/skills.txt
+cat /projects/vaultsh.txt
+dashboard
 
-cv/          professional profile
-projects/    personal projects
-docs/        project documentation
-
-Getting started:
-
-help
-tree
-cd cv
-cat README.txt
-
-Useful commands:
-
-help
-pwd
-ls
-cd
-cat
-tree
-grep
-history
-clear
-
-Note:
-
-This is not a Linux shell.
-It is a backend engine built in Go with a virtual filesystem and command execution API.
+This is not a Linux shell. It is a Go backend with a virtual filesystem,
+session state, command parsing, pipelines, search, and telemetry integrations.

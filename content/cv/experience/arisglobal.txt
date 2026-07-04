@@ -1,28 +1,22 @@
-company: Amplexor / ArisGlobal
-role: Software Developer
-period: 2019-10 to 2021-10
-location: Croatia, hybrid
-industry: pharma
+AMPLEXOR / ARISGLOBAL
+====================
 
-summary: enterprise backend development in regulated environments
+Software Developer | 2019-10 to 2021-10
+Croatia, hybrid | Pharma
 
-technology: Java
-technology: JSP
-technology: Spring
-technology: C#
-technology: Git
-technology: Jenkins
+SUMMARY
+-------
+Enterprise backend development and platform maintenance in a regulated
+environment with a large legacy codebase.
 
-focus: enterprise document management
-focus: monolithic systems
-focus: regulated environments
-focus: PDF manipulation
-focus: legacy code
-focus: performance improvements
-focus: system stability
+DETAILS
+-------
+Technology   Java | JSP | Spring | C# | Git | Jenkins
+Focus        Document management | Monolithic systems | Regulated environments
+             PDF processing | Legacy code | Performance | Stability
 
-responsibility: production issue resolution
-responsibility: feature delivery
-responsibility: regulatory requirement implementation
-responsibility: legacy code refactoring
-responsibility: platform maintenance
+RESPONSIBILITIES
+----------------
+- Resolved production issues and delivered product features.
+- Implemented regulatory requirements.
+- Refactored legacy code and improved platform performance and stability.
