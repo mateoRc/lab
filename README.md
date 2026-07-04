@@ -1,6 +1,7 @@
 # Backend Lab
 
-Local orchestration and shared content for Vault, Atlas, and Forge.
+Local orchestration and shared content for Vault, Atlas, and Forge, with
+planned release analysis from Sentinel.
 
 Each application repository owns its source code, tests, dependencies, and
 Dockerfile. Lab owns shared configuration, content, and Docker Compose
@@ -126,6 +127,9 @@ Only Vault publishes a host port. Atlas and Forge are reachable exclusively
 through the private Compose network and require bearer authentication on all
 non-health endpoints.
 
+[`sentinel.yml`](sentinel.yml) defines the proposed release policy. It remains
+inactive until Sentinel is integrated into CI.
+
 ## Shared content
 
 `content/` is the single source of truth. Compose mounts it into both
@@ -136,4 +140,7 @@ filesystem and Atlas scans it for search requests.
 
 Shared documentation lives under `content/docs/`. Start with the
 [architecture overview](content/docs/architecture.md) or
-[event catalog](content/docs/events.md).
+[event catalog](content/docs/events.md). Sentinel has separate
+[architecture](content/docs/sentinel-architecture.md),
+[configuration](content/docs/sentinel-configuration.md), and
+[roadmap](content/docs/roadmaps/sentinel.md) documents.

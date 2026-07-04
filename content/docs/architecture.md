@@ -1,6 +1,7 @@
 # Backend Lab
 
-Backend Lab consists of three services and one orchestration repository.
+Backend Lab consists of three runtime services, one CI/CD analysis tool, and
+one orchestration repository.
 
 ## Projects
 
@@ -43,6 +44,13 @@ Responsibilities:
 - Produce operational summaries
 - Render terminal-friendly ASCII dashboards
 
+### Sentinel
+
+Sentinel is a planned CI/CD release guardian. It analyzes changes and
+deterministic check results, applies release policy, and produces
+evidence-based reports. It runs before deployment in GitHub Actions and is not
+part of the runtime Docker Compose stack.
+
 ## Communication
 
 ```text
@@ -54,6 +62,12 @@ Vault
 Vault and Atlas enqueue telemetry in bounded in-process queues. Background
 workers deliver it to Forge over HTTP. Delivery is best-effort and uses no
 external message broker.
+
+Release analysis uses a separate control path:
+
+```text
+GitHub Actions --> Sentinel --> policy and report --> existing deployment
+```
 
 ## External Services
 
@@ -137,6 +151,9 @@ backend-lab/
 Each service repository owns its source code, tests, dependencies, and
 Dockerfile. Lab owns Docker Compose, environment configuration, shared content,
 and local orchestration.
+
+Sentinel owns CI analysis code. Lab owns its Backend Lab policy and shared
+architecture, configuration, and roadmap documentation.
 
 ## Local Logs
 

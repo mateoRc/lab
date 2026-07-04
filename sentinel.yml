@@ -1,0 +1,39 @@
+schema: sentinel.dev/v1alpha1
+
+project:
+  name: backend-lab
+  default_branch: main
+
+repositories:
+  - name: vaultsh
+    path: ../vaultsh
+  - name: atlas
+    path: ../atlas
+  - name: forge
+    path: ../forge
+  - name: lab
+    path: .
+
+checks:
+  regression:
+    enabled: true
+  security:
+    enabled: true
+  deployment:
+    enabled: true
+
+policy:
+  block_on_check_failure: true
+  block_on_critical_security_finding: true
+  require_approval_for_high_risk: true
+
+agent:
+  enabled: false
+  advisory_only: true
+  allow_repository_writes: false
+  allow_deployment: false
+
+report:
+  format: markdown
+  include_file_references: true
+  include_check_evidence: true
