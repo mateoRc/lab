@@ -27,6 +27,8 @@
 - [ ] Identify changed repositories, services, and files
 - [ ] Map changes to relevant unit, integration, and deployment tests
 - [x] Aggregate Vaultsh, Atlas, Forge, and Compose checks
+- [ ] Consume service-repository CI results instead of rebuilding and retesting
+      every service in the Lab workflow
 - [ ] Verify parser, API, session, service-contract, and degradation paths
 - [ ] Report missing coverage without inventing results
 
