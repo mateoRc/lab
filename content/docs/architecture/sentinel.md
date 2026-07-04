@@ -18,11 +18,16 @@ Checks use adapters that convert tool-specific output into one normalized
 result contract. Adding a scanner or test suite should require a new adapter,
 not changes to policy, agent, or reporting code.
 
-The initial command adapter accepts argument arrays rather than shell strings,
-allows only approved executables, confines working directories to the CI
-workspace, limits execution time, and retains only a bounded failure-output
-tail. Backend Lab currently uses it for containerized service tests and Compose
-validation.
+The command adapter accepts argument arrays rather than shell strings, allows
+only approved executables, confines working directories to the CI workspace,
+limits execution time, and retains only a bounded failure-output tail.
+Additional adapters normalize GitHub Actions outcomes and verify required or
+forbidden configuration markers.
+
+Backend Lab runs containerized tests, Compose validation, repository secret and
+dependency scanning, container-image scanning, security-header policy, and
+internal-network policy. Third-party scanner actions are pinned to full commit
+SHAs. Detailed scanner output is not published to the public dashboard.
 
 ### Policy Engine
 

@@ -35,7 +35,8 @@
 - [ ] Verify missing and invalid service tokens are rejected
 - [ ] Test path traversal, malformed input, and command-injection strings
 - [ ] Verify request limits, rate limits, headers, and internal-port isolation
-- [ ] Ingest dependency, container, and secret-scanning results
+- [x] Verify configured security headers and internal-network isolation
+- [x] Ingest dependency, container, and secret-scanning results
 
 ## Version 1.0
 
@@ -52,7 +53,8 @@
 ### Release Integration
 
 - [x] Run an advisory mock assessment on pull requests and `main`
-- [ ] Publish step summaries, report artifacts, and updated PR comments
+- [x] Publish step summaries and report artifacts
+- [ ] Publish or update pull-request comments
 - [ ] Use protected environments for high-risk release approval
 - [x] Dogfood Sentinel on Vaultsh, Atlas, Forge, and Lab
 - [x] Expose sanitized status in the existing deployment dashboard

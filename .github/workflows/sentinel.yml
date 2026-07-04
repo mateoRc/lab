@@ -13,12 +13,13 @@ jobs:
   assess:
     name: Advisory release assessment
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - name: Check out Lab
         uses: actions/checkout@v4
         with:
           path: lab
+          persist-credentials: false
 
       - name: Check out Sentinel
         uses: actions/checkout@v4
@@ -58,43 +59,163 @@ jobs:
       - name: Install Sentinel
         run: python -m pip install --editable ./sentinel
 
+      - name: Build and test Vaultsh
+        id: vaultsh_build
+        continue-on-error: true
+        run: docker build --tag vaultsh:sentinel ./vaultsh
+
+      - name: Build and test Atlas
+        id: atlas_build
+        continue-on-error: true
+        run: docker build --tag atlas:sentinel ./atlas
+
+      - name: Build and test Forge
+        id: forge_build
+        continue-on-error: true
+        run: docker build --tag forge:sentinel ./forge
+
+      - name: Scan repositories
+        id: repository_scan
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,secret
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: 1
+          format: json
+          output: trivy-repositories.json
+
+      - name: Scan Vaultsh image
+        id: vaultsh_scan
+        if: always() && steps.vaultsh_build.outcome == 'success'
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8
+        with:
+          scan-type: image
+          image-ref: vaultsh:sentinel
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: 1
+          format: json
+          output: trivy-vaultsh.json
+
+      - name: Scan Atlas image
+        id: atlas_scan
+        if: always() && steps.atlas_build.outcome == 'success'
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8
+        with:
+          scan-type: image
+          image-ref: atlas:sentinel
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: 1
+          format: json
+          output: trivy-atlas.json
+
+      - name: Scan Forge image
+        id: forge_scan
+        if: always() && steps.forge_build.outcome == 'success'
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8
+        with:
+          scan-type: image
+          image-ref: forge:sentinel
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: 1
+          format: json
+          output: trivy-forge.json
+
       - name: Create check plan
         env:
           COMMIT_SHA: ${{ github.sha }}
+          VAULTSH_BUILD: ${{ steps.vaultsh_build.outcome }}
+          ATLAS_BUILD: ${{ steps.atlas_build.outcome }}
+          FORGE_BUILD: ${{ steps.forge_build.outcome }}
+          REPOSITORY_SCAN: ${{ steps.repository_scan.outcome }}
+          VAULTSH_SCAN: ${{ steps.vaultsh_scan.outcome }}
+          ATLAS_SCAN: ${{ steps.atlas_scan.outcome }}
+          FORGE_SCAN: ${{ steps.forge_scan.outcome }}
         run: |
           python - <<'PY'
           import json
           import os
           from pathlib import Path
 
+          def result(name, source, outcome):
+              if outcome == "success":
+                  status = "passed"
+                  evidence = "check completed successfully"
+              elif outcome in ("", "skipped"):
+                  status = "warning"
+                  evidence = "check skipped because its image build failed"
+              else:
+                  status = "failed"
+                  evidence = "check reported a failure; inspect the workflow log"
+              return {
+                  "kind": "external",
+                  "name": name,
+                  "status": status,
+                  "source": source,
+                  "evidence": evidence,
+              }
+
+          def scanner_result(name, path, outcome):
+              check = result(name, "Trivy", outcome)
+              report = Path(path)
+              if not report.is_file():
+                  return check
+              try:
+                  data = json.loads(report.read_text(encoding="utf-8"))
+                  results = data.get("Results") or []
+                  vulnerabilities = sum(
+                      len(item.get("Vulnerabilities") or []) for item in results
+                  )
+                  secrets = sum(len(item.get("Secrets") or []) for item in results)
+                  misconfigurations = sum(
+                      len(item.get("Misconfigurations") or []) for item in results
+                  )
+                  check["evidence"] = (
+                      f"{vulnerabilities} high/critical vulnerabilities, "
+                      f"{secrets} secrets, {misconfigurations} misconfigurations"
+                  )
+              except (OSError, json.JSONDecodeError, AttributeError):
+                  check["evidence"] = "scanner report was unavailable or invalid"
+              finally:
+                  report.unlink(missing_ok=True)
+              return check
+
           plan = {
               "project": "backend-lab",
               "commit": os.environ["COMMIT_SHA"],
               "checks": [
-                  {
-                      "kind": "command",
-                      "name": "vaultsh-tests",
-                      "command": [
-                          "docker", "build", "--target", "test",
-                          "--tag", "vaultsh:sentinel", "."
-                      ],
-                      "working_directory": "vaultsh",
-                      "timeout_seconds": 900,
-                  },
-                  {
-                      "kind": "command",
-                      "name": "atlas-tests",
-                      "command": ["docker", "build", "--target", "build", "."],
-                      "working_directory": "atlas",
-                      "timeout_seconds": 900,
-                  },
-                  {
-                      "kind": "command",
-                      "name": "forge-tests",
-                      "command": ["docker", "build", "--target", "test", "."],
-                      "working_directory": "forge",
-                      "timeout_seconds": 900,
-                  },
+                  result("vaultsh-tests", "Docker build", os.environ["VAULTSH_BUILD"]),
+                  result("atlas-tests", "Docker build", os.environ["ATLAS_BUILD"]),
+                  result("forge-tests", "Docker build", os.environ["FORGE_BUILD"]),
+                  scanner_result(
+                      "repository-security",
+                      "trivy-repositories.json",
+                      os.environ["REPOSITORY_SCAN"],
+                  ),
+                  scanner_result(
+                      "vaultsh-image-security",
+                      "trivy-vaultsh.json",
+                      os.environ["VAULTSH_SCAN"],
+                  ),
+                  scanner_result(
+                      "atlas-image-security",
+                      "trivy-atlas.json",
+                      os.environ["ATLAS_SCAN"],
+                  ),
+                  scanner_result(
+                      "forge-image-security",
+                      "trivy-forge.json",
+                      os.environ["FORGE_SCAN"],
+                  ),
                   {
                       "kind": "command",
                       "name": "compose-development",
@@ -121,6 +242,25 @@ jobs:
                           "ATLAS_AUTH_TOKEN": "sentinel-validation",
                           "FORGE_AUTH_TOKEN": "sentinel-validation",
                       },
+                  },
+                  {
+                      "kind": "file_policy",
+                      "name": "security-headers",
+                      "path": "lab/Caddyfile",
+                      "required": [
+                          "Strict-Transport-Security",
+                          "X-Content-Type-Options",
+                          "X-Frame-Options",
+                          "Referrer-Policy",
+                          "-Server",
+                      ],
+                  },
+                  {
+                      "kind": "file_policy",
+                      "name": "internal-network",
+                      "path": "lab/docker-compose.prod.yml",
+                      "required": ["backend:", "internal: true"],
+                      "forbidden": ["8080:8080", "8080:"],
                   },
               ],
           }
