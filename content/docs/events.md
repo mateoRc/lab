@@ -72,7 +72,7 @@ events into in-memory values:
 
 - Total requests
 - Total errors
-- Total duration and average duration
+- Total duration, average latency, and bounded-sample median latency
 - Counts by service
 - Counts by command or operation
 
