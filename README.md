@@ -1,7 +1,7 @@
 # Backend Lab
 
 Local orchestration and shared content for Vault, Atlas, and Forge, with
-planned release analysis from Sentinel.
+advisory release analysis from Sentinel.
 
 Each application repository owns its source code, tests, dependencies, and
 Dockerfile. Lab owns shared configuration, content, and Docker Compose
@@ -127,8 +127,8 @@ Only Vault publishes a host port. Atlas and Forge are reachable exclusively
 through the private Compose network and require bearer authentication on all
 non-health endpoints.
 
-[`sentinel.yml`](sentinel.yml) defines the proposed release policy. It remains
-inactive until Sentinel is integrated into CI.
+[`sentinel.yml`](sentinel.yml) defines the release policy. Sentinel currently
+runs real deterministic checks with mock analysis in advisory mode.
 
 ## Shared content
 

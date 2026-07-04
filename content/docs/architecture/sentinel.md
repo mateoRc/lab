@@ -18,6 +18,12 @@ Checks use adapters that convert tool-specific output into one normalized
 result contract. Adding a scanner or test suite should require a new adapter,
 not changes to policy, agent, or reporting code.
 
+The initial command adapter accepts argument arrays rather than shell strings,
+allows only approved executables, confines working directories to the CI
+workspace, limits execution time, and retains only a bounded failure-output
+tail. Backend Lab currently uses it for containerized service tests and Compose
+validation.
+
 ### Policy Engine
 
 Applies explicit rules to deterministic results. It owns the release gate and

@@ -12,12 +12,12 @@
 - [x] Markdown and JSON reports
 - [x] Advisory Backend Lab workflow
 - [ ] Strict configuration validation
-- [ ] Extensible check-adapter registry
-- [ ] Source metadata for every evidence item
+- [x] Extensible check-adapter registry
+- [x] Source metadata for every evidence item
 
 ### Deterministic Checks
 
-- [ ] Run allowlisted commands with timeouts and output limits
+- [x] Run allowlisted commands with timeouts and output limits
 - [ ] Apply policy to test, security, and deployment results
 - [ ] Fail closed on invalid configuration or missing required evidence
 - [ ] Redact secrets from logs and reports
@@ -26,6 +26,7 @@
 
 - [ ] Identify changed repositories, services, and files
 - [ ] Map changes to relevant unit, integration, and deployment tests
+- [x] Aggregate Vaultsh, Atlas, Forge, and Compose checks
 - [ ] Verify parser, API, session, service-contract, and degradation paths
 - [ ] Report missing coverage without inventing results
 
@@ -53,7 +54,7 @@
 - [x] Run an advisory mock assessment on pull requests and `main`
 - [ ] Publish step summaries, report artifacts, and updated PR comments
 - [ ] Use protected environments for high-risk release approval
-- [ ] Dogfood Sentinel on Vaultsh, Atlas, Forge, and Lab
+- [x] Dogfood Sentinel on Vaultsh, Atlas, Forge, and Lab
 - [x] Expose sanitized status in the existing deployment dashboard
 
 ## Explicitly Deferred
