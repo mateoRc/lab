@@ -60,6 +60,12 @@
 
 ### Persistent Analytics
 
+Decision: persistence remains an internal Forge capability, not a separate
+product or service. Forge owns telemetry ingestion, storage, aggregation, and
+reporting; SQLite is an implementation detail behind that boundary. Revisit
+this boundary only if storage needs independent scaling or operational
+ownership.
+
 - [ ] Store events in SQLite on a persistent Docker volume
 - [ ] Enable WAL mode and add schema migrations
 - [ ] Record timestamps without storing IPs, tokens, request bodies, or arguments
