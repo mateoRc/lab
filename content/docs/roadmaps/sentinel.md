@@ -27,7 +27,7 @@
 - [x] Identify changed repositories, services, and files
 - [x] Map changes to relevant unit, integration, and deployment checks
 - [x] Aggregate Vaultsh, Atlas, Forge, and Compose checks
-- [ ] Consume service-repository CI results instead of rebuilding and retesting
+- [x] Consume service-repository CI results instead of rebuilding and retesting
       every service in the Lab workflow
 - [x] Verify service-contract and optional-service degradation paths
 - [ ] Add change-selected parser, API, and session checks
@@ -35,9 +35,9 @@
 
 ### Security Analysis
 
-- [ ] Verify missing and invalid service tokens are rejected
-- [ ] Test path traversal, malformed input, and command-injection strings
-- [ ] Verify request limits, rate limits, headers, and internal-port isolation
+- [x] Verify missing and invalid service tokens are rejected
+- [x] Test path traversal, malformed input, and command-injection strings
+- [x] Verify request limits, rate limits, headers, and internal-port isolation
 - [x] Verify configured security headers and internal-network isolation
 - [x] Ingest dependency, container, and secret-scanning results
 - [x] Publish sanitized findings and deterministic remediation actions
@@ -46,7 +46,7 @@
 
 ### Agent Analysis
 
-- [ ] Add a provider-independent analysis interface
+- [x] Add a provider-independent analysis interface
 - [ ] Integrate a production LLM provider
 - [ ] Restrict context to diffs, configuration, and check evidence
 - [ ] Require file, line, check, or log references for findings

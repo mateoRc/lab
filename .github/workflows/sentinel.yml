@@ -73,6 +73,8 @@ jobs:
           BEFORE_SHA: ${{ github.event.before }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           DISPATCH_REPOSITORY: ${{ github.event.client_payload.repository }}
+          DISPATCH_CONCLUSION: ${{ github.event.client_payload.conclusion }}
+          DISPATCH_RUN_ID: ${{ github.event.client_payload.run_id }}
         run: |
           python - <<'PY'
           import json
@@ -85,6 +87,11 @@ jobs:
               repository = os.environ["DISPATCH_REPOSITORY"]
               if repository not in {"vaultsh", "atlas", "forge"}:
                   raise SystemExit(f"unsupported dispatch repository: {repository}")
+              if os.environ["DISPATCH_CONCLUSION"] != "success":
+                  raise SystemExit("service dispatch must report a successful CI run")
+              run_id = os.environ["DISPATCH_RUN_ID"]
+              if not run_id.isdigit():
+                  raise SystemExit("service dispatch run_id must be numeric")
               changes = [f"{repository}/__repository_change__"]
               base = ""
           elif event == "pull_request":
@@ -161,19 +168,19 @@ jobs:
 
       - name: Build and test Vaultsh
         id: vaultsh_build
-        if: steps.impact.outputs.vaultsh_build == 'true'
+        if: github.event_name != 'repository_dispatch' && steps.impact.outputs.vaultsh_build == 'true'
         continue-on-error: true
         run: docker build --tag vaultsh:sentinel ./vaultsh
 
       - name: Build and test Atlas
         id: atlas_build
-        if: steps.impact.outputs.atlas_build == 'true'
+        if: github.event_name != 'repository_dispatch' && steps.impact.outputs.atlas_build == 'true'
         continue-on-error: true
         run: docker build --tag atlas:sentinel ./atlas
 
       - name: Build and test Forge
         id: forge_build
-        if: steps.impact.outputs.forge_build == 'true'
+        if: github.event_name != 'repository_dispatch' && steps.impact.outputs.forge_build == 'true'
         continue-on-error: true
         run: docker build --tag forge:sentinel ./forge
 
@@ -258,6 +265,9 @@ jobs:
           FORGE_BUILD_AFFECTED: ${{ steps.impact.outputs.forge_build }}
           INTEGRATION_AFFECTED: ${{ steps.impact.outputs.integration }}
           DEPLOYMENT_AFFECTED: ${{ steps.impact.outputs.deployment }}
+          EVENT_NAME: ${{ github.event_name }}
+          DISPATCH_REPOSITORY: ${{ github.event.client_payload.repository }}
+          DISPATCH_RUN_ID: ${{ github.event.client_payload.run_id }}
           VAULT_VERSION: ${{ steps.versions.outputs.vault }}
           ATLAS_VERSION: ${{ steps.versions.outputs.atlas }}
           FORGE_VERSION: ${{ steps.versions.outputs.forge }}
@@ -362,12 +372,34 @@ jobs:
           )
           for service, test_name, scan_name, build_env, scan_env, report in service_checks:
               if os.environ[f"{service.upper()}_BUILD_AFFECTED"] == "true":
-                  checks.append(
-                      result(test_name, "Docker build", os.environ[build_env])
-                  )
-                  checks.append(
-                      scanner_result(scan_name, report, os.environ[scan_env])
-                  )
+                  if (
+                      os.environ["EVENT_NAME"] == "repository_dispatch"
+                      and os.environ["DISPATCH_REPOSITORY"] == service
+                  ):
+                      run_id = os.environ["DISPATCH_RUN_ID"]
+                      checks.append({
+                          "kind": "external",
+                          "name": test_name,
+                          "status": "passed",
+                          "source": f"{service} GitHub Actions run {run_id}",
+                          "evidence": (
+                              "service CI tested and published this exact commit"
+                          ),
+                      })
+                      checks.append({
+                          "kind": "external",
+                          "name": scan_name,
+                          "status": "warning",
+                          "source": f"{service} GitHub Actions run {run_id}",
+                          "evidence": "service CI does not yet publish image-scan evidence",
+                      })
+                  else:
+                      checks.append(
+                          result(test_name, "Docker build", os.environ[build_env])
+                      )
+                      checks.append(
+                          scanner_result(scan_name, report, os.environ[scan_env])
+                      )
 
           if os.environ["DEPLOYMENT_AFFECTED"] == "true":
               checks.extend([
@@ -412,17 +444,26 @@ jobs:
               images = {
                   "vaultsh": (
                       "vaultsh:sentinel"
-                      if os.environ["VAULTSH_BUILD_AFFECTED"] == "true"
+                      if (
+                          os.environ["EVENT_NAME"] != "repository_dispatch"
+                          and os.environ["VAULTSH_BUILD_AFFECTED"] == "true"
+                      )
                       else f"ghcr.io/mateorc/vaultsh:{os.environ['VAULT_VERSION']}"
                   ),
                   "atlas": (
                       "atlas:sentinel"
-                      if os.environ["ATLAS_BUILD_AFFECTED"] == "true"
+                      if (
+                          os.environ["EVENT_NAME"] != "repository_dispatch"
+                          and os.environ["ATLAS_BUILD_AFFECTED"] == "true"
+                      )
                       else f"ghcr.io/mateorc/atlas:{os.environ['ATLAS_VERSION']}"
                   ),
                   "forge": (
                       "forge:sentinel"
-                      if os.environ["FORGE_BUILD_AFFECTED"] == "true"
+                      if (
+                          os.environ["EVENT_NAME"] != "repository_dispatch"
+                          and os.environ["FORGE_BUILD_AFFECTED"] == "true"
+                      )
                       else f"ghcr.io/mateorc/forge:{os.environ['FORGE_VERSION']}"
                   ),
               }
@@ -432,7 +473,10 @@ jobs:
                   "FORGE_IMAGE": images["forge"],
               })
               for service, image in images.items():
-                  if os.environ[f"{service.upper()}_BUILD_AFFECTED"] != "true":
+                  if (
+                      os.environ["EVENT_NAME"] == "repository_dispatch"
+                      or os.environ[f"{service.upper()}_BUILD_AFFECTED"] != "true"
+                  ):
                       checks.append({
                           "kind": "command",
                           "name": f"pull-{service}-integration-image",
@@ -471,6 +515,54 @@ jobs:
                       "json": {"line": "dashboard"},
                       "expected": {"exit_code": 0},
                       "contains": {"output": "LIVE ACTIVITY"},
+                  },
+                  {
+                      "kind": "http_json",
+                      "name": "path-traversal-rejected",
+                      "url": "http://127.0.0.1:8080/api/exec",
+                      "json": {"line": "cat /../../etc/passwd"},
+                      "expected": {"exit_code": 1},
+                  },
+                  {
+                      "kind": "http_json",
+                      "name": "malformed-command-rejected",
+                      "url": "http://127.0.0.1:8080/api/exec",
+                      "json": {"line": "cat \"unterminated"},
+                      "expected": {"exit_code": 2},
+                      "contains": {"output": "unterminated quote"},
+                  },
+                  {
+                      "kind": "http_json",
+                      "name": "command-injection-rejected",
+                      "url": "http://127.0.0.1:8080/api/exec",
+                      "json": {"line": "cat /cv/about.md; whoami"},
+                      "expected": {"exit_code": 2},
+                  },
+                  {
+                      "kind": "command",
+                      "name": "atlas-invalid-token-rejected",
+                      "command": [
+                          "docker", "compose", "-f", "docker-compose.yml",
+                          "exec", "-T", "vault", "wget", "--quiet", "--spider",
+                          "--header", "Authorization: Bearer invalid",
+                          "http://atlas:8080/search?q=test",
+                      ],
+                      "working_directory": "lab",
+                      "environment": environment,
+                      "expected_exit_code": 1,
+                  },
+                  {
+                      "kind": "command",
+                      "name": "forge-invalid-token-rejected",
+                      "command": [
+                          "docker", "compose", "-f", "docker-compose.yml",
+                          "exec", "-T", "vault", "wget", "--quiet", "--spider",
+                          "--header", "Authorization: Bearer invalid",
+                          "http://forge:8080/summary",
+                      ],
+                      "working_directory": "lab",
+                      "environment": environment,
+                      "expected_exit_code": 1,
                   },
                   {
                       "kind": "command",

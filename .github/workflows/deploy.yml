@@ -123,6 +123,65 @@ jobs:
             ssh deploy@"$SERVER_HOST" \
               "docker login ghcr.io --username '$GHCR_USERNAME' --password-stdin"
 
+      - name: Verify release images exist
+        env:
+          ACTION: ${{ github.event_name == 'push' && 'deploy' || inputs.action }}
+          ATLAS_VERSION: ${{ steps.versions.outputs.atlas }}
+          FORGE_VERSION: ${{ steps.versions.outputs.forge }}
+          REQUESTED_VERSION: ${{ inputs.version || '__none__' }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          TARGET: ${{ github.event_name == 'push' && 'all' || inputs.service }}
+          VAULT_VERSION: ${{ steps.versions.outputs.vault }}
+        run: |
+          ssh deploy@"$SERVER_HOST" bash -s -- \
+            "$ACTION" "$TARGET" "$REQUESTED_VERSION" \
+            "$VAULT_VERSION" "$ATLAS_VERSION" "$FORGE_VERSION" <<'SCRIPT'
+          set -euo pipefail
+          action="$1"
+          target="$2"
+          requested="$3"
+          vault="$4"
+          atlas="$5"
+          forge="$6"
+          cd /home/deploy/backend_lab/lab
+
+          if [ "$action" = "rollback" ]; then
+            test -f runtime/previous-release.json
+            mapfile -t images < <(python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          release = json.loads(
+              Path("runtime/previous-release.json").read_text(encoding="utf-8")
+          )
+          for service in ("vault", "atlas", "forge"):
+              image = "vaultsh" if service == "vault" else service
+              print(f"ghcr.io/mateorc/{image}:{release[service]}")
+          PY
+            )
+          elif [ "$target" = "all" ]; then
+            images=(
+              "ghcr.io/mateorc/vaultsh:$vault"
+              "ghcr.io/mateorc/atlas:$atlas"
+              "ghcr.io/mateorc/forge:$forge"
+            )
+          else
+            [ "$requested" = "__none__" ] && requested=""
+            case "$target" in
+              vault) image=vaultsh; version="${requested:-$vault}" ;;
+              atlas) image=atlas; version="${requested:-$atlas}" ;;
+              forge) image=forge; version="${requested:-$forge}" ;;
+              *) echo "Unsupported deployment target: $target" >&2; exit 2 ;;
+            esac
+            images=("ghcr.io/mateorc/$image:$version")
+          fi
+
+          for image in "${images[@]}"; do
+            echo "Verifying $image"
+            docker pull "$image"
+          done
+          SCRIPT
+
       - name: Select release versions
         env:
           ACTION: ${{ github.event_name == 'push' && 'deploy' || inputs.action }}
