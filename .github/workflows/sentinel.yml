@@ -137,6 +137,10 @@ jobs:
               name: name in impact["checks"]
               for name in ("integration", "deployment", "sentinel")
           })
+          values.update({
+              f"{name}_build": f"{name}-build" in impact["checks"]
+              for name in ("vaultsh", "atlas", "forge")
+          })
           with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
               for name, enabled in values.items():
                   output.write(f"{name}={str(enabled).lower()}\n")
@@ -144,19 +148,19 @@ jobs:
 
       - name: Build and test Vaultsh
         id: vaultsh_build
-        if: steps.impact.outputs.vaultsh == 'true'
+        if: steps.impact.outputs.vaultsh_build == 'true'
         continue-on-error: true
         run: docker build --tag vaultsh:sentinel ./vaultsh
 
       - name: Build and test Atlas
         id: atlas_build
-        if: steps.impact.outputs.atlas == 'true'
+        if: steps.impact.outputs.atlas_build == 'true'
         continue-on-error: true
         run: docker build --tag atlas:sentinel ./atlas
 
       - name: Build and test Forge
         id: forge_build
-        if: steps.impact.outputs.forge == 'true'
+        if: steps.impact.outputs.forge_build == 'true'
         continue-on-error: true
         run: docker build --tag forge:sentinel ./forge
 
@@ -216,6 +220,13 @@ jobs:
           format: json
           output: trivy-forge.json
 
+      - name: Resolve checked-out service versions
+        id: versions
+        run: |
+          echo "vault=$(git -C vaultsh rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "atlas=$(git -C atlas rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "forge=$(git -C forge rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
       - name: Create check plan
         env:
           COMMIT_SHA: ${{ github.event.client_payload.sha || github.sha }}
@@ -229,8 +240,14 @@ jobs:
           VAULTSH_AFFECTED: ${{ steps.impact.outputs.vaultsh }}
           ATLAS_AFFECTED: ${{ steps.impact.outputs.atlas }}
           FORGE_AFFECTED: ${{ steps.impact.outputs.forge }}
+          VAULTSH_BUILD_AFFECTED: ${{ steps.impact.outputs.vaultsh_build }}
+          ATLAS_BUILD_AFFECTED: ${{ steps.impact.outputs.atlas_build }}
+          FORGE_BUILD_AFFECTED: ${{ steps.impact.outputs.forge_build }}
           INTEGRATION_AFFECTED: ${{ steps.impact.outputs.integration }}
           DEPLOYMENT_AFFECTED: ${{ steps.impact.outputs.deployment }}
+          VAULT_VERSION: ${{ steps.versions.outputs.vault }}
+          ATLAS_VERSION: ${{ steps.versions.outputs.atlas }}
+          FORGE_VERSION: ${{ steps.versions.outputs.forge }}
         run: |
           python - <<'PY'
           import json
@@ -331,7 +348,7 @@ jobs:
                "FORGE_BUILD", "FORGE_SCAN", "trivy-forge.json"),
           )
           for service, test_name, scan_name, build_env, scan_env, report in service_checks:
-              if os.environ[f"{service.upper()}_AFFECTED"] == "true":
+              if os.environ[f"{service.upper()}_BUILD_AFFECTED"] == "true":
                   checks.append(
                       result(test_name, "Docker build", os.environ[build_env])
                   )

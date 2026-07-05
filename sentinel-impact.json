@@ -24,6 +24,9 @@
     ]
   },
   "checks": {
+    "vaultsh-build": ["vaultsh/**"],
+    "atlas-build": ["atlas/**"],
+    "forge-build": ["forge/**"],
     "integration": [
       "vaultsh/**",
       "atlas/**",

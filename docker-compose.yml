@@ -1,5 +1,6 @@
 services:
   vault:
+    image: ${VAULT_IMAGE:-vaultsh:local}
     build:
       context: ${VAULT_BUILD_CONTEXT:-../vaultsh}
     ports:
@@ -29,6 +30,7 @@ services:
         max-file: "3"
 
   atlas:
+    image: ${ATLAS_IMAGE:-atlas:local}
     build:
       context: ${ATLAS_BUILD_CONTEXT:-../atlas}
     environment:
@@ -54,6 +56,7 @@ services:
         max-file: "3"
 
   forge:
+    image: ${FORGE_IMAGE:-forge:local}
     build:
       context: ${FORGE_BUILD_CONTEXT:-../forge}
     environment:
