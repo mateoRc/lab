@@ -4,10 +4,13 @@ on:
   pull_request:
   push:
     branches: [main]
+  repository_dispatch:
+    types: [service-ci-completed]
   workflow_dispatch:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   assess:
@@ -19,6 +22,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: lab
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Check out Sentinel
@@ -59,18 +63,93 @@ jobs:
       - name: Install Sentinel
         run: python -m pip install --editable ./sentinel
 
+      - name: Analyze changed components
+        id: impact
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          event = os.environ["EVENT_NAME"]
+          if event == "repository_dispatch":
+              repository = "${{ github.event.client_payload.repository }}"
+              changes = [f"{repository}/__repository_change__"]
+              base = ""
+          elif event == "pull_request":
+              base = os.environ["BASE_SHA"]
+          elif event == "push" and set(os.environ.get("BEFORE_SHA", "")) != {"0"}:
+              base = os.environ["BEFORE_SHA"]
+          else:
+              base = ""
+
+          if event != "repository_dispatch" and base:
+              output = subprocess.check_output(
+                  ["git", "-C", "lab", "diff", "--name-only", f"{base}...HEAD"],
+                  text=True,
+              )
+              changes = [f"lab/{line}" for line in output.splitlines() if line]
+          elif event != "repository_dispatch":
+              changes = [
+                  "lab/__manual__",
+                  "vaultsh/__manual__",
+                  "atlas/__manual__",
+                  "forge/__manual__",
+                  "sentinel/__manual__",
+              ]
+          if not changes:
+              changes = ["lab/__no_changes__"]
+          Path("sentinel-report").mkdir()
+          Path("sentinel-report/changes.json").write_text(
+              json.dumps(changes, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          PY
+          sentinel impact \
+            --changes sentinel-report/changes.json \
+            --rules lab/sentinel-impact.json \
+            --output sentinel-report/impact.json
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          impact = json.loads(
+              Path("sentinel-report/impact.json").read_text(encoding="utf-8")
+          )
+          values = {
+              name: name in impact["services"]
+              for name in ("vaultsh", "atlas", "forge")
+          }
+          values.update({
+              name: name in impact["checks"]
+              for name in ("integration", "deployment", "sentinel")
+          })
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              for name, enabled in values.items():
+                  output.write(f"{name}={str(enabled).lower()}\n")
+          PY
+
       - name: Build and test Vaultsh
         id: vaultsh_build
+        if: steps.impact.outputs.vaultsh == 'true'
         continue-on-error: true
         run: docker build --tag vaultsh:sentinel ./vaultsh
 
       - name: Build and test Atlas
         id: atlas_build
+        if: steps.impact.outputs.atlas == 'true'
         continue-on-error: true
         run: docker build --tag atlas:sentinel ./atlas
 
       - name: Build and test Forge
         id: forge_build
+        if: steps.impact.outputs.forge == 'true'
         continue-on-error: true
         run: docker build --tag forge:sentinel ./forge
 
@@ -132,7 +211,7 @@ jobs:
 
       - name: Create check plan
         env:
-          COMMIT_SHA: ${{ github.sha }}
+          COMMIT_SHA: ${{ github.event.client_payload.sha || github.sha }}
           VAULTSH_BUILD: ${{ steps.vaultsh_build.outcome }}
           ATLAS_BUILD: ${{ steps.atlas_build.outcome }}
           FORGE_BUILD: ${{ steps.forge_build.outcome }}
@@ -140,6 +219,11 @@ jobs:
           VAULTSH_SCAN: ${{ steps.vaultsh_scan.outcome }}
           ATLAS_SCAN: ${{ steps.atlas_scan.outcome }}
           FORGE_SCAN: ${{ steps.forge_scan.outcome }}
+          VAULTSH_AFFECTED: ${{ steps.impact.outputs.vaultsh }}
+          ATLAS_AFFECTED: ${{ steps.impact.outputs.atlas }}
+          FORGE_AFFECTED: ${{ steps.impact.outputs.forge }}
+          INTEGRATION_AFFECTED: ${{ steps.impact.outputs.integration }}
+          DEPLOYMENT_AFFECTED: ${{ steps.impact.outputs.deployment }}
         run: |
           python - <<'PY'
           import json
@@ -204,33 +288,52 @@ jobs:
           def clean(value, limit):
               return " ".join(str(value).split())[:limit]
 
-          plan = {
-              "project": "backend-lab",
-              "commit": os.environ["COMMIT_SHA"],
-              "checks": [
-                  result("vaultsh-tests", "Docker build", os.environ["VAULTSH_BUILD"]),
-                  result("atlas-tests", "Docker build", os.environ["ATLAS_BUILD"]),
-                  result("forge-tests", "Docker build", os.environ["FORGE_BUILD"]),
-                  scanner_result(
-                      "repository-security",
-                      "trivy-repositories.json",
-                      os.environ["REPOSITORY_SCAN"],
-                  ),
-                  scanner_result(
-                      "vaultsh-image-security",
-                      "trivy-vaultsh.json",
-                      os.environ["VAULTSH_SCAN"],
-                  ),
-                  scanner_result(
-                      "atlas-image-security",
-                      "trivy-atlas.json",
-                      os.environ["ATLAS_SCAN"],
-                  ),
-                  scanner_result(
-                      "forge-image-security",
-                      "trivy-forge.json",
-                      os.environ["FORGE_SCAN"],
-                  ),
+          checks = [
+              scanner_result(
+                  "repository-security",
+                  "trivy-repositories.json",
+                  os.environ["REPOSITORY_SCAN"],
+              ),
+              {
+                  "kind": "file_policy",
+                  "name": "security-headers",
+                  "path": "lab/Caddyfile",
+                  "required": [
+                      "Strict-Transport-Security",
+                      "X-Content-Type-Options",
+                      "X-Frame-Options",
+                      "Referrer-Policy",
+                      "-Server",
+                  ],
+              },
+              {
+                  "kind": "file_policy",
+                  "name": "internal-network",
+                  "path": "lab/docker-compose.prod.yml",
+                  "required": ["backend:", "internal: true"],
+                  "forbidden": ["8080:8080", "8080:"],
+              },
+          ]
+
+          service_checks = (
+              ("vaultsh", "vaultsh-tests", "vaultsh-image-security",
+               "VAULTSH_BUILD", "VAULTSH_SCAN", "trivy-vaultsh.json"),
+              ("atlas", "atlas-tests", "atlas-image-security",
+               "ATLAS_BUILD", "ATLAS_SCAN", "trivy-atlas.json"),
+              ("forge", "forge-tests", "forge-image-security",
+               "FORGE_BUILD", "FORGE_SCAN", "trivy-forge.json"),
+          )
+          for service, test_name, scan_name, build_env, scan_env, report in service_checks:
+              if os.environ[f"{service.upper()}_AFFECTED"] == "true":
+                  checks.append(
+                      result(test_name, "Docker build", os.environ[build_env])
+                  )
+                  checks.append(
+                      scanner_result(scan_name, report, os.environ[scan_env])
+                  )
+
+          if os.environ["DEPLOYMENT_AFFECTED"] == "true":
+              checks.extend([
                   {
                       "kind": "command",
                       "name": "compose-development",
@@ -256,28 +359,109 @@ jobs:
                           "DOMAIN": "example.invalid",
                           "ATLAS_AUTH_TOKEN": "sentinel-validation",
                           "FORGE_AUTH_TOKEN": "sentinel-validation",
+                          "VAULT_IMAGE": "ghcr.io/example/vaultsh:1111111111111111111111111111111111111111",
+                          "ATLAS_IMAGE": "ghcr.io/example/atlas:2222222222222222222222222222222222222222",
+                          "FORGE_IMAGE": "ghcr.io/example/forge:3333333333333333333333333333333333333333",
                       },
                   },
+              ])
+
+          if os.environ["INTEGRATION_AFFECTED"] == "true":
+              compose = ["docker", "compose", "-f", "docker-compose.yml"]
+              environment = {
+                  "ATLAS_AUTH_TOKEN": "sentinel-validation",
+                  "FORGE_AUTH_TOKEN": "sentinel-validation",
+              }
+              checks.extend([
                   {
-                      "kind": "file_policy",
-                      "name": "security-headers",
-                      "path": "lab/Caddyfile",
-                      "required": [
-                          "Strict-Transport-Security",
-                          "X-Content-Type-Options",
-                          "X-Frame-Options",
-                          "Referrer-Policy",
-                          "-Server",
-                      ],
+                      "kind": "command",
+                      "name": "integration-stack",
+                      "command": compose + ["up", "--build", "-d", "--wait"],
+                      "working_directory": "lab",
+                      "environment": environment,
+                      "timeout_seconds": 1200,
                   },
                   {
-                      "kind": "file_policy",
-                      "name": "internal-network",
-                      "path": "lab/docker-compose.prod.yml",
-                      "required": ["backend:", "internal: true"],
-                      "forbidden": ["8080:8080", "8080:"],
+                      "kind": "http_json",
+                      "name": "vaultsh-content-contract",
+                      "url": "http://127.0.0.1:8080/api/exec",
+                      "json": {"line": "cat /cv/about.md"},
+                      "expected": {"exit_code": 0},
+                      "contains": {"output": "# About"},
                   },
-              ],
+                  {
+                      "kind": "http_json",
+                      "name": "vaultsh-atlas-contract",
+                      "url": "http://127.0.0.1:8080/api/exec",
+                      "json": {"line": "search Languages"},
+                      "expected": {"exit_code": 0},
+                      "contains": {"output": "/cv/skills.md"},
+                  },
+                  {
+                      "kind": "http_json",
+                      "name": "vaultsh-forge-contract",
+                      "url": "http://127.0.0.1:8080/api/exec",
+                      "json": {"line": "dashboard"},
+                      "expected": {"exit_code": 0},
+                      "contains": {"output": "LIVE ACTIVITY"},
+                  },
+                  {
+                      "kind": "command",
+                      "name": "stop-atlas-for-degradation-test",
+                      "command": compose + ["stop", "atlas"],
+                      "working_directory": "lab",
+                      "environment": environment,
+                  },
+                  {
+                      "kind": "http_json",
+                      "name": "atlas-outage-degradation",
+                      "url": "http://127.0.0.1:8080/api/exec",
+                      "json": {"line": "cat /cv/about.md"},
+                      "expected": {"exit_code": 0},
+                      "contains": {"output": "# About"},
+                  },
+                  {
+                      "kind": "http_json",
+                      "name": "atlas-outage-is-isolated",
+                      "url": "http://127.0.0.1:8080/api/exec",
+                      "json": {"line": "search Languages"},
+                      "expected": {"exit_code": 1, "output": "search unavailable"},
+                  },
+                  {
+                      "kind": "command",
+                      "name": "restore-atlas",
+                      "command": compose + ["start", "atlas"],
+                      "working_directory": "lab",
+                      "environment": environment,
+                  },
+                  {
+                      "kind": "command",
+                      "name": "stop-forge-for-degradation-test",
+                      "command": compose + ["stop", "forge"],
+                      "working_directory": "lab",
+                      "environment": environment,
+                  },
+                  {
+                      "kind": "http_json",
+                      "name": "forge-outage-degradation",
+                      "url": "http://127.0.0.1:8080/api/exec",
+                      "json": {"line": "cat /cv/about.md"},
+                      "expected": {"exit_code": 0},
+                      "contains": {"output": "# About"},
+                  },
+                  {
+                      "kind": "http_json",
+                      "name": "forge-outage-is-isolated",
+                      "url": "http://127.0.0.1:8080/api/exec",
+                      "json": {"line": "dashboard"},
+                      "expected": {"exit_code": 1, "output": "dashboard unavailable"},
+                  },
+              ])
+
+          plan = {
+              "project": "backend-lab",
+              "commit": os.environ["COMMIT_SHA"],
+              "checks": checks,
           }
           Path("sentinel-report").mkdir()
           Path("sentinel-report/plan.json").write_text(
@@ -293,6 +477,14 @@ jobs:
             --workspace . \
             --output sentinel-report/evidence.json
 
+      - name: Stop integration stack
+        if: always() && steps.impact.outputs.integration == 'true'
+        working-directory: lab
+        env:
+          ATLAS_AUTH_TOKEN: sentinel-validation
+          FORGE_AUTH_TOKEN: sentinel-validation
+        run: docker compose -f docker-compose.yml down --volumes --remove-orphans
+
       - name: Run mock analysis
         run: |
           sentinel assess \
@@ -304,6 +496,57 @@ jobs:
 
       - name: Publish summary
         run: cat sentinel-report/assessment.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish concise pull-request report
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const assessment = JSON.parse(
+              fs.readFileSync("sentinel-report/assessment.json", "utf8")
+            );
+            const marker = "<!-- sentinel-assessment -->";
+            const checks = assessment.checks
+              .map(check => `| ${check.name} | ${check.status} |`)
+              .join("\n");
+            const body = [
+              marker,
+              "## Sentinel advisory assessment",
+              "",
+              `**Risk:** ${assessment.risk} · **Decision:** ${assessment.decision}`,
+              "",
+              assessment.summary,
+              "",
+              "| Check | Status |",
+              "| --- | --- |",
+              checks,
+              "",
+              "Sentinel remains advisory; this report does not gate deployment.",
+            ].join("\n");
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const previous = comments.find(
+              comment => comment.user.type === "Bot" && comment.body.includes(marker)
+            );
+            if (previous) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: previous.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
 
       - name: Create public status
         run: |
@@ -351,7 +594,7 @@ jobs:
           retention-days: 14
 
       - name: Configure deployment SSH
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event_name == 'repository_dispatch'
         env:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
@@ -364,7 +607,7 @@ jobs:
             "SHA256:ScA4PoeUfbgh+A4EpGlLpUqbETbwaoXTHRCI/s+NGXc"
 
       - name: Publish dashboard status
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event_name == 'repository_dispatch'
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |

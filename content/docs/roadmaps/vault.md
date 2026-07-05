@@ -188,6 +188,8 @@
 ## Nice to Have
 
 - [x] Command and path autocomplete
+- [ ] Mount cached provider-generated content from the proposed
+      [Scribe service](scribe.md)
 - [ ] Aliases
 - [ ] Environment variables
 - [ ] Configuration

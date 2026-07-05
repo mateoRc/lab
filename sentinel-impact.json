@@ -1,0 +1,46 @@
+{
+  "repositories": {
+    "lab": ["lab/**"],
+    "vaultsh": ["vaultsh/**"],
+    "atlas": ["atlas/**"],
+    "forge": ["forge/**"],
+    "sentinel": ["sentinel/**"]
+  },
+  "services": {
+    "vaultsh": [
+      "vaultsh/**",
+      "lab/content/**",
+      "lab/Caddyfile",
+      "lab/docker-compose*.yml"
+    ],
+    "atlas": [
+      "atlas/**",
+      "lab/content/**",
+      "lab/docker-compose*.yml"
+    ],
+    "forge": [
+      "forge/**",
+      "lab/docker-compose*.yml"
+    ]
+  },
+  "checks": {
+    "integration": [
+      "vaultsh/**",
+      "atlas/**",
+      "forge/**",
+      "lab/content/**",
+      "lab/docker-compose*.yml"
+    ],
+    "deployment": [
+      "lab/Caddyfile",
+      "lab/docker-compose.prod.yml",
+      "lab/.github/workflows/deploy.yml"
+    ],
+    "sentinel": [
+      "sentinel/**",
+      "lab/sentinel.yml",
+      "lab/sentinel-impact.json",
+      "lab/.github/workflows/sentinel.yml"
+    ]
+  }
+}

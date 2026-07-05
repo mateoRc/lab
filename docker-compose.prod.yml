@@ -27,8 +27,7 @@ services:
         condition: service_healthy
 
   vault:
-    build:
-      context: ${VAULT_BUILD_CONTEXT:-../vaultsh}
+    image: ${VAULT_IMAGE:?set VAULT_IMAGE in the release manifest}
     restart: unless-stopped
     expose:
       - "8080"
@@ -67,8 +66,7 @@ services:
       start_period: 5s
 
   atlas:
-    build:
-      context: ${ATLAS_BUILD_CONTEXT:-../atlas}
+    image: ${ATLAS_IMAGE:?set ATLAS_IMAGE in the release manifest}
     restart: unless-stopped
     expose:
       - "8080"
@@ -100,8 +98,7 @@ services:
       start_period: 10s
 
   forge:
-    build:
-      context: ${FORGE_BUILD_CONTEXT:-../forge}
+    image: ${FORGE_IMAGE:?set FORGE_IMAGE in the release manifest}
     restart: unless-stopped
     expose:
       - "8080"

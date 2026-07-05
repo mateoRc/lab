@@ -4,6 +4,21 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      action:
+        description: Deploy selected versions or roll back to the previous release
+        type: choice
+        options: [deploy, rollback]
+        default: deploy
+      service:
+        description: Service to deploy; rollback always restores the full release
+        type: choice
+        options: [all, vault, atlas, forge]
+        default: all
+      version:
+        description: Optional full Git SHA for a targeted service deployment
+        type: string
+        required: false
 
 concurrency:
   group: production
@@ -16,6 +31,9 @@ jobs:
     steps:
       - name: Check out lab
         uses: actions/checkout@v4
+
+      - name: Test release manifest tooling
+        run: python -m unittest tests.test_release_versions --verbose
 
       - name: Configure SSH
         env:
@@ -30,6 +48,7 @@ jobs:
             "SHA256:ScA4PoeUfbgh+A4EpGlLpUqbETbwaoXTHRCI/s+NGXc"
 
       - name: Update public repositories
+        if: github.event_name == 'push' || inputs.action != 'rollback'
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
@@ -52,6 +71,16 @@ jobs:
           sync_repo atlas
           sync_repo forge
           SCRIPT
+
+      - name: Resolve immutable service versions
+        id: versions
+        if: github.event_name == 'push' || inputs.action != 'rollback'
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        run: |
+          echo "vault=$(ssh deploy@"$SERVER_HOST" git -C /home/deploy/backend_lab/vaultsh rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "atlas=$(ssh deploy@"$SERVER_HOST" git -C /home/deploy/backend_lab/atlas rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "forge=$(ssh deploy@"$SERVER_HOST" git -C /home/deploy/backend_lab/forge rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Upload lab repository
         env:
@@ -77,12 +106,78 @@ jobs:
             'SESSION_LIMIT=5000' > production.env
           scp production.env deploy@"$SERVER_HOST":/home/deploy/backend_lab/lab/.env
 
-      - name: Deploy
+      - name: Authenticate production image pulls
         env:
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
-          ssh deploy@"$SERVER_HOST" \
-            'cd /home/deploy/backend_lab/lab && install -d -m 755 runtime && docker compose -f docker-compose.prod.yml config --quiet && docker compose -f docker-compose.prod.yml up --build -d --wait'
+          printf '%s' "$GHCR_TOKEN" |
+            ssh deploy@"$SERVER_HOST" \
+              "docker login ghcr.io --username '$GHCR_USERNAME' --password-stdin"
+
+      - name: Select release versions
+        env:
+          ACTION: ${{ github.event_name == 'push' && 'deploy' || inputs.action }}
+          ATLAS_VERSION: ${{ steps.versions.outputs.atlas }}
+          FORGE_VERSION: ${{ steps.versions.outputs.forge }}
+          REQUESTED_VERSION: ${{ inputs.version }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          TARGET: ${{ github.event_name == 'push' && 'all' || inputs.service }}
+          VAULT_VERSION: ${{ steps.versions.outputs.vault }}
+        run: |
+          ssh deploy@"$SERVER_HOST" bash -s -- \
+            "$ACTION" "$TARGET" "$REQUESTED_VERSION" \
+            "$VAULT_VERSION" "$ATLAS_VERSION" "$FORGE_VERSION" <<'SCRIPT'
+          set -euo pipefail
+          action="$1"
+          target="$2"
+          requested="$3"
+          vault="$4"
+          atlas="$5"
+          forge="$6"
+          cd /home/deploy/backend_lab/lab
+          install -d -m 755 runtime
+          if [ "$action" = "rollback" ]; then
+            python3 scripts/release_versions.py rollback --runtime runtime
+          else
+            python3 scripts/release_versions.py prepare \
+              --runtime runtime \
+              --target "$target" \
+              --version "$requested" \
+              --vault "$vault" \
+              --atlas "$atlas" \
+              --forge "$forge"
+          fi
+          SCRIPT
+
+      - name: Deploy selected release
+        env:
+          ACTION: ${{ github.event_name == 'push' && 'deploy' || inputs.action }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          TARGET: ${{ github.event_name == 'push' && 'all' || inputs.service }}
+        run: |
+          ssh deploy@"$SERVER_HOST" bash -s -- "$ACTION" "$TARGET" <<'SCRIPT'
+          set -euo pipefail
+          action="$1"
+          target="$2"
+          [ "$action" = "rollback" ] && target=all
+          cd /home/deploy/backend_lab/lab
+          compose() {
+            docker compose \
+              --env-file .env \
+              --env-file runtime/versions.env \
+              -f docker-compose.prod.yml "$@"
+          }
+          compose config --quiet
+          if [ "$target" = "all" ]; then
+            compose pull
+            compose up -d --wait
+          else
+            compose pull "$target"
+            compose up -d --wait --no-deps "$target"
+          fi
+          SCRIPT
 
       - name: Verify
         run: curl --fail --show-error --silent --retry 12 --retry-delay 5 https://mateolabs.dev/healthz
@@ -103,8 +198,25 @@ jobs:
           deployed_at="$3"
           directory=/home/deploy/backend_lab/lab/runtime
           install -d -m 755 "$directory"
-          printf '{"status":"%s","version":"%s","deployed_at":"%s"}\n' \
-            "$status" "$version" "$deployed_at" > "$directory/deployment.json.tmp"
+          python3 - "$status" "$version" "$deployed_at" \
+            "$directory/release.json" "$directory/deployment.json.tmp" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          status, version, deployed_at, release_path, output_path = sys.argv[1:]
+          services = json.loads(Path(release_path).read_text(encoding="utf-8"))
+          payload = {
+              "status": status,
+              "version": version,
+              "deployed_at": deployed_at,
+              "services": services,
+          }
+          Path(output_path).write_text(
+              json.dumps(payload, separators=(",", ":")) + "\n",
+              encoding="utf-8",
+          )
+          PY
           chmod 644 "$directory/deployment.json.tmp"
           mv "$directory/deployment.json.tmp" "$directory/deployment.json"
           SCRIPT
