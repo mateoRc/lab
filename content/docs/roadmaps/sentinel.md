@@ -20,16 +20,17 @@
 - [x] Run allowlisted commands with timeouts and output limits
 - [x] Apply policy to test, security, and deployment results
 - [x] Fail closed on invalid configuration or missing required evidence
-- [ ] Redact secrets from logs and reports
+- [x] Redact secrets from retained evidence and reports
 
 ### Regression Analysis
 
-- [ ] Identify changed repositories, services, and files
-- [ ] Map changes to relevant unit, integration, and deployment tests
+- [x] Identify changed repositories, services, and files
+- [x] Map changes to relevant unit, integration, and deployment checks
 - [x] Aggregate Vaultsh, Atlas, Forge, and Compose checks
 - [ ] Consume service-repository CI results instead of rebuilding and retesting
       every service in the Lab workflow
-- [ ] Verify parser, API, session, service-contract, and degradation paths
+- [x] Verify service-contract and optional-service degradation paths
+- [ ] Add change-selected parser, API, and session checks
 - [ ] Report missing coverage without inventing results
 
 ### Security Analysis
@@ -57,7 +58,7 @@
 
 - [x] Run an advisory mock assessment on pull requests and `main`
 - [x] Publish step summaries and report artifacts
-- [ ] Publish or update pull-request comments
+- [x] Publish or update concise pull-request comments
 - [ ] Use protected environments for high-risk release approval
 - [x] Dogfood Sentinel on Vaultsh, Atlas, Forge, and Lab
 - [x] Expose sanitized status in the existing deployment dashboard

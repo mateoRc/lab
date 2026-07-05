@@ -45,7 +45,7 @@
 
 - [x] Vaultsh HTTP integration
 - [x] Forge telemetry
-- [ ] Versioned container images
+- [x] Immutable commit-tagged container images
 
 ## Explicitly Deferred
 

@@ -54,3 +54,8 @@ class ReleaseVersionsTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             with self.assertRaisesRegex(ValueError, "full Git SHA"):
                 prepare(Path(directory), invalid, "all")
+
+    def test_requested_version_requires_target(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, "targeted service"):
+                prepare(Path(directory), V1, "all", "7" * 40)

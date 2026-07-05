@@ -36,26 +36,57 @@ SESSION_LIMIT=5000
 Never commit `.env`. Store production values in the deployment platform's
 secret manager when one is available.
 
-## Start
+The production GitHub environment also requires:
 
-```sh
-docker compose -f docker-compose.prod.yml config
-docker compose -f docker-compose.prod.yml up --build -d --wait
-```
+- `GHCR_USERNAME` — account used for production image pulls
+- `GHCR_TOKEN` — package token with read access
+- Existing SSH, service-token, and server-host secrets
+
+Each service repository can define `LAB_DISPATCH_TOKEN`, scoped to dispatch the
+Lab workflow, so successful `main` CI runs trigger an advisory Sentinel
+assessment for that exact service commit.
+
+## Immutable Images
+
+Vaultsh, Atlas, and Forge CI publish GHCR images tagged with the full Git commit
+SHA. Production Compose contains no service build contexts; it reads pinned
+image references from `runtime/versions.env`.
+
+During the initial migration, merge and run all three service CI workflows
+before deploying the image-only Lab Compose configuration. The first Lab
+deployment fails safely if any resolved SHA has not been published.
+
+Lab's deployment workflow:
+
+1. Resolves the selected service commits.
+2. Updates a tested release manifest.
+3. Pulls the immutable images.
+4. Starts either the full release or one selected service.
+5. Waits for health checks and verifies public HTTPS.
+6. Publishes the release and all three service versions to Vaultsh.
 
 Caddy automatically obtains and renews the domain's HTTPS certificate. Check
 the deployment:
 
 ```sh
 curl -I https://portfolio.example.com/healthz
-docker compose -f docker-compose.prod.yml ps
-docker compose -f docker-compose.prod.yml logs --tail=100
+docker compose \
+  --env-file .env \
+  --env-file runtime/versions.env \
+  -f docker-compose.prod.yml ps
+docker compose \
+  --env-file .env \
+  --env-file runtime/versions.env \
+  -f docker-compose.prod.yml logs --tail=100
 ```
 
 Stop the deployment:
 
 ```sh
-docker compose -f docker-compose.prod.yml down
+docker compose \
+  --env-file .env \
+  --env-file runtime/versions.env \
+  -f docker-compose.prod.yml down
 ```
 
 Do not add host `ports` entries to Vaultsh, Atlas, or Forge.
@@ -106,31 +137,37 @@ Cloudflare availability and rule quotas depend on the selected account plan.
 
 ## Updating
 
-```sh
-git pull
-docker compose -f docker-compose.prod.yml up --build -d --wait
-```
+Use the Lab `Deploy` workflow.
+
+- A push to Lab `main` deploys the latest successful service SHAs together.
+- A manual `deploy` run can target `vault`, `atlas`, `forge`, or `all`.
+- A targeted run can optionally select an existing full Git SHA.
 
 Review logs and health status after every update. Do not automatically prune
 images until the updated stack has passed its health checks.
 
-## Targeted Service Updates
+## Rollback
 
-The services are independently rebuildable within the same Compose project.
-For a manual service-only update:
+Run the Lab `Deploy` workflow manually with `action=rollback`. Rollback swaps
+the current and previous tested release manifests, pulls those exact images,
+updates the full Compose stack, waits for health, and verifies public HTTPS.
+
+The manifest behavior is covered by `tests/test_release_versions.py`.
+
+For emergency server-side recovery:
 
 ```sh
-git -C ../atlas pull --ff-only
-docker compose -f docker-compose.prod.yml config --quiet
-docker compose -f docker-compose.prod.yml up --build -d --wait --no-deps atlas
+cd /home/deploy/backend_lab/lab
+python3 scripts/release_versions.py rollback --runtime runtime
+docker compose \
+  --env-file .env \
+  --env-file runtime/versions.env \
+  -f docker-compose.prod.yml pull
+docker compose \
+  --env-file .env \
+  --env-file runtime/versions.env \
+  -f docker-compose.prod.yml up -d --wait
 ```
 
-Replace `atlas` and its source path with `vault`/`../vaultsh` or
-`forge`/`../forge` as needed. Use a full-stack update when Compose
-configuration, shared content, service tokens, or cross-service contracts
-change.
-
-The automated deployment remains centralized in Lab. Separate per-service
-deployment workflows should wait until production uses pinned image versions
-and defines API compatibility rules; otherwise independent pipelines would
-increase coordination risk without isolating the shared deployment state.
+Deployment remains centralized in Lab so secrets, Compose state, release
+history, and rollback stay under one concurrency lock.

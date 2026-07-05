@@ -17,6 +17,8 @@ def prepare(
     _validate_versions(latest)
     if target not in {*SERVICES, "all"}:
         raise ValueError(f"unsupported deployment target: {target}")
+    if target == "all" and requested_version:
+        raise ValueError("a requested version requires a targeted service")
     current = load_release(runtime / "release.json", required=False)
     release = dict(current or latest)
     if target == "all":

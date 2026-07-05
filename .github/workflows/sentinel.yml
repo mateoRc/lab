@@ -36,6 +36,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: mateoRc/vaultsh
+          ref: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.repository == 'vaultsh' && github.event.client_payload.sha || 'main' }}
           path: vaultsh
           persist-credentials: false
 
@@ -43,6 +44,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: mateoRc/atlas
+          ref: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.repository == 'atlas' && github.event.client_payload.sha || 'main' }}
           path: atlas
           persist-credentials: false
 
@@ -50,6 +52,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: mateoRc/forge
+          ref: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.repository == 'forge' && github.event.client_payload.sha || 'main' }}
           path: forge
           persist-credentials: false
 
@@ -69,6 +72,7 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           BEFORE_SHA: ${{ github.event.before }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          DISPATCH_REPOSITORY: ${{ github.event.client_payload.repository }}
         run: |
           python - <<'PY'
           import json
@@ -78,13 +82,16 @@ jobs:
 
           event = os.environ["EVENT_NAME"]
           if event == "repository_dispatch":
-              repository = "${{ github.event.client_payload.repository }}"
+              repository = os.environ["DISPATCH_REPOSITORY"]
+              if repository not in {"vaultsh", "atlas", "forge"}:
+                  raise SystemExit(f"unsupported dispatch repository: {repository}")
               changes = [f"{repository}/__repository_change__"]
               base = ""
           elif event == "pull_request":
               base = os.environ["BASE_SHA"]
-          elif event == "push" and set(os.environ.get("BEFORE_SHA", "")) != {"0"}:
-              base = os.environ["BEFORE_SHA"]
+          elif event == "push":
+              before = os.environ.get("BEFORE_SHA", "")
+              base = "" if not before or before == "0" * 40 else before
           else:
               base = ""
 
@@ -498,7 +505,7 @@ jobs:
         run: cat sentinel-report/assessment.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publish concise pull-request report
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v7
         with:
           script: |

@@ -16,8 +16,11 @@ checks, and deployments to explain failures and assess release risk.
 
 - Deterministic regression and security checks
 - Strict policy validation and normalized evidence
+- Change-aware check selection across Backend Lab repositories
+- Service-contract and degradation checks
+- Centralized evidence redaction
 - Advisory release-risk assessments
-- Markdown, JSON, and sanitized runtime reports
+- Markdown, JSON, pull-request, and sanitized runtime reports
 - Extensible check adapters with bounded output
 
 ## Planned capabilities

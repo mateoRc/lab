@@ -145,6 +145,9 @@
 - [x] Add deployment status to the dashboard
 - [x] Add a `deployments` command
 - [ ] Keep a short history of sanitized deployments
+- [x] Publish immutable commit-tagged container images
+- [x] Deploy pinned per-service image versions
+- [x] Support targeted deployment and tested release rollback
 
 ### Production Hardening
 

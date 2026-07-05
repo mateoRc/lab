@@ -49,7 +49,8 @@ flowchart LR
 | Deployment verification | Compose waits for service health checks, then CI verifies the public HTTPS health endpoint |
 
 Tests run in each service repository's CI workflow. Production deployment runs
-only from Lab and publishes sanitized deployment status to Vaultsh.
+only from Lab, pulls service images pinned by Git SHA, and publishes sanitized
+per-service deployment status to Vaultsh.
 
 ## Prerequisites
 
@@ -126,7 +127,8 @@ the private backend network and require bearer authentication on all
 non-health endpoints.
 
 [`sentinel.yml`](sentinel.yml) defines the release policy. Sentinel currently
-runs real deterministic checks with mock analysis in advisory mode.
+runs change-selected deterministic checks, service-contract and degradation
+checks, centralized evidence redaction, and mock analysis in advisory mode.
 
 ## Shared content
 

@@ -17,7 +17,8 @@ It is the single source of truth for shared searchable portfolio content.
 - Reproducible multi-service local and production startup
 - Shared read-only content mounts and isolated service networking
 - HTTPS ingress, health checks, resource limits, and deployment metadata
-- Automated deployment to Hetzner through GitHub Actions
+- Immutable service images and targeted deployment through GitHub Actions
+- Tested release manifests and full-stack rollback
 
 ## Decisions
 

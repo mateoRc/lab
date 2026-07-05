@@ -5,6 +5,13 @@ machine-readable check results. It is not a runtime Backend Lab service.
 
 ## Components
 
+### Impact Analyzer
+
+Maps normalized changed paths to affected repositories, runtime services, and
+check groups using Lab's versioned `sentinel-impact.json` rules. Service
+repositories can dispatch their successful `main` CI result to Lab with the
+exact commit SHA.
+
 ### Check Runner
 
 Executes deterministic regression, security, build, and deployment checks.
@@ -18,7 +25,8 @@ The command adapter accepts argument arrays rather than shell strings, allows
 only approved executables, confines working directories to the CI workspace,
 limits execution time, and retains only a bounded failure-output tail.
 Additional adapters normalize GitHub Actions outcomes and verify required or
-forbidden configuration markers.
+forbidden configuration markers. A local-only HTTP adapter validates service
+contracts and degraded behavior through Vaultsh's public API.
 
 Backend Lab runs containerized tests, Compose validation, repository secret and
 dependency scanning, container-image scanning, security-header policy, and
@@ -45,7 +53,8 @@ planned but not implemented.
 ### Reporter
 
 Produces Markdown and JSON reports. Reports distinguish facts, policy
-decisions, and agent inferences.
+decisions, and agent inferences. Pull-request runs create or update one concise
+advisory comment.
 
 On `main`, CI also publishes a reduced assessment containing risk, check
 statuses, provider, commit, timestamp, and summary. Vaultsh reads this file
@@ -70,16 +79,16 @@ flowchart LR
     provider --> report
 ```
 
-Change-aware repository analysis, production LLM analysis, pull-request
-comments, and approval workflows remain roadmap items.
+Production LLM analysis and approval workflows remain roadmap items.
 
 ## Trust Boundary
 
 Repository files and command output are untrusted input. Sentinel executes only
 configured allowlisted commands, passes arguments without a shell, confines
-working directories to the workspace, and bounds retained output. Backend
-Lab's workflow reduces scanner findings before publication and does not expose
-raw scanner reports in runtime metadata.
+working directories to the workspace, and bounds retained output. A centralized
+redactor removes common credential forms and explicit check-environment secrets
+before evidence is stored. Backend Lab's workflow reduces scanner findings
+before publication and does not expose raw scanner reports in runtime metadata.
 
 ## Decisions
 
