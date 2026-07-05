@@ -128,11 +128,12 @@ jobs:
           ACTION: ${{ github.event_name == 'push' && 'deploy' || inputs.action }}
           ATLAS_VERSION: ${{ steps.versions.outputs.atlas }}
           FORGE_VERSION: ${{ steps.versions.outputs.forge }}
-          REQUESTED_VERSION: ${{ inputs.version }}
+          REQUESTED_VERSION: ${{ inputs.version || '__none__' }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           TARGET: ${{ github.event_name == 'push' && 'all' || inputs.service }}
           VAULT_VERSION: ${{ steps.versions.outputs.vault }}
         run: |
+          # TODO: Replace positional SSH arguments with structured input.
           ssh deploy@"$SERVER_HOST" bash -s -- \
             "$ACTION" "$TARGET" "$REQUESTED_VERSION" \
             "$VAULT_VERSION" "$ATLAS_VERSION" "$FORGE_VERSION" <<'SCRIPT'
@@ -140,6 +141,7 @@ jobs:
           action="$1"
           target="$2"
           requested="$3"
+          [ "$requested" = "__none__" ] && requested=""
           vault="$4"
           atlas="$5"
           forge="$6"
