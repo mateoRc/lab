@@ -42,15 +42,15 @@ tree
 tree -a
 tree -L 2 /
 cd cv/experience
-cat reversinglabs.txt
+cat reversinglabs.md
 cd ..
 ```
 
 Paths can be absolute or relative:
 
 ```sh
-cat /cv/about.txt
-cat projects/vaultsh.txt
+cat /cv/about.md
+cat projects/vaultsh.md
 cd /cv/experience
 cd ..
 ```
@@ -58,15 +58,15 @@ cd ..
 Quoted and escaped arguments are supported:
 
 ```sh
-cat "file with spaces.txt"
-cat file\ with\ spaces.txt
+cat "file with spaces.md"
+cat file\ with\ spaces.md
 ```
 
 Number file or pipeline lines:
 
 ```sh
-cat -n /cv/about.txt
-cat /cv/about.txt | cat -n
+cat -n /cv/about.md
+cat /cv/about.md | cat -n
 ```
 
 ## Pipelines
@@ -77,25 +77,25 @@ a stage returns a non-zero exit code.
 Show programming languages:
 
 ```sh
-cat /cv/skills.txt | grep "^Languages"
+cat /cv/skills.md | grep "Languages"
 ```
 
 Show the first three ReversingLabs responsibilities:
 
 ```sh
-cat /cv/experience/reversinglabs.txt | grep "^-" | head -n 3
+cat /cv/experience/reversinglabs.md | grep "^- [^*]" | head -n 3
 ```
 
 Count A1 responsibilities:
 
 ```sh
-cat /cv/experience/a1.txt | grep "^-" | wc -l
+cat /cv/experience/a1.md | grep "^- [^*]" | wc -l
 ```
 
 Show numbered, case-insensitive matches:
 
 ```sh
-cat /cv/skills.txt | grep -in "python"
+cat /cv/skills.md | grep -in "python"
 ```
 
 Display the five most recent history entries:
@@ -107,24 +107,24 @@ history | tail -n 5
 Reverse-sort Vaultsh feature and decision bullets:
 
 ```sh
-cat /projects/vaultsh.txt | grep "^-" | sort -r
+cat /projects/vaultsh.md | grep "^- [^*]" | sort -r
 ```
 
 Commands that accept `[file]` can read a virtual file directly or consume
 pipeline input:
 
 ```sh
-head -n 5 /cv/skills.txt
-cat /cv/skills.txt | head -n 5
+head -n 5 /cv/skills.md
+cat /cv/skills.md | head -n 5
 ```
 
 More pipeline examples:
 
 ```sh
-cat /cv/skills.txt | grep "^Languages"
-cat /cv/experience/reversinglabs.txt | grep "^Technology"
+cat /cv/skills.md | grep "Languages"
+cat /cv/experience/reversinglabs.md | grep "Technology"
 search "Technology" | grep "/projects/"
-tree | grep ".txt" | sort
+tree | grep ".md" | sort
 ```
 
 ## Keyboard Shortcuts
@@ -137,7 +137,7 @@ Autocomplete uses the current session directory:
 ```text
 cat cv/exp<Tab>    -> cat cv/experience/
 cd cv/experience
-cat rev<Tab>       -> cat reversinglabs.txt
+cat rev<Tab>       -> cat reversinglabs.md
 ```
 
 ## Exit Codes

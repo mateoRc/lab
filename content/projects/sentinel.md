@@ -1,28 +1,27 @@
-SENTINEL
-========
+# Sentinel
 
-Personal project | Planned
+**Personal project** · Planned
 
-SUMMARY
--------
+## Summary
+
 An agentic CI/CD release guardian that analyzes changes, tests, security
 checks, and deployments to explain failures and assess release risk.
 
-DETAILS
--------
-Technology   Python | GitHub Actions
-Interface    CLI | CI reports | Pull request checks
+## Details
 
-PLANNED CAPABILITIES
---------------------
+- **Technology:** Python and GitHub Actions
+- **Interface:** CLI, CI reports, and pull request checks
+
+## Planned capabilities
+
 - Change-aware release risk assessment
 - Deterministic regression and security checks
 - CI failure analysis with file and line references
 - Deployment and rollback recommendations
 - Human approval for high-risk releases
 
-DECISIONS
----------
+## Decisions
+
 - Deterministic policies own pass/fail decisions.
 - Agent analysis is advisory and evidence-based.
 - Repository access is read-only and production changes require approval.

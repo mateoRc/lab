@@ -11,7 +11,7 @@
 
 ### Content
 
-- [x] Load plain text files from `/app/content`
+- [x] Load raw Markdown files from `/app/content`
 - [x] Recursively discover files
 - [x] Treat content as read-only
 

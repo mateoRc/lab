@@ -7,13 +7,13 @@ the directory read-only into Vault and Atlas at `/app/content`.
 
 ```text
 /
-├── README.txt
+├── README.md
 ├── cv/
-│   ├── README.txt
-│   ├── about.txt
-│   ├── skills.txt
-│   ├── interests.txt
-│   ├── contact.txt
+│   ├── README.md
+│   ├── about.md
+│   ├── skills.md
+│   ├── interests.md
+│   ├── contact.md
 │   └── experience/
 ├── projects/
 └── docs/
@@ -21,35 +21,36 @@ the directory read-only into Vault and Atlas at `/app/content`.
 
 ## Format
 
-- Use UTF-8 plain text with LF line endings.
-- Use uppercase document and section headings with `=` and `-` separators.
+- Use UTF-8 Markdown with LF line endings.
+- Use ATX headings (`#`) with a single H1 document title.
 - Prefer short prose for summaries and bullets for responsibilities or features.
-- Use one aligned category line for values that should be searchable together.
-- Wrap long category values on an indented continuation line.
-- Do not use Markdown.
+- Use bold labels in bullets for compact metadata.
+- Wrap prose at approximately 80 characters.
+- Keep content readable as raw Markdown in terminal commands.
+- Do not add hidden rendered text or maintain a separate rendered representation.
 - Do not include confidential or sensitive employer or project details.
 
 Example:
 
-```text
-EXAMPLE
-========
+```markdown
+# Example
 
-Backend Engineer | 2024-present
+**Backend Engineer** · 2024–present
 
-SUMMARY
--------
+## Summary
+
 Backend work on a distributed production system.
 
-DETAILS
--------
-Focus       Backend services | Distributed systems
-Technology  Go | Docker
+## Details
 
-RESPONSIBILITIES
-----------------
+- **Focus:** Backend services and distributed systems
+- **Technology:** Go and Docker
+
+## Responsibilities
+
 - Delivered features from design through deployment.
 ```
 
-Vault and Atlas read the same files directly; no copy or synchronization step
-is required.
+Vaultsh and Atlas read the same raw Markdown files directly; no rendering,
+copy, or synchronization step is required. `cat`, `grep`, `head`, `tail`, and
+`wc` operate on the original Markdown text.

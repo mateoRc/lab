@@ -1,7 +1,0 @@
-INTERESTS
-=========
-
-Engineering   Backend systems | Distributed systems | Developer tooling
-              System reliability | Code quality | Maintainability
-Learning      Go
-Outside       Coffee | Travel | Fitness

@@ -1,26 +1,25 @@
-BACKEND LAB
-===========
+# Backend Lab
 
-Personal project | Active
+**Personal project** · Active
 
-SUMMARY
--------
+## Summary
+
 The integration and deployment repository for Vaultsh, Atlas, and Forge.
 It is the single source of truth for shared searchable portfolio content.
 
-DETAILS
--------
-Technology   Docker | Docker Compose | Caddy | GitHub Actions
-Services     Vaultsh | Atlas | Forge
+## Details
 
-FEATURES
---------
+- **Technology:** Docker, Docker Compose, Caddy, and GitHub Actions
+- **Services:** Vaultsh, Atlas, and Forge
+
+## Features
+
 - Reproducible multi-service local and production startup
 - Shared read-only content mounts and isolated service networking
 - HTTPS ingress, health checks, resource limits, and deployment metadata
 - Automated deployment to Hetzner through GitHub Actions
 
-DECISIONS
----------
+## Decisions
+
 - Keep service repositories independent.
 - Centralize orchestration without duplicating content.
