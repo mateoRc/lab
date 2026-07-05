@@ -150,7 +150,7 @@ jobs:
         if: steps.impact.outputs.integration == 'true'
         env:
           GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME || 'mateoRc' }}
         run: |
           if [ -z "$GHCR_TOKEN" ] || [ -z "$GHCR_USERNAME" ]; then
             echo "GHCR read credentials are not configured; using anonymous pulls"

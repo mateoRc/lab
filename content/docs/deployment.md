@@ -36,11 +36,14 @@ SESSION_LIMIT=5000
 Never commit `.env`. Store production values in the deployment platform's
 secret manager when one is available.
 
-The production GitHub environment also requires:
+For private GHCR packages, the production GitHub environment also requires:
 
-- `GHCR_USERNAME` — account used for production image pulls
 - `GHCR_TOKEN` — package token with read access
+- `GHCR_USERNAME` — optional account override; defaults to `mateoRc`
 - Existing SSH, service-token, and server-host secrets
+
+Public packages can be pulled anonymously; the workflow skips registry login
+when `GHCR_TOKEN` is absent.
 
 Each service repository can define `LAB_DISPATCH_TOKEN`, scoped to dispatch the
 Lab workflow, so successful `main` CI runs trigger an advisory Sentinel

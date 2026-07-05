@@ -112,9 +112,13 @@ jobs:
       - name: Authenticate production image pulls
         env:
           GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME || 'mateoRc' }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
+          if [ -z "$GHCR_TOKEN" ] || [ -z "$GHCR_USERNAME" ]; then
+            echo "GHCR credentials are not configured; using anonymous pulls"
+            exit 0
+          fi
           printf '%s' "$GHCR_TOKEN" |
             ssh deploy@"$SERVER_HOST" \
               "docker login ghcr.io --username '$GHCR_USERNAME' --password-stdin"
@@ -201,6 +205,10 @@ jobs:
           deployed_at="$3"
           directory=/home/deploy/backend_lab/lab/runtime
           install -d -m 755 "$directory"
+          if [ ! -f "$directory/release.json" ]; then
+            echo "No release manifest exists; preserving previous deployment metadata"
+            exit 0
+          fi
           python3 - "$status" "$version" "$deployed_at" \
             "$directory/release.json" "$directory/deployment.json.tmp" <<'PY'
           import json
