@@ -396,11 +396,41 @@ jobs:
                   "ATLAS_AUTH_TOKEN": "sentinel-validation",
                   "FORGE_AUTH_TOKEN": "sentinel-validation",
               }
+              images = {
+                  "vaultsh": (
+                      "vaultsh:sentinel"
+                      if os.environ["VAULTSH_BUILD_AFFECTED"] == "true"
+                      else f"ghcr.io/mateorc/vaultsh:{os.environ['VAULT_VERSION']}"
+                  ),
+                  "atlas": (
+                      "atlas:sentinel"
+                      if os.environ["ATLAS_BUILD_AFFECTED"] == "true"
+                      else f"ghcr.io/mateorc/atlas:{os.environ['ATLAS_VERSION']}"
+                  ),
+                  "forge": (
+                      "forge:sentinel"
+                      if os.environ["FORGE_BUILD_AFFECTED"] == "true"
+                      else f"ghcr.io/mateorc/forge:{os.environ['FORGE_VERSION']}"
+                  ),
+              }
+              environment.update({
+                  "VAULT_IMAGE": images["vaultsh"],
+                  "ATLAS_IMAGE": images["atlas"],
+                  "FORGE_IMAGE": images["forge"],
+              })
+              for service, image in images.items():
+                  if os.environ[f"{service.upper()}_BUILD_AFFECTED"] != "true":
+                      checks.append({
+                          "kind": "command",
+                          "name": f"pull-{service}-integration-image",
+                          "command": ["docker", "pull", image],
+                          "working_directory": "lab",
+                      })
               checks.extend([
                   {
                       "kind": "command",
                       "name": "integration-stack",
-                      "command": compose + ["up", "--build", "-d", "--wait"],
+                      "command": compose + ["up", "--no-build", "-d", "--wait"],
                       "working_directory": "lab",
                       "environment": environment,
                       "timeout_seconds": 1200,
