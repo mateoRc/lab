@@ -1,13 +1,63 @@
 # Backend Lab Architecture
 
-Backend Lab consists of three runtime services, one CI/CD analysis tool, and
-one orchestration repository.
+Backend Lab consists of three application services, a production reverse
+proxy, one CI/CD analysis tool, and one orchestration repository.
+
+## System Context
+
+```mermaid
+flowchart LR
+    browser["Browser"]
+
+    subgraph production["Production Docker Compose"]
+        caddy["Caddy<br/>frontend network"]
+        vaultsh["Vaultsh<br/>frontend + backend networks"]
+        atlas["Atlas<br/>backend network"]
+        forge["Forge<br/>backend network"]
+
+        caddy -->|"HTTP · frontend network"| vaultsh
+        vaultsh -->|"search · backend network"| atlas
+        vaultsh -->|"dashboard and metrics reads · backend network"| forge
+        vaultsh -->|"events · backend network"| forge
+        atlas -->|"events · backend network"| forge
+    end
+
+    browser -->|"HTTPS"| caddy
+```
+
+Vaultsh is dual-homed. Caddy can reach it through the frontend network, while
+Vaultsh reaches Atlas and Forge through the internal backend network.
+
+## Read-only Mounts
+
+```mermaid
+flowchart LR
+    content["content/<br/>Markdown files"]
+    metadata["runtime/<br/>deployment.json and sentinel.json"]
+    vaultsh["Vaultsh"]
+    atlas["Atlas"]
+
+    content -->|"read-only mount"| vaultsh
+    content -->|"read-only mount"| atlas
+    metadata -->|"read-only mount"| vaultsh
+```
+
+These boxes represent host directories and files, not databases. Forge has no
+content or runtime metadata mount; it receives events over HTTP and keeps its
+aggregates in memory.
 
 ## Projects
 
-### Vault
+Service internals are documented separately:
 
-Vault is a read-only virtual shell engine.
+- [Vaultsh architecture](vaultsh.md)
+- [Atlas architecture](atlas.md)
+- [Forge architecture](forge.md)
+- [Sentinel architecture](sentinel.md)
+
+### Vaultsh
+
+Vaultsh is a read-only virtual shell engine.
 
 Responsibilities:
 
@@ -19,7 +69,7 @@ Responsibilities:
 - Pipelines
 - Terminal API
 
-Vault owns the user experience. It does not own search or telemetry logic.
+Vaultsh owns the user experience. It does not own search or telemetry logic.
 
 ### Atlas
 
@@ -27,7 +77,7 @@ Atlas searches the shared content.
 
 Responsibilities:
 
-- Read UTF-8 text documents from shared storage
+- Read UTF-8 Markdown documents from shared storage
 - Search documents
 - Return matching files and lines
 
@@ -46,39 +96,49 @@ Responsibilities:
 
 ### Sentinel
 
-Sentinel is a planned CI/CD release guardian. It analyzes changes and
+Sentinel is a CI/CD release guardian. It analyzes changes and
 deterministic check results, applies release policy, and produces
 evidence-based reports. It runs before deployment in GitHub Actions and is not
 part of the runtime Docker Compose stack.
 
 ## Communication
 
-```text
-Vault
-  ├── HTTP ──> Atlas
-  └── HTTP ──> Forge
-```
-
-Vault and Atlas enqueue telemetry in bounded in-process queues. Background
+Vaultsh calls Atlas for search and Forge for analytics reads. Vaultsh and Atlas
+enqueue telemetry in bounded in-process queues. Background
 workers deliver it to Forge over HTTP. Delivery is best-effort and uses no
 external message broker.
 
 Release analysis uses a separate control path:
 
-```text
-GitHub Actions --> Sentinel --> policy and report --> existing deployment
+```mermaid
+flowchart LR
+    change["Pull request or push"]
+    checks["Deterministic checks"]
+    sentinel["Sentinel assessment"]
+    report["Report artifact"]
+    deploy["Deployment workflow"]
+    production["Production Compose stack"]
+
+    change --> checks --> sentinel --> report
+    change -->|"push to main"| deploy --> production
 ```
+
+Sentinel runs deterministic checks and produces an advisory assessment. On
+pushes to `main`, Sentinel publishes sanitized assessment metadata, while the
+separate deployment workflow publishes deployment metadata and updates the
+production Compose stack. Pull-request runs publish report artifacts only.
+Sentinel does not currently gate deployment.
 
 ## External Services
 
-Vault can integrate with external backend services.
+Vaultsh can integrate with optional backend services.
 
 Defined integration targets:
 
-- Atlas — indexing and search
+- Atlas — recursive line search
 - Forge — telemetry and metrics
 
-Integrations are optional. If an external service is unavailable, Vault
+Integrations are optional. If an external service is unavailable, Vaultsh
 continues functioning with degraded capabilities rather than failing unrelated
 command execution.
 
@@ -94,12 +154,13 @@ lab/
     └── docs/
 ```
 
-Vault mounts this directory as its virtual filesystem. Atlas searches the same
-directory. Content must never be duplicated between service repositories.
+Vaultsh mounts this directory as its virtual filesystem. Atlas searches the
+same raw Markdown files. Content must never be duplicated between service
+repositories.
 
 ## User Experience
 
-Vault exposes friendly shell commands:
+Vaultsh exposes friendly shell commands:
 
 ```text
 search kafka
@@ -122,9 +183,10 @@ docker compose exec vault wget -qO- \
 
 Commands are the product interface. HTTP requests are the debugging interface.
 
-Only Vault publishes a host port. Atlas and Forge are private Compose services.
-Their non-health endpoints require independent bearer service tokens. TLS must
-terminate at the deployment ingress so browser traffic to Vault is encrypted.
+In local development, Vaultsh publishes a host port. In production, only Caddy
+publishes host ports; Vaultsh is reachable from Caddy on the frontend network,
+while Atlas and Forge are private to the internal backend network. Atlas and
+Forge require independent bearer service tokens for non-health endpoints.
 
 ## Design Principles
 
@@ -157,16 +219,16 @@ architecture, configuration, and roadmap documentation.
 
 ## Local Logs
 
-Services write operational logs to container stdout. Lab configures Docker's
+Application services write operational logs to container stdout. Lab configures Docker's
 `json-file` driver with a 10 MB maximum file size and three retained files per
 service. Logs remain separate from Forge telemetry and can be inspected with
 `docker compose logs`.
 
 ## Production Boundary
 
-The production stack places Caddy on the public frontend network. Vaultsh is
-reachable from Caddy but has no published host port. Atlas and Forge exist only
-on an internal backend network, which Vaultsh joins for service calls.
+The production stack connects Caddy only to the frontend network. Vaultsh joins
+both frontend and backend networks but has no published host port. Atlas and
+Forge join only the internal backend network.
 
 Caddy owns HTTPS certificate management. Vaultsh owns API rate limits, request
 and command size limits, active-session capacity, and HTTP timeouts. Compose

@@ -140,6 +140,6 @@ filesystem and Atlas scans it for search requests.
 
 Shared documentation lives under `content/docs/`. Start with the
 [architecture overview](content/docs/architecture/overview.md) or
-[event catalog](content/docs/events.md). Sentinel has separate
-[architecture](content/docs/architecture/sentinel.md) and
-[roadmap](content/docs/roadmaps/sentinel.md) documents.
+[event catalog](content/docs/events.md). Vaultsh, Atlas, Forge, and Sentinel
+have concise service documents under
+[`content/docs/architecture/`](content/docs/architecture/).
