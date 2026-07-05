@@ -111,7 +111,7 @@ jobs:
               ]
           if not changes:
               changes = ["lab/__no_changes__"]
-          Path("sentinel-report").mkdir()
+          Path("sentinel-report").mkdir(exist_ok=True)
           Path("sentinel-report/changes.json").write_text(
               json.dumps(changes, indent=2) + "\n",
               encoding="utf-8",
@@ -530,7 +530,7 @@ jobs:
               "commit": os.environ["COMMIT_SHA"],
               "checks": checks,
           }
-          Path("sentinel-report").mkdir()
+          Path("sentinel-report").mkdir(exist_ok=True)
           Path("sentinel-report/plan.json").write_text(
               json.dumps(plan, indent=2) + "\n",
               encoding="utf-8",
