@@ -146,6 +146,19 @@ jobs:
                   output.write(f"{name}={str(enabled).lower()}\n")
           PY
 
+      - name: Authenticate integration image pulls
+        if: steps.impact.outputs.integration == 'true'
+        env:
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+        run: |
+          if [ -z "$GHCR_TOKEN" ] || [ -z "$GHCR_USERNAME" ]; then
+            echo "GHCR read credentials are not configured; using anonymous pulls"
+            exit 0
+          fi
+          printf '%s' "$GHCR_TOKEN" |
+            docker login ghcr.io --username "$GHCR_USERNAME" --password-stdin
+
       - name: Build and test Vaultsh
         id: vaultsh_build
         if: steps.impact.outputs.vaultsh_build == 'true'
