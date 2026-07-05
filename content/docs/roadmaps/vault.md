@@ -123,7 +123,7 @@
 
 ### Storage
 
-- [x] Mounted text content
+- [x] Mounted raw Markdown content
 - [ ] Session store abstraction
 - [ ] External session store
 - [ ] Filesystem abstraction
@@ -164,6 +164,15 @@
 - [ ] Index
 - [ ] Ranking
 - [ ] Query language
+
+### Document Export
+
+- [ ] Export selected Markdown documents to PDF from the canonical raw source
+- [ ] Keep generated PDFs outside the searchable content tree
+- [ ] Define deterministic PDF styling and page-break behavior
+- [ ] Evaluate an optional `open <path.md>` command that opens the exported PDF
+      in a new browser tab
+- [ ] Keep `cat`, `grep`, `head`, `tail`, and `wc` operating on raw Markdown
 
 ## Post-v1 Content
 

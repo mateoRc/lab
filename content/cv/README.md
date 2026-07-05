@@ -6,6 +6,7 @@ Employer and project details are intentionally high-level.
 ## Start here
 
 ```sh
+cd /cv
 cat about.md
 cat skills.md
 tree experience

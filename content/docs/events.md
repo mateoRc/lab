@@ -1,6 +1,6 @@
 # Event Catalog
 
-Vault and Atlas send best-effort telemetry events to Forge over HTTP. Events
+Vaultsh and Atlas send best-effort telemetry events to Forge over HTTP. Events
 are queued temporarily in each producer's memory and delivered by a background
 worker using `POST /events`.
 
@@ -27,11 +27,11 @@ Fields:
 - `duration_ms` — execution duration in milliseconds.
 - `exit_code` — `0` for success; non-zero values count as errors.
 
-## Vault Events
+## Vaultsh Events
 
 ### `command.executed`
 
-Emitted after every Vault command execution.
+Emitted after every Vaultsh command execution.
 
 ```json
 {
@@ -86,6 +86,6 @@ All counters reset when Forge restarts.
 - Events may be lost when a producer or Forge restarts.
 - There are no durable acknowledgements, retries, persistence, or ordering
   guarantees.
-- Telemetry delivery failures never fail Vault commands or Atlas searches.
+- Telemetry delivery failures never fail Vaultsh commands or Atlas searches.
 
 This best-effort model is intentional for the MVP.

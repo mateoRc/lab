@@ -38,12 +38,12 @@
 - [x] Mount shared content at `/app/content` as read-only
 - [x] Document API usage
 - [x] GitHub Actions CI
-- [x] Shared local deployment for Vault and Atlas
+- [x] Shared local deployment for Vaultsh and Atlas
 - [x] Bearer service authentication
 
 ## After MVP
 
-- [x] Vault HTTP integration
+- [x] Vaultsh HTTP integration
 - [x] Forge telemetry
 - [ ] Versioned container images
 
@@ -56,5 +56,5 @@
 - End-user authentication
 - Embeddings
 - External search libraries
-- Queues and asynchronous events
+- Durable or external queues
 - Anvil integration

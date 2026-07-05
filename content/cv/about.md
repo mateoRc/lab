@@ -14,6 +14,6 @@ deployment, improving existing systems, and mentoring engineers new to a team.
 
 - **Focus:** Backend services, distributed systems, internal tools, shared
   libraries, and production reliability
-- **Industries:** Cybersecurity, telecom, financial services, and pharma
+- **Industries:** Cybersecurity, telecom, government services, and pharma
 - **Work:** Technical ownership, implementation, deployment, proofs of concept,
   and mentoring

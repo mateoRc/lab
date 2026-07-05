@@ -32,7 +32,7 @@ Response:
 }
 ```
 
-The values report whether Vault can currently reach each optional service.
+The values report whether Vaultsh can currently reach each optional service.
 
 ## Execute a Command
 
@@ -67,7 +67,7 @@ command history.
 ```sh
 curl -X POST http://localhost:8080/api/exec \
   -H "Content-Type: application/json" \
-  -d '{"line":"cd experience"}'
+  -d '{"line":"cd /cv/experience"}'
 ```
 
 Continue the session:
@@ -123,8 +123,8 @@ Request:
 
 ```json
 {
-  "line": "cat exp",
-  "cursor": 7,
+  "line": "cat /cv/exp",
+  "cursor": 11,
   "session_id": "<session-id>"
 }
 ```
@@ -134,10 +134,10 @@ Response:
 ```json
 {
   "start": 4,
-  "end": 7,
-  "replacement": "experience/",
+  "end": 11,
+  "replacement": "/cv/experience/",
   "candidates": [
-    "experience/"
+    "/cv/experience/"
   ],
   "session_id": "<session-id>"
 }

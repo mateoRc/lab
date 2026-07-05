@@ -1,6 +1,6 @@
 # Sentinel
 
-**Personal project** · Planned
+**Personal project** · Active, pre-1.0
 
 ## Summary
 
@@ -12,12 +12,19 @@ checks, and deployments to explain failures and assess release risk.
 - **Technology:** Python and GitHub Actions
 - **Interface:** CLI, CI reports, and pull request checks
 
+## Current capabilities
+
+- Deterministic regression and security checks
+- Strict policy validation and normalized evidence
+- Advisory release-risk assessments
+- Markdown, JSON, and sanitized runtime reports
+- Extensible check adapters with bounded output
+
 ## Planned capabilities
 
 - Change-aware release risk assessment
-- Deterministic regression and security checks
-- CI failure analysis with file and line references
-- Deployment and rollback recommendations
+- Production LLM analysis with evidence references
+- Pull-request reporting
 - Human approval for high-risk releases
 
 ## Decisions

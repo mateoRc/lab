@@ -5,10 +5,6 @@ machine-readable check results. It is not a runtime Backend Lab service.
 
 ## Components
 
-### Change Analyzer
-
-Identifies affected repositories, services, files, and configuration surfaces.
-
 ### Check Runner
 
 Executes deterministic regression, security, build, and deployment checks.
@@ -35,13 +31,16 @@ are published.
 
 ### Policy Engine
 
-Applies explicit rules to deterministic results. It owns the release gate and
-does not depend on an LLM response.
+Applies explicit rules to deterministic results and does not depend on an LLM
+response. The current Backend Lab policy is advisory. In non-advisory mode,
+blocked and approval-required decisions cause the CLI to return a non-zero
+exit code.
 
-### Agent Analyzer
+### Analysis Provider
 
-Explains failures, assesses release risk, identifies missing coverage, and
-recommends actions using diff and check evidence.
+The current mock provider summarizes check outcomes. A production provider
+that explains failures, identifies missing coverage, and cites evidence is
+planned but not implemented.
 
 ### Reporter
 
@@ -55,29 +54,39 @@ without treating Sentinel as an online service.
 
 ## Flow
 
-```text
-Git change
-    |
-    +--> deterministic checks --> policy gate --------+
-    |                                                 |
-    +--> diff + check evidence --> agent analysis ----+--> report
-                                                      |
-                                  human approval <----+
-                                                      |
-                                         existing deployment
+```mermaid
+flowchart LR
+    plan["Check plan"]
+    checks["Allowlisted check adapters"]
+    evidence["Normalized evidence"]
+    policy["Policy evaluation"]
+    provider["Mock analysis provider"]
+    report["Markdown and JSON reports"]
+
+    plan --> checks --> evidence
+    evidence --> policy
+    evidence --> provider
+    policy --> report
+    provider --> report
 ```
+
+Change-aware repository analysis, production LLM analysis, pull-request
+comments, and approval workflows remain roadmap items.
 
 ## Trust Boundary
 
-Repository files, diffs, and logs are untrusted input. Sentinel must not execute
-instructions found inside them. Tool access is allowlisted, repository access
-is read-only, secrets are redacted, and production changes require approval.
+Repository files and command output are untrusted input. Sentinel executes only
+configured allowlisted commands, passes arguments without a shell, confines
+working directories to the workspace, and bounds retained output. Backend
+Lab's workflow reduces scanner findings before publication and does not expose
+raw scanner reports in runtime metadata.
 
 ## Decisions
 
 - Deterministic evidence and policy are the authoritative product core.
 - Check adapters are extensible; policy depends only on normalized results.
-- LLM providers explain evidence and context but never decide check outcomes.
+- Analysis providers explain evidence and context but never decide check
+  outcomes.
 - Sentinel runs as an ephemeral CI CLI and stores no database initially.
 - Repository writes and deployments require separate human-controlled tooling.
 

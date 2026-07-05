@@ -14,7 +14,7 @@
 - [x] `POST /events`
 - [x] Validate service, event, and name
 - [x] Accept duration and exit code
-- [x] Support Vault events
+- [x] Support Vaultsh events
 - [x] Support Atlas events
 
 ### Aggregation

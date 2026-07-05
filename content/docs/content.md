@@ -1,7 +1,7 @@
 # Content
 
 The `lab` repository owns the files under `content/`. Docker Compose mounts
-the directory read-only into Vault and Atlas at `/app/content`.
+the directory read-only into Vaultsh and Atlas at `/app/content`.
 
 ## Layout
 

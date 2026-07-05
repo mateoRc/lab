@@ -1,6 +1,6 @@
 # Backend Lab
 
-Local orchestration and shared content for Vault, Atlas, and Forge, with
+Local orchestration and shared content for Vaultsh, Atlas, and Forge, with
 advisory release analysis from Sentinel.
 
 Each application repository owns its source code, tests, dependencies, and
@@ -13,23 +13,20 @@ orchestration only.
 flowchart LR
     User[Browser] -->|HTTPS| Caddy
 
-    subgraph Frontend["frontend network"]
-        Caddy[Caddy ingress]
-        Vaultsh[Vaultsh<br/>Go shell engine]
-        Caddy -->|HTTP| Vaultsh
+    subgraph Compose["Production Docker Compose"]
+        Caddy[Caddy<br/>frontend network]
+        Vaultsh[Vaultsh<br/>frontend + backend networks]
+        Atlas[Atlas<br/>backend network]
+        Forge[Forge<br/>backend network]
+        Content[content/<br/>Markdown files]
+
+        Caddy -->|HTTP · frontend| Vaultsh
+        Vaultsh -->|Search · backend| Atlas
+        Vaultsh -->|Events and analytics · backend| Forge
+        Atlas -->|Search events · backend| Forge
+        Content -.->|Read-only mount| Vaultsh
+        Content -.->|Read-only mount| Atlas
     end
-
-    subgraph Backend["internal backend network"]
-        Atlas[Atlas<br/>Java search]
-        Forge[Forge<br/>Python telemetry]
-    end
-
-    Content[(Shared content<br/>read-only)] -.->|Read-only mount| Vaultsh
-    Content -.->|Read-only mount| Atlas
-
-    Vaultsh -->|Search · HTTP + bearer token| Atlas
-    Vaultsh -->|Events and analytics · HTTP + bearer token| Forge
-    Atlas -->|Search events · HTTP + bearer token| Forge
 
     Actions[GitHub Actions] -->|SSH · rsync · Docker Compose| Host[Hetzner host]
     Host -.-> Caddy
@@ -67,7 +64,7 @@ docker compose up --build
 
 Services:
 
-- Vault: http://localhost:8080
+- Vaultsh: http://localhost:8080
 - Atlas: private Compose network only
 - Forge: private Compose network only
 
@@ -123,8 +120,9 @@ openssl rand -hex 32
 Set the results as `ATLAS_AUTH_TOKEN` and `FORGE_AUTH_TOKEN`. Compose refuses
 to start when either token is missing. Do not commit `.env`.
 
-Only Vault publishes a host port. Atlas and Forge are reachable exclusively
-through the private Compose network and require bearer authentication on all
+In local Compose, only Vaultsh publishes a host port. In production, only
+Caddy publishes host ports. Atlas and Forge are reachable exclusively through
+the private backend network and require bearer authentication on all
 non-health endpoints.
 
 [`sentinel.yml`](sentinel.yml) defines the release policy. Sentinel currently
@@ -132,9 +130,9 @@ runs real deterministic checks with mock analysis in advisory mode.
 
 ## Shared content
 
-`content/` is the single source of truth. Compose mounts it into both
-containers at `/app/content` read-only. Vault loads it as its virtual
-filesystem and Atlas scans it for search requests.
+`content/` is the single source of truth. Compose mounts it into Vaultsh and
+Atlas at `/app/content` read-only. Vaultsh loads it as its virtual filesystem,
+and Atlas scans it for search requests.
 
 ## Documentation
 

@@ -24,6 +24,8 @@ the API result. The command's normal text output is unchanged.
 | `search` | `search <query>` | Search portfolio content with the Atlas search engine |
 | `metrics` | `metrics` | Show the Forge analytics summary |
 | `dashboard` | `dashboard` | Show the Forge analytics dashboard |
+| `deployments` | `deployments` | Show the latest production deployment |
+| `whoami` | `whoami` | Show Mateo's current role and focus |
 
 Use `help <command>` inside Vaultsh for command-specific usage.
 
@@ -37,7 +39,7 @@ lists directories.
 pwd
 ls
 ls -la /
-ls -R experience
+ls -R /cv/experience
 tree
 tree -a
 tree -L 2 /

@@ -113,3 +113,24 @@ docker compose -f docker-compose.prod.yml up --build -d --wait
 
 Review logs and health status after every update. Do not automatically prune
 images until the updated stack has passed its health checks.
+
+## Targeted Service Updates
+
+The services are independently rebuildable within the same Compose project.
+For a manual service-only update:
+
+```sh
+git -C ../atlas pull --ff-only
+docker compose -f docker-compose.prod.yml config --quiet
+docker compose -f docker-compose.prod.yml up --build -d --wait --no-deps atlas
+```
+
+Replace `atlas` and its source path with `vault`/`../vaultsh` or
+`forge`/`../forge` as needed. Use a full-stack update when Compose
+configuration, shared content, service tokens, or cross-service contracts
+change.
+
+The automated deployment remains centralized in Lab. Separate per-service
+deployment workflows should wait until production uses pinned image versions
+and defines API compatibility rules; otherwise independent pipelines would
+increase coordination risk without isolating the shared deployment state.
