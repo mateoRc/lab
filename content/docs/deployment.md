@@ -103,7 +103,7 @@ volume. The default policy retains 30 days and limits the SQLite database plus
 WAL to 128 MiB. Normal `docker compose down` preserves this volume; do not use
 `down --volumes` unless deleting analytics is intentional.
 
-Create a consistent off-server backup while Forge remains online:
+Create a consistent backup file while Forge remains online:
 
 ```sh
 mkdir -p backups
@@ -126,7 +126,7 @@ docker compose \
   exec forge rm /app/data/forge-backup.db
 ```
 
-Copy `backups/forge.db` off the host. To restore, stop Forge, replace the
+Transfer `backups/forge.db` off the host. To restore, stop Forge, replace the
 database through a one-off container, and start Forge again:
 
 ```sh

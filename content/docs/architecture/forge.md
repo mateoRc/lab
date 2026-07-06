@@ -17,7 +17,7 @@ flowchart LR
 
     producers --> ingest -->|"write accepted event"| storage
     vaultsh --> query -->|"request summary"| summary
-    storage -->|"retained event rows"| summary
+    storage -->|"aggregates and durations"| summary
     summary --> output
 ```
 
@@ -25,8 +25,8 @@ flowchart LR
   UTC timestamp.
 - **SQLite store:** applies ordered migrations, WAL mode, retention, and
   database-size limits.
-- **Summary builder:** filters persisted rows and calculates counts, average
-  latency, and median latency.
+- **Summary builder:** requests filtered SQL aggregates and durations, then
+  assembles the response and calculates median latency.
 - **Dashboard renderer:** converts a summary into plain text and proportional
   bars.
 

@@ -27,6 +27,11 @@ Fields:
 - `duration_ms` — execution duration in milliseconds.
 - `exit_code` — `0` for success; non-zero values count as errors.
 
+String fields accept only letters, numbers, `.`, `_`, and `-`. Their maximum
+lengths are 64 characters for `service` and 128 for `event` and `name`.
+`duration_ms` is limited to `0`–`86400000`; `exit_code` is limited to
+`0`–`255`. Unknown fields are rejected.
+
 ## Vaultsh Events
 
 ### `command.executed`
