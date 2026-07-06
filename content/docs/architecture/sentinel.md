@@ -1,108 +1,53 @@
 # Sentinel Architecture
 
-Sentinel runs in CI and consumes repository configuration, Git diffs, and
-machine-readable check results. It is not a runtime Backend Lab service.
-
-## Components
-
-### Impact Analyzer
-
-Maps normalized changed paths to affected repositories, runtime services, and
-check groups using Lab's versioned `sentinel-impact.json` rules. Service
-repositories can dispatch their successful `main` CI result to Lab with the
-exact commit SHA.
-
-### Check Runner
-
-Executes deterministic regression, security, build, and deployment checks.
-Every check produces a status, structured evidence, and logs.
-
-Checks use adapters that convert tool-specific output into one normalized
-result contract. Adding a scanner or test suite should require a new adapter,
-not changes to policy, agent, or reporting code.
-
-The command adapter accepts argument arrays rather than shell strings, allows
-only approved executables, confines working directories to the CI workspace,
-limits execution time, and retains only a bounded failure-output tail.
-Additional adapters normalize GitHub Actions outcomes and verify required or
-forbidden configuration markers. A local-only HTTP adapter validates service
-contracts and degraded behavior through Vaultsh's public API.
-
-Backend Lab runs containerized tests, Compose validation, repository secret and
-dependency scanning, container-image scanning, security-header policy, and
-internal-network policy. Third-party scanner actions are pinned to full commit
-SHAs. Detailed scanner output is not published to the public dashboard.
-The public assessment contains bounded counts, vulnerability identifiers,
-package names, installed and fixed versions, and deterministic remediation
-actions. Secret values and raw scanner reports are deleted before artifacts
-are published.
-
-### Policy Engine
-
-Applies explicit rules to deterministic results and does not depend on an LLM
-response. The current Backend Lab policy is advisory. In non-advisory mode,
-blocked and approval-required decisions cause the CLI to return a non-zero
-exit code.
-
-### Analysis Provider
-
-The current mock provider summarizes check outcomes. A production provider
-that explains failures, identifies missing coverage, and cites evidence is
-planned but not implemented.
-
-### Reporter
-
-Produces Markdown and JSON reports. Reports distinguish facts, policy
-decisions, and agent inferences. Pull-request runs create or update one concise
-advisory comment.
-
-On `main`, CI also publishes a reduced assessment containing risk, check
-statuses, provider, commit, timestamp, and summary. Vaultsh reads this file
-through Lab's existing read-only runtime mount and shows the last assessment
-without treating Sentinel as an online service.
+Sentinel is an ephemeral CI CLI. It consumes configuration, changed paths, and
+machine-readable check results; it is not part of the production Compose
+runtime.
 
 ## Flow
 
 ```mermaid
 flowchart LR
-    plan["Check plan"]
-    checks["Allowlisted check adapters"]
-    evidence["Normalized evidence"]
-    policy["Policy evaluation"]
-    provider["Mock analysis provider"]
-    report["Markdown and JSON reports"]
-
-    plan --> checks --> evidence
-    evidence --> policy
-    evidence --> provider
-    policy --> report
+    changes["Changed paths"] --> impact["Impact analysis"]
+    plan["Check plan"] --> checks["Allowlisted adapters"]
+    impact --> checks
+    checks --> evidence["Normalized evidence"]
+    evidence --> policy["Deterministic policy"]
+    evidence --> provider["Analysis provider"]
+    policy --> report["Markdown and JSON reports"]
     provider --> report
 ```
 
-Production LLM analysis and approval workflows remain roadmap items.
+## Components
 
-## Trust Boundary
+- **Impact analyzer:** maps changed paths to repositories, services, and check
+  groups using Lab's versioned rules.
+- **Check adapters:** execute or import regression, security, build, contract,
+  and deployment results into one bounded evidence contract.
+- **Policy engine:** makes deterministic release decisions independently of
+  model output.
+- **Analysis provider:** explains evidence. The current provider is a mock;
+  production LLM analysis remains planned.
+- **Reporter:** separates facts, policy decisions, and inferences in CI
+  artifacts, pull-request comments, and sanitized runtime metadata.
 
-Repository files and command output are untrusted input. Sentinel executes only
-configured allowlisted commands, passes arguments without a shell, confines
-working directories to the workspace, and bounds retained output. A centralized
-redactor removes common credential forms and explicit check-environment secrets
-before evidence is stored. Backend Lab's workflow reduces scanner findings
-before publication and does not expose raw scanner reports in runtime metadata.
+## Trust boundary
 
-## Decisions
+Repository files and tool output are untrusted. Command checks use argument
+arrays rather than shell strings, allowlisted executables, workspace-confined
+directories, timeouts, and bounded retained output. Central redaction removes
+common credentials and configured secrets before evidence is stored.
 
-- Deterministic evidence and policy are the authoritative product core.
-- Check adapters are extensible; policy depends only on normalized results.
-- Analysis providers explain evidence and context but never decide check
-  outcomes.
-- Sentinel runs as an ephemeral CI CLI and stores no database initially.
-- Repository writes and deployments require separate human-controlled tooling.
+Raw scanner reports and secret values are never included in public runtime
+metadata. Analysis providers cannot override check outcomes, write
+repositories, or deploy.
 
-Backend Lab owns the versioned policy in `lab/sentinel.yml`. Unknown or missing
-required fields will fail validation, agent capabilities are advisory, and
-secrets must come from CI rather than YAML.
+## Ownership and state
 
-The current policy uses `advisory_only: true`. Changing it to `false` makes
-blocked and approval-required decisions fail the Sentinel CI step; this switch
-will remain advisory until the check set is proven stable.
+Sentinel owns the CLI, normalized evidence model, adapters, policy engine, and
+reporters. Lab owns Backend Lab's `sentinel.yml`, impact rules, and workflow
+integration. Sentinel stores no database.
+
+The current Lab policy is advisory. In non-advisory mode, blocked and
+approval-required decisions produce a non-zero exit code; promotion to that
+mode requires a proven check set and protected approval workflow.

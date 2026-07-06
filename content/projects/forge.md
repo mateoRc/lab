@@ -2,25 +2,9 @@
 
 **Personal project** · Active
 
-## Summary
+A Python/FastAPI telemetry service for Vaultsh and Atlas.
 
-A lightweight telemetry service for Vaultsh and Atlas with in-memory
-aggregation and terminal-friendly activity dashboards.
-
-## Details
-
-- **Technology:** Python, FastAPI, and Docker
-- **API:** `POST /events`, `GET /healthz`, `GET /summary`, and `GET /dashboard`
-- **Event fields:** Service, event, name, duration, and exit code
-
-## Features
-
-- Request, error, latency, service, and command aggregation
-- Filtered summaries and configurable ASCII dashboards
-- Bearer service authentication
-- Version-labeled container images
-
-## Decisions
-
-- Keep live telemetry in memory and accept reset-on-redeploy behavior.
-- Avoid Grafana, Prometheus, Kafka, and a database until persistence is needed.
+- In-memory request, error, latency, service, and command aggregates
+- Filtered JSON summaries and terminal-friendly dashboards
+- Authenticated service endpoints
+- Deliberately accepts reset-on-restart behavior until persistence is required

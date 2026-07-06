@@ -1,220 +1,39 @@
-# Roadmap
+# Vaultsh Roadmap
 
-## MVP
+This file lists unfinished work only. Current behavior belongs in
+[Vaultsh architecture](../architecture/vaultsh.md) and the
+[command reference](../commands.md).
 
-### Bootstrap
+## Shell and state
 
-- [x] Containerized Go HTTP server
-- [x] Docker Compose
-- [x] Browser terminal
-- [x] Health endpoint
+- Add file timestamps and `ls -t`.
+- Introduce session-store and filesystem abstractions.
+- Add an external session store if Vaultsh runs multiple replicas.
+- Evaluate aliases, environment variables, plugins, and multiple mounted
+  vaults.
+- Add fuzzy history search with `Ctrl+R`.
 
-### HTTP API
+## Search and performance
 
-- [x] `POST /api/exec`
-- [x] Request/response models
-- [x] Unknown command handling
+- Add indexing, ranking, and a query language through Atlas.
+- Add benchmarks and profiling before introducing an LRU cache.
 
-### Shell Engine
+## Content and documents
 
-- [x] Engine
-- [x] Command registry
+- Add education, certifications, achievements, public contact links, and
+  additional technical write-ups.
+- Export selected canonical Markdown documents to deterministic PDFs outside
+  the searchable content tree.
+- Evaluate an `open <path.md>` command for generated documents.
+- Mount cached provider content from the proposed [Scribe service](scribe.md).
 
-### Commands
+## Operations
 
-- [x] `help`
-- [x] `about`
-- [x] `clear` backend action
-- [x] Command interface
+- Keep a short sanitized deployment history.
+- Evaluate JWT authentication only if a user-specific access model is added.
+- Evaluate WebSocket, TUI, and CLI clients if the HTTP terminal is
+  insufficient.
 
-### Frontend
+## Optional product details
 
-- [x] Send commands to API
-- [x] Render output
-- [x] Basic history
-- [x] Auto focus
-- [x] Clear shortcut (`Ctrl+L`)
-
-### Developer Experience
-
-- [x] Graceful shutdown
-- [x] Structured logging
-- [x] Basic tests
-- [x] Shared read-only content
-- [x] GitHub Actions CI
-
-## v1
-
-### Virtual Filesystem
-
-- [x] Node model
-- [x] Directory
-- [x] File
-- [x] Path resolver
-- [x] Current working directory
-
-### Commands
-
-- [x] `pwd`
-- [x] `ls`
-- [x] `cd`
-- [x] `cat`
-- [x] `tree`
-- [x] `history`
-- [x] Command-specific help
-
-### Sessions
-
-- [x] Execution context
-- [x] Session ID
-- [x] Command history
-- [x] Working directory per session
-- [x] Session expiration and cleanup
-
-### External Services
-
-- [x] Optional Atlas search integration
-- [x] Optional Forge telemetry integration
-- [x] `search` command
-- [x] `metrics` command
-- [x] `dashboard` command
-- [x] Graceful degradation
-- [x] Atlas and Forge frontend status indicators
-
-## v2
-
-### Parser
-
-- [x] Tokenizer
-- [x] Lexer
-- [x] Parser
-- [x] AST
-
-### Pipelines
-
-- [x] Pipe operator
-- [x] Pipeline executor
-
-### Built-ins
-
-- [x] `grep`
-- [x] `head`
-- [x] `tail`
-- [x] `wc`
-- [x] `sort`
-
-### Command Options
-
-- [x] `ls -a`, `ls -l`, and combined forms
-- [x] `ls -R [path]`
-- [x] `tree -L <depth> [path]`
-- [x] `tree -a` includes hidden entries
-- [x] `cat -n <file>`
-- [x] `grep -i` and `grep -n`
-- [x] `head -n <count>` and `tail -n <count>`
-- [x] `sort -r`
-- [x] Verbose output (`--verbose`) returned with command results
-
-## v3
-
-### Command Options
-
-- [ ] File timestamps and `ls -t`
-
-### Storage
-
-- [x] Mounted raw Markdown content
-- [ ] Session store abstraction
-- [ ] External session store
-- [ ] Filesystem abstraction
-
-### Authentication
-
-- [ ] JWT authentication
-
-### Performance
-
-- [ ] LRU cache
-- [ ] Benchmarks
-- [ ] Profiling
-
-### Deployment Visibility
-
-- [x] Publish sanitized deployment metadata from CI
-- [x] Mount deployment metadata read-only
-- [x] Add deployment status to the dashboard
-- [x] Add a `deployments` command
-- [ ] Keep a short history of sanitized deployments
-- [x] Publish immutable commit-tagged container images
-- [x] Deploy pinned per-service image versions
-- [x] Verify candidate images before changing release metadata
-- [x] Support targeted deployment and tested release rollback
-
-### Production Hardening
-
-- [x] API request and command size limits
-- [x] Per-client API rate limits
-- [x] Active session cap
-- [x] HTTP server timeouts
-- [x] Browser security headers
-- [x] HTTPS reverse proxy deployment
-- [x] Container resource and privilege limits
-
-## v4
-
-### Search
-
-- [x] Search service
-- [ ] Index
-- [ ] Ranking
-- [ ] Query language
-
-### Document Export
-
-- [ ] Export selected Markdown documents to PDF from the canonical raw source
-- [ ] Keep generated PDFs outside the searchable content tree
-- [ ] Define deterministic PDF styling and page-break behavior
-- [ ] Evaluate an optional `open <path.md>` command that opens the exported PDF
-      in a new browser tab
-- [ ] Keep `cat`, `grep`, `head`, `tail`, and `wc` operating on raw Markdown
-
-## Post-v1 Content
-
-- [ ] Education
-- [ ] Certifications
-- [ ] Achievements
-- [ ] Public contact links
-- [ ] Availability
-- [ ] Additional project profiles
-- [ ] Architecture decisions and technical write-ups
-- [ ] Search-friendly technology and domain synonyms
-
-## Nice to Have
-
-- [x] Command and path autocomplete
-- [ ] Mount cached provider-generated content from the proposed
-      [Scribe service](scribe.md)
-- [ ] Aliases
-- [ ] Environment variables
-- [ ] Configuration
-- [ ] Plugin system
-- [ ] Multiple mounted vaults
-- [ ] WebSocket transport
-- [ ] TUI client
-- [ ] CLI client
-- [ ] Fuzzy history search with `Ctrl+R`
-
-### Easter Eggs
-
-- [x] `.motd` hidden welcome message
-- [x] `whoami` prints Mateo's current role and focus
-- [ ] Single-command triggers
-- [ ] Command-sequence triggers
-- [ ] Session-scoped progress
-- [x] `hire mateo` returns a sudo-access hint
-- [x] `sudo hire mateo -s <yearly_salary>` requires a yearly amount
-- [x] Yearly amounts below `70000` suggest `100000`
-- [x] Yearly amounts from `70000` through `100000` receive a 1.5× counter-offer
-- [x] Yearly amounts above `100000` return an immediate start response
-- [x] Return a counter-offer at 1.5× the submitted salary
-- [x] Accept a pending counter-offer with `y` or `Y`
+- Add session-scoped command-sequence easter eggs.

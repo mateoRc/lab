@@ -1,145 +1,63 @@
 # Backend Lab
 
-Local orchestration and shared content for Vaultsh, Atlas, and Forge, with
-advisory release analysis from Sentinel.
+Orchestration, deployment configuration, and shared content for Vaultsh,
+Atlas, Forge, and Sentinel.
 
-Each application repository owns its source code, tests, dependencies, and
-Dockerfile. Lab owns shared configuration, content, and Docker Compose
-orchestration only.
+This repository owns Docker Compose, Caddy, environment configuration, release
+policy, and `content/`. Each service repository owns its code, tests,
+dependencies, Dockerfile, and development instructions.
 
-## Architecture
+## Run locally
 
-```mermaid
-flowchart LR
-    User[Browser] -->|HTTPS| Caddy
-
-    subgraph Compose["Production Docker Compose"]
-        Caddy[Caddy<br/>frontend network]
-        Vaultsh[Vaultsh<br/>frontend + backend networks]
-        Atlas[Atlas<br/>backend network]
-        Forge[Forge<br/>backend network]
-        Content[content/<br/>Markdown files]
-
-        Caddy -->|HTTP · frontend| Vaultsh
-        Vaultsh -->|Search · backend| Atlas
-        Vaultsh -->|Events and analytics · backend| Forge
-        Atlas -->|Search events · backend| Forge
-        Content -.->|Read-only mount| Vaultsh
-        Content -.->|Read-only mount| Atlas
-    end
-
-    Actions[GitHub Actions] -->|SSH · rsync · Docker Compose| Host[Hetzner host]
-    Host -.-> Caddy
-```
-
-- Caddy is the only internet-facing container.
-- Vaultsh owns the user experience and degrades gracefully when Atlas or Forge
-  is unavailable.
-- Atlas and Forge are reachable only through the internal backend network.
-- Vaultsh and Atlas consume the same read-only content.
-
-## Testing
-
-| Layer | Coverage |
-| --- | --- |
-| Vaultsh unit tests | Tokenizer, lexer, parser, commands, virtual filesystem, sessions, completion, HTTP limits, and telemetry dispatch |
-| Atlas unit and integration tests | Search behavior, HTTP controller, health endpoint, authentication, and telemetry dispatch |
-| Forge unit and API tests | Event validation, aggregation, filtering, authentication, health, summaries, and dashboard rendering |
-| Container tests | Every service image builds and runs its test suite before producing the runtime image |
-| Deployment verification | Compose waits for service health checks, then CI verifies the public HTTPS health endpoint |
-
-Tests run in each service repository's CI workflow. Production deployment runs
-only from Lab, pulls service images pinned by Git SHA, and publishes sanitized
-per-service deployment status to Vaultsh.
-
-## Prerequisites
-
-Install Docker Engine or Docker Desktop with Docker Compose v2. Clone `lab`,
-`vaultsh`, `atlas`, and `forge` as sibling directories.
-
-## Run
+Prerequisites: Docker Engine or Docker Desktop with Compose v2, plus sibling
+clones of `vaultsh`, `atlas`, and `forge`.
 
 ```sh
+cp .env.example .env
+openssl rand -hex 32 # ATLAS_AUTH_TOKEN
+openssl rand -hex 32 # FORGE_AUTH_TOKEN
 docker compose up --build
 ```
 
-Services:
-
-- Vaultsh: http://localhost:8080
-- Atlas: private Compose network only
-- Forge: private Compose network only
-
-Stop the stack:
-
-```sh
-docker compose down
-```
-
-To get a temporary public URL for the local app:
-
-```sh
-docker run --rm cloudflare/cloudflared:latest tunnel --url http://host.docker.internal:8080
-```
-
-Open the `trycloudflare.com` URL printed by the command.
-
-## Production
-
-Pushes to `main` deploy to [mateolabs.dev](https://mateolabs.dev) through
-GitHub Actions. To access the server:
-
-```sh
-ssh -i <private-key> deploy@<server-ip>
-```
-
-See the [deployment guide](content/docs/deployment.md) for the server layout,
-security controls, and manual recovery commands.
-
-## Logs
-
-All services write logs to container stdout. Docker rotates each service's
-local JSON logs at 10 MB and retains three files.
+Open http://localhost:8080. Atlas and Forge are available only on the private
+Compose network.
 
 ```sh
 docker compose logs --tail=100
-docker compose logs -f forge
-docker compose logs -f vault atlas
+docker compose logs -f vault atlas forge
+docker compose down
 ```
 
-Logs are local operational output, not Forge telemetry. Forge keeps aggregated
-telemetry counters in memory and does not store application logs.
+Do not commit `.env`. Set `ATLAS_AUTH_TOKEN` and `FORGE_AUTH_TOKEN` to
+independent values; Compose rejects missing tokens.
 
-## Configuration
+## Production
 
-Copy `.env.example` to `.env`, then generate independent service tokens:
+Pushes to `main` deploy immutable, Git-SHA-tagged service images to
+[mateolabs.dev](https://mateolabs.dev). Caddy is the only container that
+publishes host ports. See the [deployment guide](content/docs/deployment.md)
+for host setup, security controls, updates, and rollback.
 
-```sh
-openssl rand -hex 32
-openssl rand -hex 32
-```
+## Repository scope
 
-Set the results as `ATLAS_AUTH_TOKEN` and `FORGE_AUTH_TOKEN`. Compose refuses
-to start when either token is missing. Do not commit `.env`.
+- `compose.yaml` and `compose.prod.yaml`: local and production topology
+- `Caddyfile`: HTTPS ingress
+- `content/`: canonical Markdown mounted read-only by Vaultsh and Atlas
+- `sentinel.yml` and `sentinel-impact.json`: release-analysis policy
+- `.github/workflows/`: integration, assessment, and deployment automation
 
-In local Compose, only Vaultsh publishes a host port. In production, only
-Caddy publishes host ports. Atlas and Forge are reachable exclusively through
-the private backend network and require bearer authentication on all
-non-health endpoints.
-
-[`sentinel.yml`](sentinel.yml) defines the release policy. Sentinel currently
-runs change-selected deterministic checks, service-contract and degradation
-checks, centralized evidence redaction, and mock analysis in advisory mode.
-
-## Shared content
-
-`content/` is the single source of truth. Compose mounts it into Vaultsh and
-Atlas at `/app/content` read-only. Vaultsh loads it as its virtual filesystem,
-and Atlas scans it for search requests.
+Application logs go to container stdout and remain separate from Forge
+telemetry.
 
 ## Documentation
 
-Shared documentation lives under `content/docs/`. Start with the
-[architecture overview](content/docs/architecture/overview.md) or
-[event catalog](content/docs/events.md). Vaultsh, Atlas, Forge, and Sentinel
-have concise service documents under
-[`content/docs/architecture/`](content/docs/architecture/).
+- [Architecture overview](content/docs/architecture/overview.md)
+- [HTTP API](content/docs/api.md)
+- [Command reference](content/docs/commands.md)
+- [Event catalog](content/docs/events.md)
+- [Content format](content/docs/content.md)
+- [Roadmaps](content/docs/roadmaps/)
+
+Service-specific architecture is under
+[`content/docs/architecture/`](content/docs/architecture/). Development
+commands belong in each service repository README.

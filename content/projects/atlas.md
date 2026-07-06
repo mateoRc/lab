@@ -2,25 +2,10 @@
 
 **Personal project** · Active
 
-## Summary
+An authenticated Java/Spring Boot service that searches the Markdown content
+shared with Vaultsh.
 
-An authenticated HTTP search service that performs case-insensitive search
-across the shared portfolio content used by Vaultsh.
-
-## Details
-
-- **Technology:** Java, Spring Boot, Maven, and Docker
-- **API:** `GET /search` and `GET /healthz`
-
-## Features
-
-- Recursive UTF-8 content discovery and line-by-line scanning
-- File path and line number results
-- Query validation and integration tests
-- Bearer service authentication
-- Best-effort telemetry delivery to Forge
-
-## Decisions
-
-- Keep search infrastructure minimal for the current content size.
-- Avoid a database or external search engine until indexing is justified.
+- Deterministic, case-insensitive line scanning
+- Source paths, line numbers, and original text in results
+- Best-effort Forge telemetry
+- Deliberately avoids indexing until scale justifies it

@@ -2,24 +2,10 @@
 
 **Personal project** · Active
 
-## Summary
+A Go service and browser terminal that exposes structured portfolio content as
+a read-only virtual shell.
 
-A read-only virtual shell engine and backend-first terminal interface for
-exploring structured professional and project content.
-
-## Details
-
-- **Technology:** Go, Docker, JavaScript, HTML, and CSS
-- **API:** `POST /api/exec`, `POST /api/complete`, and `GET /api/status`
-
-## Features
-
-- Tokenizer, lexer, parser, AST, and pipeline execution
-- Session-isolated virtual filesystem, paths, history, and autocomplete
-- Atlas search and Forge telemetry integrations with graceful degradation
-- Rate limits, size limits, security headers, and deployment visibility
-
-## Decisions
-
-- Keep the frontend small and ship it with the Go service.
-- Never execute host commands or expose the host filesystem.
+- Tokenizer, parser, pipelines, and composable Unix-like commands
+- Session-isolated paths, history, and completion
+- Atlas search and Forge telemetry with graceful degradation
+- Virtual filesystem only: no host command execution or host filesystem access
