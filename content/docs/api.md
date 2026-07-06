@@ -56,7 +56,8 @@ Response:
 {
   "output": "/",
   "exit_code": 0,
-  "session_id": "<session-id>"
+  "session_id": "<session-id>",
+  "current_directory": "/"
 }
 ```
 
@@ -87,7 +88,8 @@ Some commands return a frontend action:
   "output": "",
   "exit_code": 0,
   "action": "clear",
-  "session_id": "<session-id>"
+  "session_id": "<session-id>",
+  "current_directory": "/cv/experience"
 }
 ```
 
@@ -105,7 +107,8 @@ changing command output:
   "output": "- **Languages:** Python, Java, JavaScript, TypeScript, Go, and C#",
   "exit_code": 0,
   "verbose": "pipeline=cat,grep; stages=2; completed=2",
-  "session_id": "<session-id>"
+  "session_id": "<session-id>",
+  "current_directory": "/"
 }
 ```
 
@@ -139,12 +142,15 @@ Response:
   "candidates": [
     "/cv/experience/"
   ],
-  "session_id": "<session-id>"
+  "session_id": "<session-id>",
+  "current_directory": "/"
 }
 ```
 
 `start` and `end` identify the input range the client should replace.
-`replacement` is the longest common candidate prefix.
+`replacement` is the longest common candidate prefix. Both endpoints return
+`current_directory` so clients can render session state without duplicating
+path resolution.
 
 ## Errors
 
