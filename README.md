@@ -40,7 +40,8 @@ for host setup, security controls, updates, and rollback.
 
 ## Repository scope
 
-- `compose.yaml` and `compose.prod.yaml`: local and production topology
+- `docker-compose.yml` and `docker-compose.prod.yml`: local and production
+  topology
 - `Caddyfile`: HTTPS ingress
 - `content/`: canonical Markdown mounted read-only by Vaultsh and Atlas
 - `sentinel.yml` and `sentinel-impact.json`: release-analysis policy
