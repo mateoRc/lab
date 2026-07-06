@@ -62,3 +62,14 @@ telemetry.
 Service-specific architecture is under
 [`content/docs/architecture/`](content/docs/architecture/). Development
 commands belong in each service repository README.
+
+### Ownership
+
+- Repository READMEs own setup, configuration, and development commands.
+- Architecture documents own current design, boundaries, and trade-offs.
+- API, command, and event documents own exact interface behavior.
+- Roadmaps track completed milestones and unfinished work.
+- Project pages provide short public summaries.
+- The deployment guide owns production operations and recovery.
+
+Link to the authoritative document instead of copying its content.
