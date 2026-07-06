@@ -5,6 +5,11 @@ import re
 from pathlib import Path
 
 SERVICES = ("vault", "atlas", "forge")
+IMAGE_REPOSITORIES = {
+    "vault": "vaultsh",
+    "atlas": "atlas",
+    "forge": "forge",
+}
 _SHA = re.compile(r"^[0-9a-f]{40}$")
 
 
@@ -58,7 +63,7 @@ def _publish(runtime: Path, release: dict[str, str]) -> None:
     _atomic_json(runtime / "release.json", release)
     lines = [
         f"{service.upper()}_IMAGE=ghcr.io/mateorc/"
-        f"{'vaultsh' if service == 'vault' else service}:{release[service]}"
+        f"{IMAGE_REPOSITORIES[service]}:{release[service]}"
         for service in SERVICES
     ]
     _atomic_text(runtime / "versions.env", "\n".join(lines) + "\n")
