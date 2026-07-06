@@ -30,6 +30,8 @@ Set the generated values and deployment domain:
 DOMAIN=portfolio.example.com
 ATLAS_AUTH_TOKEN=<first-generated-token>
 FORGE_AUTH_TOKEN=<second-generated-token>
+FORGE_RETENTION_DAYS=30
+FORGE_MAX_DATABASE_BYTES=134217728
 SESSION_LIMIT=5000
 ```
 
@@ -93,6 +95,61 @@ docker compose \
 ```
 
 Do not add host `ports` entries to Vaultsh, Atlas, or Forge.
+
+## Forge data
+
+Forge stores accepted events in `/app/data/forge.db` on the `forge_data` named
+volume. The default policy retains 30 days and limits the SQLite database plus
+WAL to 128 MiB. Normal `docker compose down` preserves this volume; do not use
+`down --volumes` unless deleting analytics is intentional.
+
+Create a consistent off-server backup while Forge remains online:
+
+```sh
+mkdir -p backups
+docker compose \
+  --env-file .env \
+  --env-file runtime/versions.env \
+  -f docker-compose.prod.yml \
+  exec forge python -m scripts.database backup \
+  --database /app/data/forge.db \
+  --output /app/data/forge-backup.db
+docker compose \
+  --env-file .env \
+  --env-file runtime/versions.env \
+  -f docker-compose.prod.yml \
+  cp forge:/app/data/forge-backup.db backups/forge.db
+docker compose \
+  --env-file .env \
+  --env-file runtime/versions.env \
+  -f docker-compose.prod.yml \
+  exec forge rm /app/data/forge-backup.db
+```
+
+Copy `backups/forge.db` off the host. To restore, stop Forge, replace the
+database through a one-off container, and start Forge again:
+
+```sh
+docker compose \
+  --env-file .env \
+  --env-file runtime/versions.env \
+  -f docker-compose.prod.yml stop forge
+docker compose \
+  --env-file .env \
+  --env-file runtime/versions.env \
+  -f docker-compose.prod.yml \
+  run --rm \
+  -v "$(pwd)/backups:/backup:ro" \
+  forge python -m scripts.database restore \
+  --database /app/data/forge.db \
+  --input /backup/forge.db
+docker compose \
+  --env-file .env \
+  --env-file runtime/versions.env \
+  -f docker-compose.prod.yml up -d --wait forge
+```
+
+Restore validates SQLite integrity and atomically replaces the database.
 
 ## Protection Limits
 

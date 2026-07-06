@@ -1,67 +1,68 @@
 # Forge Architecture
 
-Forge receives service telemetry, aggregates it in memory, and exposes JSON
-summaries and terminal-friendly dashboards.
+Forge receives authenticated telemetry, stores bounded event records in
+SQLite, and exposes filtered JSON summaries and terminal-friendly dashboards.
 
 ## Components
 
 ```mermaid
 flowchart LR
     producers["Vaultsh and Atlas"]
-    api["FastAPI endpoints"]
-    metrics["Thread-safe metrics store"]
+    ingest["POST /events"]
+    query["GET /summary or /dashboard"]
+    storage[("SQLite event store")]
     summary["Summary builder"]
-    dashboard["ASCII dashboard renderer"]
+    output["JSON summary or ASCII dashboard"]
     vaultsh["Vaultsh"]
 
-    producers -->|"POST /events"| api --> metrics
-    metrics --> summary
-    vaultsh -->|"GET /summary or /dashboard"| api
-    api --> summary
-    summary --> dashboard
+    producers --> ingest -->|"write accepted event"| storage
+    vaultsh --> query -->|"request summary"| summary
+    storage -->|"retained event rows"| summary
+    summary --> output
 ```
 
-- **Event endpoint:** Validates and records authenticated telemetry events.
-- **Metrics store:** Aggregates counts and durations by service, event, and
-  command name under a lock.
-- **Summary endpoint:** Filters aggregates and returns JSON.
-- **Dashboard renderer:** Converts a summary into plain text and proportional
+- **Event endpoint:** validates bounded event fields and adds a server-generated
+  UTC timestamp.
+- **SQLite store:** applies ordered migrations, WAL mode, retention, and
+  database-size limits.
+- **Summary builder:** filters persisted rows and calculates counts, average
+  latency, and median latency.
+- **Dashboard renderer:** converts a summary into plain text and proportional
   bars.
 
-The health endpoint is public inside the private Compose network. Event,
-summary, and dashboard endpoints require the Forge service token.
+The health endpoint is public inside the private Compose network. Other
+endpoints require the Forge service token.
 
-## Data Model
+## Data model
 
-Each event contains:
+Each stored event contains only its UTC recording timestamp, producer service,
+event type, command or operation name, duration, and exit code. String fields
+have strict length and character limits. Unknown request fields are rejected.
+Forge does not accept IP addresses, tokens, request bodies, or command
+arguments.
 
-- Producer service
-- Event type
-- Command or operation name
-- Duration in milliseconds
-- Exit code
+## Storage lifecycle
 
-Forge stores counters and total duration for each event key. It retains at most
-2,048 recent duration samples per key for median calculation. It does not store
-raw requests, command arguments, tokens, or client addresses.
+Migrations run in numeric order at startup. File-backed databases use WAL mode
+with a five-second busy timeout. Compose mounts `/app/data` from the
+`forge_data` volume.
 
-## State and Failure Behavior
+`FORGE_RETENTION_DAYS` removes expired rows. If the database and WAL exceed
+`FORGE_MAX_DATABASE_BYTES`, Forge deletes the oldest rows in bounded batches
+and compacts the database. Defaults are 30 days and 128 MiB.
 
-All aggregates are process-local and reset when Forge restarts. There is no
-database, queue broker, or replication.
+## Failure behavior
 
-- Invalid events are rejected without changing metrics.
-- Concurrent reads and writes are protected by one lock.
-- Producer queues decouple request latency; events are lost when a queue is
-  full or delivery fails.
+- Invalid events are rejected without changing storage.
+- One process lock serializes connection access.
+- Producer queues remain best-effort; events can be lost before Forge accepts
+  them.
+- Accepted events survive Forge restarts and deployments.
 - Forge unavailability does not block Vaultsh commands or Atlas searches.
-- Dashboard and metrics commands report degraded availability when Forge
-  cannot be reached.
 
-## Design Decisions
+## Decisions
 
-- Aggregate immediately instead of retaining raw telemetry.
-- Keep telemetry best-effort because it is operational context, not business
-  data.
-- Render plain text so Vaultsh can display the dashboard without a second UI.
-- Accept reset-on-restart behavior until historical analytics are required.
+- Keep persistence inside Forge rather than adding a storage service.
+- Retain bounded sanitized events so summaries can be rebuilt.
+- Use SQLite because production runs one Forge instance.
+- Render plain text so Vaultsh needs no second analytics UI.

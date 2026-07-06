@@ -4,7 +4,7 @@
 
 A Python/FastAPI telemetry service for Vaultsh and Atlas.
 
-- In-memory request, error, latency, service, and command aggregates
+- SQLite-backed request, error, latency, service, and command analytics
 - Filtered JSON summaries and terminal-friendly dashboards
 - Authenticated service endpoints
-- Deliberately accepts reset-on-restart behavior until persistence is required
+- Bounded retention, database size, and operational backup procedures

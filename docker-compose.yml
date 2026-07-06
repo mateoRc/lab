@@ -61,6 +61,11 @@ services:
       context: ${FORGE_BUILD_CONTEXT:-../forge}
     environment:
       FORGE_AUTH_TOKEN: ${FORGE_AUTH_TOKEN:?set FORGE_AUTH_TOKEN in .env}
+      FORGE_DATABASE_PATH: /app/data/forge.db
+      FORGE_RETENTION_DAYS: ${FORGE_RETENTION_DAYS:-30}
+      FORGE_MAX_DATABASE_BYTES: ${FORGE_MAX_DATABASE_BYTES:-134217728}
+    volumes:
+      - forge_data:/app/data
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/healthz')"]
       interval: 5s
@@ -72,3 +77,6 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+volumes:
+  forge_data:

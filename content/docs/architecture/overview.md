@@ -49,15 +49,16 @@ queues, so telemetry failure or queue saturation never blocks user requests.
 There is no message broker.
 
 Deployment and sanitized Sentinel results are CI-produced JSON files mounted
-read-only into Vaultsh. Forge keeps aggregates in memory and receives no file
-mounts.
+read-only into Vaultsh. Forge stores bounded telemetry events on its dedicated
+SQLite volume.
 
 ## Failure boundaries
 
 - Atlas failure disables search only.
 - Forge failure disables analytics and loses undelivered telemetry.
 - Vaultsh restart discards sessions.
-- Forge restart discards aggregates.
+- Accepted Forge events survive restarts; producer queues can still lose
+  events before delivery.
 - Provider or CI failure does not affect the last deployed runtime.
 
 The system deliberately favors graceful degradation and replaceable

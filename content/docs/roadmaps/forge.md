@@ -12,18 +12,12 @@ This file tracks delivery status. Current design belongs in
 - [x] Bounded median-latency samples
 - [x] Unit, API, and container tests
 - [x] Bearer service authentication and versioned images
-
-## Persistent analytics
-
-Keep persistence inside Forge unless storage requires independent operational
-ownership.
-
-- [ ] Store events in SQLite on a persistent volume.
-- [ ] Enable WAL mode and schema migrations.
-- [ ] Record timestamps without IPs, tokens, request bodies, or arguments.
-- [ ] Build summaries from persisted events.
-- [ ] Define retention and database-size limits.
-- [ ] Add off-server backup and restore procedures.
+- [x] SQLite event persistence on a dedicated volume
+- [x] WAL mode and ordered schema migrations
+- [x] Server-generated timestamps and bounded sanitized fields
+- [x] Summaries rebuilt from persisted events
+- [x] Retention and database-size limits
+- [x] Verified backup and restore tooling
 
 ## Explicitly deferred
 

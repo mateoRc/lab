@@ -67,25 +67,23 @@ event. Search failures use a non-zero exit code.
 
 ## Forge Storage
 
-Forge does not save raw events and has no database. It immediately aggregates
-events into in-memory values:
+Forge stores validated events in SQLite with a server-generated UTC timestamp.
+Stored fields are limited to service, event, name, duration, and exit code.
+Unknown fields are rejected; IPs, tokens, request bodies, and command arguments
+are not accepted.
 
-- Total requests
-- Total errors
-- Total duration, average latency, and bounded-sample median latency
-- Counts by service
-- Counts by command or operation
-
-All counters reset when Forge restarts.
+Summaries are rebuilt from retained events and include request and error totals,
+average and median latency, and counts by service and operation. Retention and
+database-size limits delete the oldest rows.
 
 ## Delivery Guarantees
 
 - Producer queues hold at most 1,000 events by default.
 - Enqueueing does not block application requests.
 - Events are dropped if a producer queue is full.
-- Events may be lost when a producer or Forge restarts.
-- There are no durable acknowledgements, retries, persistence, or ordering
-  guarantees.
+- Events may be lost while queued by a producer or during delivery.
+- Forge persists accepted events, but there are no durable producer
+  acknowledgements, retries, or cross-producer ordering guarantees.
 - Telemetry delivery failures never fail Vaultsh commands or Atlas searches.
 
 This best-effort model is intentional for the MVP.
