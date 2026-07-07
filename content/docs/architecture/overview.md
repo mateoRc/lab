@@ -22,7 +22,8 @@ flowchart LR
 
 Caddy is the only internet-facing container. Vaultsh joins the frontend and
 backend networks; Atlas and Forge join only the backend network. Independent
-bearer tokens protect their non-health endpoints.
+bearer tokens protect service APIs. Health and status probes are public only
+inside the private Compose networks.
 
 ## Component ownership
 

@@ -84,8 +84,8 @@ Summaries are rebuilt from retained events for the requested activity window:
 include request and error totals, average, p50, and p95 backend command time,
 plus counts by service and operation. Retention and database-size limits delete
 the oldest rows. Storage metadata covers all retained rows, independent of the
-selected activity window; `oldest retained` is the oldest row still present in
-SQLite, not an all-time project history marker.
+selected activity window; `oldest retained` is the exact UTC timestamp of the
+oldest row still present in SQLite, not an all-time project history marker.
 
 ## Delivery Guarantees
 

@@ -17,7 +17,7 @@ Successful response:
 ok
 ```
 
-## Service Status
+## Browser Service Status
 
 ```http
 GET /api/status
@@ -34,7 +34,20 @@ Response:
 
 The values report whether Vaultsh can currently reach each optional service.
 
-Vaultsh also reads private backend `/status` endpoints for dashboard uptime.
+## Backend Service Status
+
+Atlas and Forge expose internal `/status` endpoints on the backend Compose
+network. Vaultsh reads them for dashboard uptime.
+
+Response:
+
+```json
+{
+  "status": "ok",
+  "uptime_seconds": 84
+}
+```
+
 Backend `/healthz` endpoints stay as simple public probes inside the Compose
 network.
 
