@@ -8,6 +8,7 @@ the API result. The command's normal text output is unchanged.
 | Command | Usage | Purpose |
 | --- | --- | --- |
 | `help` | `help [command]` | List commands or show command-specific usage |
+| `welcome` | `welcome` | Show the terminal introduction |
 | `about` | `about` | Describe Vaultsh |
 | `pwd` | `pwd` | Print the current virtual directory |
 | `ls` | `ls [-alR] [path]` | List files and directories |

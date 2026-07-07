@@ -49,8 +49,8 @@ Emitted after every Vaultsh command execution.
 ```
 
 `name` contains the first command in the submitted command line, including
-built-ins such as `cat`, `grep`, `ls`, `search`, `metrics`, `dashboard`, and
-`contact`.
+built-ins such as `cat`, `grep`, `ls`, `search`, `metrics`, `dashboard`,
+`contact`, and `welcome`.
 
 ## Atlas Events
 
