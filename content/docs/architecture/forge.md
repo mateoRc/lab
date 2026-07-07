@@ -26,7 +26,7 @@ flowchart LR
 - **SQLite store:** applies ordered migrations, WAL mode, retention, and
   database-size limits.
 - **Summary builder:** requests time-windowed SQL aggregates and durations,
-  then assembles p50 and p95 latency plus storage metadata.
+  then assembles p50 and p95 backend command time plus storage metadata.
 - **Dashboard renderer:** converts a summary into plain text and proportional
   bars.
 
