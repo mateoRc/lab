@@ -49,9 +49,8 @@ analytics reads. Vaultsh and Atlas send events through bounded in-process
 queues, so telemetry failure or queue saturation never blocks user requests.
 There is no message broker.
 
-Deployment and sanitized Sentinel results are CI-produced JSON files mounted
-read-only into Vaultsh. Forge stores bounded telemetry events on its dedicated
-SQLite volume.
+Deployment and sanitized Sentinel results are CI-produced JSON files mounted 
+into Vaultsh. Forge stores bounded telemetry events in SQLite database.
 
 ## Failure boundaries
 
