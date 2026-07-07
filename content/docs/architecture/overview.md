@@ -31,7 +31,7 @@ inside the private Compose networks.
   execution, and virtual filesystem.
 - **Atlas** owns search over the shared Markdown content.
 - **Forge** owns telemetry ingestion, aggregation, and text dashboards.
-- **Sentinel** is an ephemeral CI tool that evaluates deterministic evidence
+- **Sentinel** is a CI tool that evaluates deterministic evidence
   and release policy. It is not a runtime service.
 - **Lab** owns orchestration, deployment, shared content, runtime metadata,
   and project-specific Sentinel policy.
