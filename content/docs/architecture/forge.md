@@ -30,8 +30,8 @@ flowchart LR
 - **Dashboard renderer:** converts a summary into plain text and proportional
   bars.
 
-The health endpoint is public inside the private Compose network. Other
-endpoints require the Forge service token.
+The health and status endpoints are public inside the private Compose network.
+Other endpoints require the Forge service token.
 
 ## Data model
 

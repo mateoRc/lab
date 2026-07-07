@@ -5,7 +5,8 @@ are queued temporarily in each producer's memory and delivered by a background
 worker using `POST /events`.
 
 Forge requires `Authorization: Bearer <FORGE_AUTH_TOKEN>` for event ingestion
-and metrics reads. Its health endpoint is intentionally unauthenticated.
+and metrics reads. Its health and status probes are intentionally
+unauthenticated inside the Compose network.
 
 ## Event Schema
 
@@ -83,7 +84,8 @@ Summaries are rebuilt from retained events for the requested activity window:
 include request and error totals, average, p50, and p95 backend command time,
 plus counts by service and operation. Retention and database-size limits delete
 the oldest rows. Storage metadata covers all retained rows, independent of the
-selected activity window.
+selected activity window; `oldest retained` is the oldest row still present in
+SQLite, not an all-time project history marker.
 
 ## Delivery Guarantees
 

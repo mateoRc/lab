@@ -26,6 +26,8 @@ flowchart LR
   UTF-8 text line by line.
 - **Telemetry dispatcher:** Delivers events to Forge from a bounded in-process
   queue.
+- **Status endpoint:** Reports process health and uptime for the Vaultsh
+  dashboard.
 
 ## Search Flow
 

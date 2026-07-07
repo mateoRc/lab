@@ -34,6 +34,10 @@ Response:
 
 The values report whether Vaultsh can currently reach each optional service.
 
+Vaultsh also reads private backend `/status` endpoints for dashboard uptime.
+Backend `/healthz` endpoints stay as simple public probes inside the Compose
+network.
+
 ## Execute a Command
 
 ```http
