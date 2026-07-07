@@ -1,4 +1,4 @@
-# Backend Lab
+# Lab
 
 Orchestration, deployment configuration, and shared content for Vaultsh,
 Atlas, Forge, and Sentinel.
