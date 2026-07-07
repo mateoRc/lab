@@ -26,6 +26,7 @@ the API result. The command's normal text output is unchanged.
 | `dashboard` | `dashboard` | Show 24-hour analytics, services, deployment, and Sentinel status |
 | `deployments` | `deployments` | Show the latest production deployment |
 | `whoami` | `whoami` | Show Mateo's current role and focus |
+| `contact` | `contact` | Show contact links |
 
 Use `help <command>` inside Vaultsh for command-specific usage.
 
