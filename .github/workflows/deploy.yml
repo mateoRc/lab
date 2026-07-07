@@ -240,10 +240,10 @@ jobs:
           compose config --quiet
           if [ "$target" = "all" ]; then
             compose pull
-            compose up -d --wait
+            compose up -d --wait --force-recreate
           else
             compose pull "$target"
-            compose up -d --wait --no-deps "$target"
+            compose up -d --wait --force-recreate --no-deps "$target"
           fi
           SCRIPT
 
