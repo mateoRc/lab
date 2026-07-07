@@ -18,6 +18,8 @@ This file tracks delivery status. Current design belongs in
 - [x] Summaries rebuilt from persisted events
 - [x] Retention and database-size limits
 - [x] Verified backup and restore tooling
+- [x] 24-hour, 7-day, and 30-day activity windows with p95 latency
+- [x] Dashboard retention and database-usage visibility
 
 ## Explicitly deferred
 

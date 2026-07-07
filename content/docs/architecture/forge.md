@@ -25,8 +25,8 @@ flowchart LR
   UTC timestamp.
 - **SQLite store:** applies ordered migrations, WAL mode, retention, and
   database-size limits.
-- **Summary builder:** requests filtered SQL aggregates and durations, then
-  assembles the response and calculates median latency.
+- **Summary builder:** requests time-windowed SQL aggregates and durations,
+  then assembles p50 and p95 latency plus storage metadata.
 - **Dashboard renderer:** converts a summary into plain text and proportional
   bars.
 

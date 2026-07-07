@@ -23,7 +23,7 @@ the API result. The command's normal text output is unchanged.
 | `clear` | `clear` | Clear the terminal through a backend action |
 | `search` | `search <query>` | Search portfolio content with the Atlas search engine |
 | `metrics` | `metrics` | Show the Forge analytics summary |
-| `dashboard` | `dashboard` | Show the Forge analytics dashboard |
+| `dashboard` | `dashboard` | Show 24-hour analytics, services, deployment, and Sentinel status |
 | `deployments` | `deployments` | Show the latest production deployment |
 | `whoami` | `whoami` | Show Mateo's current role and focus |
 

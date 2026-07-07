@@ -77,9 +77,12 @@ Stored fields are limited to service, event, name, duration, and exit code.
 Unknown fields are rejected; IPs, tokens, request bodies, and command arguments
 are not accepted.
 
-Summaries are rebuilt from retained events and include request and error totals,
-average and median latency, and counts by service and operation. Retention and
-database-size limits delete the oldest rows.
+Summaries are rebuilt from retained events for the requested activity window:
+`hours=24`, `hours=168`, or `hours=720`. The default is 24 hours. Summaries
+include request and error totals, average, p50, and p95 latency, plus counts by
+service and operation. Retention and database-size limits delete the oldest
+rows. Storage metadata covers all retained rows, independent of the selected
+activity window.
 
 ## Delivery Guarantees
 
