@@ -1,11 +1,14 @@
 # Skills
 
-- **Engineering:** Backend services, distributed systems, API development,
-  internal tools, shared libraries, production systems, code review, and
-  mentoring
-- **Languages:** Python, Java, JavaScript, TypeScript, Go, and C#
-- **Frameworks:** Flask, Spring, Spring Boot, and JSP
-- **Infrastructure:** Docker, Kubernetes, OpenShift, ArgoCD, and AWS
+- **Primary backend stacks:** Python / Flask and Java / Spring Boot
+- **Engineering:** REST APIs, third-party integrations, distributed and
+  event-driven systems, microservices, internal tools, shared libraries,
+  production systems, code review, and mentoring
+- **Languages and runtimes:** Python, Java, Go, Node.js, JavaScript, TypeScript,
+  C#, and PHP
+- **Frameworks:** Flask, Spring, Spring Boot, JSP, and Laravel
+- **Cloud and delivery:** AWS, Docker, Kubernetes, OpenShift, Argo CD, and CI/CD
 - **Databases:** OracleDB, MongoDB, PostgreSQL, ClickHouse, ScyllaDB, and Solr
 - **Messaging:** Kafka and RabbitMQ
-- **Tooling:** Git, Grafana, and Sentry
+- **Operations and tooling:** Git, Grafana, Sentry, logging, production incident
+  response, and post-mortems

@@ -6,14 +6,17 @@ Mateo Mahmutović
 
 ## Profile
 
-Backend engineer working on production systems in regulated environments.
-Experienced in taking work from technical planning through implementation and
-deployment, improving existing systems, and mentoring engineers new to a team.
+Backend engineer building and operating production APIs, third-party
+integrations, and distributed, event-driven systems in regulated environments.
+Primary backend stacks are Python/Flask and Java/Spring Boot, with additional
+production experience in Go and Node.js. Leads work from technical direction
+through delivery, production rollout, and incident response while mentoring
+engineers.
 
 ## Details
 
-- **Focus:** Backend services, distributed systems, internal tools, shared
-  libraries, and production reliability
+- **Focus:** API development, third-party integrations, distributed systems,
+  internal tools, shared libraries, and production reliability
 - **Industries:** Cybersecurity, telecom, government services, and pharma
-- **Work:** Technical ownership, implementation, deployment, proofs of concept,
-  and mentoring
+- **Work:** Technical ownership, implementation, deployment, observability,
+  incident response, proofs of concept, and mentoring

@@ -1,22 +1,25 @@
 # ReversingLabs
 
-**Software Developer** · 2024–present  
+**Senior Software Engineer** · January 2024–present
+
 Croatia · Remote · Cybersecurity
 
 ## Summary
 
-Backend work on distributed, event-driven production systems and shared
-components used across processing and search workflows.
+Lead backend API, security data pipeline, and third-party integration work in a
+high-volume, distributed, event-driven cloud platform.
 
 ## Details
 
-- **Technology:** Python, Flask, Git, Docker, Kubernetes, RabbitMQ, Kafka,
-  ScyllaDB, and ClickHouse
-- **Focus:** Distributed systems, event-driven systems, backend services,
-  processing pipelines, integrations, and search and query processing
+- **Technology:** Python, Flask, Go, AWS, Docker, Kubernetes, Argo CD, RabbitMQ,
+  Kafka, ScyllaDB, ClickHouse, and Grafana
+- **Focus:** Production APIs, third-party integrations, distributed systems,
+  processing pipelines, shared backend components, and search and query processing
 
 ## Responsibilities
 
-- Own work from planning through implementation and deployment.
-- Build internal frameworks, integrations, and shared backend components.
-- Review code, mentor engineers, and collaborate across teams.
+- Lead multi-team backend projects from technical planning through production
+  rollout, including APIs, IOC pipelines, and third-party integrations.
+- Led a legacy API redesign to improve service boundaries and response latency.
+- Improve logging and observability, participate in incident response, review
+  code, and mentor engineers.
