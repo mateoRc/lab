@@ -44,25 +44,17 @@ flowchart LR
 
 ## Command Flow
 
-```mermaid
-sequenceDiagram
-    participant B as Browser
-    participant A as HTTP API
-    participant S as Session
-    participant E as Engine
-    participant C as Command
+```mermaid compact
+flowchart TD
+    browser["Browser: POST /api/exec"]
+    api["HTTP API: validate request"]
+    session["Session: serialize execution"]
+    parser["Shell engine: lex and parse"]
+    stages["Pipeline: execute command stages"]
+    result["Text output and exit code"]
+    response["HTTP API: JSON response"]
 
-    B->>A: POST /api/exec
-    A->>S: execute(session ID, line)
-    S->>E: execute(line)
-    E->>E: lex and parse
-    loop Pipeline stages
-        E->>C: execute(args, previous output)
-        C-->>E: text output and exit code
-    end
-    E-->>S: result
-    S-->>A: result and session ID
-    A-->>B: JSON response
+    browser --> api --> session --> parser --> stages --> result --> response
 ```
 
 Pipeline output is passed between commands as text. Execution stops when a

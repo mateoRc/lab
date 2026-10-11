@@ -1,12 +1,11 @@
 # Experience
 
-Professional background in reverse chronological order. The CV is available separately; these highlights provide context for the project work.
-
 ## ReversingLabs
 
 **Senior Software Engineer** · January 2024–present
 
-- Lead backend API, IOC pipeline, and third-party integration work from planning through production rollout across teams.
+- Lead and implement backend API, IOC pipeline, and third-party integration
+  projects across teams, from technical design through production rollout.
 - Led a legacy API redesign focused on clearer service boundaries and response latency.
 - Improve logging and observability, respond to incidents, review code, and mentor engineers.
 

@@ -5,8 +5,8 @@ A read-only virtual shell and browser Explorer for Backend Lab engineering work.
 ## Start here
 
 ```sh
-cat /projects/overview.md
-cat /docs/architecture/overview.md
+head -n 11 /projects/overview.md
+head -n 26 /docs/architecture/overview.md
 dashboard
 ```
 
