@@ -3,6 +3,9 @@
 This file tracks delivery status. Current design belongs in
 [Sentinel architecture](../architecture/sentinel.md).
 
+**Status:** Advisory CI assessment is integrated. The mock provider remains
+active; Sentinel does not gate deployment.
+
 ## Completed
 
 - [x] Python CLI, normalized evidence model, and strict configuration
@@ -12,6 +15,7 @@ This file tracks delivery status. Current design belongs in
 - [x] Central evidence redaction and deterministic remediation
 - [x] Mock analysis provider and advisory release policy
 - [x] Markdown, JSON, pull-request, and sanitized runtime reports
+- [x] Lab workflow dispatch and change-selected integration checks
 
 ## Before 1.0
 
@@ -22,7 +26,10 @@ This file tracks delivery status. Current design belongs in
 - [ ] Require file, line, check, or log references for findings.
 - [ ] Defend against prompt injection in repository content and logs.
 - [ ] Explain failures, release risk, and missing verification.
-- [ ] Replace the mock provider in the release workflow.
+- [ ] Replace the mock provider in the release workflow after the production
+  provider and evidence controls are ready.
+- [ ] Promote the workflow from advisory reporting to an enforced release gate
+  only after check coverage is proven.
 - [ ] Use protected environments for high-risk approval.
 
 ## Explicitly deferred

@@ -4,6 +4,9 @@ This file tracks delivery status. Current behavior belongs in
 [Vaultsh architecture](../architecture/vaultsh.md) and the
 [command reference](../commands.md).
 
+**Status:** Browser terminal and Explorer are implemented. Sessions and the
+virtual filesystem remain process-local and read-only, respectively.
+
 ## Completed
 
 - [x] Containerized Go service, browser terminal, and health endpoint
@@ -14,6 +17,9 @@ This file tracks delivery status. Current behavior belongs in
 - [x] Optional Atlas search and Forge telemetry with graceful degradation
 - [x] Request, rate, timeout, browser, and container hardening
 - [x] Immutable images, deployment visibility, targeted releases, and rollback
+- [x] Read-only browse API and click-driven Explorer for the same virtual files
+- [x] Rendered Markdown previews, folder navigation, and mobile Explorer layout
+- [x] Session-scoped hire and counter-offer command sequence
 
 ## Shell and state
 
@@ -44,7 +50,3 @@ This file tracks delivery status. Current behavior belongs in
 - [ ] Evaluate JWT authentication only if a user-specific access model is added.
 - [ ] Evaluate WebSocket, TUI, and CLI clients if the HTTP terminal is
   insufficient.
-
-## Optional product details
-
-- [ ] Add session-scoped command-sequence easter eggs.

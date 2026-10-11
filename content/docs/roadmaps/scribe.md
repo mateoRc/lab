@@ -1,12 +1,14 @@
 # Scribe Roadmap
 
-**Status:** Proposal
+**Status:** Proposal. The Scribe repository contains a README only; no sync
+service, snapshot publisher, or Lab integration has been implemented. Vaultsh
+and Atlas currently read Lab's authored Markdown directly.
 
 ## Purpose
 
-Provide a cached, read-only virtual filesystem generated from source-hosting
-providers. Vaultsh exposes the generated Markdown through normal shell
-commands, while Atlas indexes the same snapshot for search.
+Publish a cached, versioned Markdown snapshot that combines Lab's authored
+content with data from source-hosting providers. Vaultsh exposes the snapshot
+through normal shell commands, while Atlas searches the same Markdown.
 
 This should be a standalone synchronization service, not a Vaultsh module.
 Vaultsh must not own provider credentials, polling, rate-limit handling, or
@@ -17,19 +19,23 @@ cache writes.
 ```mermaid
 flowchart LR
     provider["GitHub API"]
+    authored["Lab authored Markdown"]
     sync["Scribe sync service"]
     cache["Versioned Markdown snapshot"]
     vaultsh["Vaultsh"]
     atlas["Atlas"]
 
     provider -->|"scheduled fetch"| sync
+    authored -->|"read-only source"| sync
     sync -->|"atomic publish"| cache
     cache -->|"read-only mount"| vaultsh
     cache -->|"read-only mount"| atlas
 ```
 
-- **Sync service:** Fetches, validates, normalizes, and caches provider data.
-- **Snapshot:** Contains generated Markdown and a machine-readable manifest.
+- **Sync service:** Fetches provider data, combines it with authored Markdown,
+  validates paths, and publishes the cache.
+- **Snapshot:** Contains authored and generated Markdown plus a machine-readable
+  manifest.
 - **Vaultsh:** Browses the snapshot through the existing virtual filesystem.
 - **Atlas:** Searches the raw Markdown without provider-specific behavior.
 
@@ -80,8 +86,11 @@ because POSIX shells already use `export` for environment variables.
 
 ## Phase 1: GitHub Snapshot
 
-- [ ] Finalize the project and mount names
+- [x] Choose Scribe as the project and repository name
+- [ ] Finalize the published snapshot and mount names
 - [ ] Define a provider-independent domain model
+- [ ] Define how authored Lab content enters the snapshot without path
+      collisions or changes to its canonical files
 - [ ] Authenticate to GitHub with a least-privilege token
 - [ ] Fetch profile and repository metadata
 - [ ] Fetch bounded recent activity, commits, branches, and releases
@@ -145,7 +154,6 @@ because POSIX shells already use `export` for environment variables.
 
 ## Open Decisions
 
-- Final product and repository name
 - Cache ownership: local volume, host directory, or object storage
 - Snapshot retention and rollback policy
 - Public-only versus explicitly allowlisted private repositories

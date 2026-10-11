@@ -3,15 +3,18 @@
 This file tracks delivery status. Current design belongs in
 [Atlas architecture](../architecture/atlas.md).
 
+**Status:** Search service implemented; search remains a linear scan of the
+shared Markdown content.
+
 ## Completed
 
-- [x] Spring Boot service, container image, and health endpoint
+- [x] Spring Boot service, container image, health endpoint, and uptime status
 - [x] Read-only recursive Markdown discovery
 - [x] Validated, case-insensitive search API
 - [x] Deterministic path, line-number, and source-line results
 - [x] Unit, integration, and container tests
 - [x] Vaultsh integration and bearer service authentication
-- [x] Best-effort Forge telemetry
+- [x] Bounded, asynchronous best-effort Forge search telemetry
 - [x] Immutable commit-tagged images
 
 ## Candidates
