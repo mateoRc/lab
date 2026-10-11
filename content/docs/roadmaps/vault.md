@@ -19,6 +19,8 @@ virtual filesystem remain process-local and read-only, respectively.
 - [x] Immutable images, deployment visibility, targeted releases, and rollback
 - [x] Read-only browse API and click-driven Explorer for the same virtual files
 - [x] Rendered Markdown previews, folder navigation, and mobile Explorer layout
+- [x] Compact parent-folder and Home navigation in folder and document views
+- [x] Terminal/Explorer switch that sticks after scrolling past the page title
 - [x] Session-scoped hire and counter-offer command sequence
 
 ## Shell and state

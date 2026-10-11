@@ -27,8 +27,8 @@ inside the private Compose networks.
 
 ## Component ownership
 
-- **Vaultsh** owns the browser terminal, HTTP entry point, sessions, shell
-  execution, and virtual filesystem.
+- **Vaultsh** owns the browser terminal and Explorer, HTTP entry point,
+  sessions, shell execution, and virtual filesystem.
 - **Atlas** owns search over the shared Markdown content.
 - **Forge** owns telemetry ingestion, aggregation, and text dashboards.
 - **Sentinel** is a CI tool that evaluates deterministic evidence
@@ -43,6 +43,8 @@ Internals: [Vaultsh](vaultsh.md), [Atlas](atlas.md), [Forge](forge.md), and
 
 `lab/content/` is the only content source. Vaultsh loads it into an in-memory
 virtual filesystem; Atlas scans the same files. Neither service writes it.
+Vaultsh's Explorer reads that filesystem through a read-only browse endpoint;
+the browser renders document previews without creating a second content copy.
 
 Vaultsh calls Atlas synchronously for search and Forge synchronously for
 analytics reads. Vaultsh and Atlas send events through bounded in-process

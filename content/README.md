@@ -1,7 +1,8 @@
 # Vaultsh
 
-A read-only virtual shell for exploring backend work and project documentation.
-Commands operate on mounted portfolio content, never on the host operating system.
+A read-only virtual shell and browser Explorer for backend work and project
+documentation. Commands operate on mounted portfolio content, never on the
+host operating system.
 
 ## Vaults
 

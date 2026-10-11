@@ -1,14 +1,16 @@
 # Vaultsh Architecture
 
-Vaultsh is the public application and shell engine. It serves the browser
-terminal, executes commands against a read-only virtual filesystem, maintains
-session state, and coordinates optional backend services.
+Vaultsh is the public application and shell engine. It serves a browser
+terminal and a click-driven Explorer, executes commands against a read-only
+virtual filesystem, maintains session state, and coordinates optional backend
+services.
 
 ## Components
 
 ```mermaid
 flowchart LR
-    browser["Browser terminal"]
+    terminal["Browser terminal"]
+    explorer["Browser Explorer"]
     api["HTTP API"]
     sessions["Session manager"]
     engine["Shell engine"]
@@ -17,15 +19,18 @@ flowchart LR
     filesystem["Virtual filesystem"]
     integrations["Atlas and Forge clients"]
 
-    browser --> api --> sessions --> engine
+    terminal --> api
+    explorer --> api
+    api -->|"commands and completion"| sessions --> engine
+    api -->|"read-only browse"| filesystem
     engine --> parser
     engine --> commands
     commands --> filesystem
     commands --> integrations
 ```
 
-- **HTTP API:** Serves static assets, command execution, completion, health,
-  and service status endpoints.
+- **HTTP API:** Serves static assets, read-only browsing, command execution,
+  completion, health, and service status endpoints.
 - **Session manager:** Creates bounded, expiring in-memory sessions and
   serializes operations within each session.
 - **Shell engine:** Parses a command line and executes pipeline stages in
@@ -62,6 +67,21 @@ sequenceDiagram
 
 Pipeline output is passed between commands as text. Execution stops when a
 stage returns a non-zero exit code. Vaultsh never invokes host shell commands.
+
+## Browser Views
+
+The terminal uses session-backed command and completion endpoints. Explorer
+uses `GET /api/browse` to read the same in-memory virtual filesystem without
+creating or changing a shell session. Directory responses provide child names,
+types, and virtual paths; file responses provide raw Markdown. See the
+[browse API](../api.md#browse-content) for the response contract.
+
+Explorer renders Markdown and Mermaid diagrams in the browser. Shell commands
+continue to return raw text. Breadcrumbs navigate ancestor paths; Back opens
+the current item's parent folder, and Home opens `/`. Those controls work in
+both folder and document views. The terminal/Explorer switch stays at the top
+after the page scrolls past its normal position and returns beneath the title
+when scrolling back up.
 
 ## State
 

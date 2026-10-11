@@ -1,6 +1,7 @@
 # HTTP API
 
-Vaultsh exposes JSON endpoints for command execution and autocomplete.
+Vaultsh exposes JSON endpoints for browsing, command execution, and
+autocomplete.
 
 These browser-facing Vaultsh endpoints remain public. Atlas and Forge are
 private backend services protected by bearer service tokens.
@@ -33,6 +34,46 @@ Response:
 ```
 
 The values report whether Vaultsh can currently reach each optional service.
+
+## Browse Content
+
+```http
+GET /api/browse?path=/docs
+```
+
+`path` is an absolute virtual path. Omitting it opens `/`. Browsing does not
+require a session ID or change the terminal's working directory. A directory
+response contains its children:
+
+```json
+{
+  "path": "/docs",
+  "kind": "directory",
+  "children": [
+    {
+      "name": "architecture",
+      "kind": "directory",
+      "path": "/docs/architecture"
+    }
+  ]
+}
+```
+
+A file response contains its original Markdown text:
+
+```json
+{
+  "path": "/cv/about.md",
+  "kind": "file",
+  "content": "# About\n\nA profile."
+}
+```
+
+Explorer renders that text as a document preview; terminal commands still use
+the raw Markdown. Directory listings omit dot-prefixed names, but this display
+rule is not an access-control boundary. A non-absolute path or one over 4,096
+bytes returns HTTP `400`; an unresolved path returns `404`, and rate limiting
+can return `429`.
 
 ## Backend Service Status
 

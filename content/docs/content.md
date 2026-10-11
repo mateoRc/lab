@@ -51,6 +51,7 @@ Backend work on a distributed production system.
 - Delivered features from design through deployment.
 ```
 
-Vaultsh and Atlas read the same raw Markdown files directly; no rendering,
-copy, or synchronization step is required. `cat`, `grep`, `head`, `tail`, and
-`wc` operate on the original Markdown text.
+Vaultsh and Atlas read the same raw Markdown files directly; no copy or
+synchronization step is required. `cat`, `grep`, `head`, `tail`, and `wc`
+operate on the original Markdown text. Explorer renders a browser preview from
+those files, including Mermaid diagrams, without storing a second version.
