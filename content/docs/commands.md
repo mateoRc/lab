@@ -41,12 +41,12 @@ lists directories.
 pwd
 ls
 ls -la /
-ls -R /cv/experience
+ls /cv
 tree
 tree -a
 tree -L 2 /
-cd cv/experience
-cat reversinglabs.md
+cd cv
+cat experience.md
 cd ..
 ```
 
@@ -55,7 +55,7 @@ Paths can be absolute or relative:
 ```sh
 cat /cv/about.md
 cat projects/vaultsh.md
-cd /cv/experience
+cd /cv
 cd ..
 ```
 
@@ -84,16 +84,16 @@ Show programming languages:
 cat /cv/skills.md | grep "Languages"
 ```
 
-Show the first three ReversingLabs responsibilities:
+Show the first three experience contributions:
 
 ```sh
-cat /cv/experience/reversinglabs.md | grep "^- [^*]" | head -n 3
+cat /cv/experience.md | grep "^- " | head -n 3
 ```
 
-Count A1 responsibilities:
+Find the A1 role:
 
 ```sh
-cat /cv/experience/a1.md | grep "^- [^*]" | wc -l
+cat /cv/experience.md | grep "A1 Hrvatska"
 ```
 
 Show numbered, case-insensitive matches:
@@ -126,22 +126,23 @@ More pipeline examples:
 
 ```sh
 cat /cv/skills.md | grep "Languages"
-cat /cv/experience/reversinglabs.md | grep "Technology"
+cat /cv/experience.md | grep "ReversingLabs"
 search "Technology" | grep "/projects/"
 tree | grep ".md" | sort
 ```
 
 ## Keyboard Shortcuts
 
-- `Tab`: complete commands and virtual filesystem paths
+- `Tab`: complete commands and virtual filesystem paths; press again to leave the input
+- `Shift+Tab`: move to the previous control; `Escape`: move to Commands
 - `Ctrl+L`: run the backend-owned `clear` command
 
 Autocomplete uses the current session directory:
 
 ```text
-cat cv/exp<Tab>    -> cat cv/experience/
-cd cv/experience
-cat rev<Tab>       -> cat reversinglabs.md
+cat cv/exp<Tab>    -> cat cv/experience.md
+cd cv
+cat exp<Tab>       -> cat experience.md
 ```
 
 ## Exit Codes

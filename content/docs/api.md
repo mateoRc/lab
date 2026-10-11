@@ -126,7 +126,7 @@ command history.
 ```sh
 curl -X POST http://localhost:8080/api/exec \
   -H "Content-Type: application/json" \
-  -d '{"line":"cd /cv/experience"}'
+  -d '{"line":"cd /cv"}'
 ```
 
 Continue the session:
@@ -147,7 +147,7 @@ Some commands return a frontend action:
   "exit_code": 0,
   "action": "clear",
   "session_id": "<session-id>",
-  "current_directory": "/cv/experience"
+  "current_directory": "/cv"
 }
 ```
 
@@ -196,9 +196,9 @@ Response:
 {
   "start": 4,
   "end": 11,
-  "replacement": "/cv/experience/",
+  "replacement": "/cv/experience.md",
   "candidates": [
-    "/cv/experience/"
+    "/cv/experience.md"
   ],
   "session_id": "<session-id>",
   "current_directory": "/"

@@ -78,10 +78,8 @@ types, and virtual paths; file responses provide raw Markdown. See the
 
 Explorer renders Markdown and Mermaid diagrams in the browser. Shell commands
 continue to return raw text. Breadcrumbs navigate ancestor paths; Back opens
-the current item's parent folder, and Home opens `/`. Those controls work in
-both folder and document views. The terminal/Explorer switch stays at the top
-after the page scrolls past its normal position and returns beneath the title
-when scrolling back up.
+the current item's parent folder. Explorer paths are shareable through the
+`?doc=` URL parameter, with browser history and relative document links.
 
 ## State
 

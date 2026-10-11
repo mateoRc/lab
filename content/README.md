@@ -1,24 +1,13 @@
 # Vaultsh
 
-A read-only virtual shell and browser Explorer for backend work and project
-documentation. Commands operate on mounted portfolio content, never on the
-host operating system.
-
-## Vaults
-
-- `cv/` — Professional profile, skills, and experience
-- `projects/` — Project summaries and engineering decisions
-- `docs/` — Architecture, APIs, commands, deployment, and roadmaps
+A read-only virtual shell and browser Explorer for Backend Lab engineering work. Commands operate on mounted content, never on the host operating system.
 
 ## Start here
 
 ```sh
-tree /cv
-cat /cv/about.md
-cat /cv/skills.md
-cat /projects/vaultsh.md
+cat /projects/overview.md
+cat /docs/architecture/overview.md
 dashboard
 ```
 
-This is not a Linux shell. It is a Go backend with a virtual filesystem,
-session state, command parsing, pipelines, search, and telemetry integrations.
+Use `help` for commands, or switch to Explorer to browse the projects, docs, and brief professional profile.

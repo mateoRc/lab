@@ -1,22 +1,7 @@
-# About
+# About Mateo
 
-Mateo Mahmutović
+Mateo Mahmutović is a senior backend engineer building production APIs, integrations, and distributed, event-driven systems. His primary stacks are Python/Flask and Java/Spring Boot, with production experience in Go and Node.js.
 
-**Senior Backend Engineer** · 6+ years
+His work spans technical planning, implementation, deployment, observability, incident response, and mentoring in cybersecurity, telecom, financial services, and pharma. See [experience](experience.md), [skills](skills.md), or [contact](contact.md).
 
-## Profile
-
-Backend engineer building and operating production APIs, third-party
-integrations, and distributed, event-driven systems in regulated environments.
-Primary backend stacks are Python/Flask and Java/Spring Boot, with additional
-production experience in Go and Node.js. Leads work from technical direction
-through delivery, production rollout, and incident response while mentoring
-engineers.
-
-## Details
-
-- **Focus:** API development, third-party integrations, distributed systems,
-  internal tools, shared libraries, and production reliability
-- **Industries:** Cybersecurity, telecom, government services, and pharma
-- **Work:** Technical ownership, implementation, deployment, observability,
-  incident response, proofs of concept, and mentoring
+Interests outside engineering include coffee, travel, and fitness.

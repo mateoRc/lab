@@ -1,15 +1,21 @@
 # Vaultsh
 
-**Personal project** · Active
+## Purpose
 
-A Go service with a browser terminal and Explorer for structured portfolio
-content in a read-only virtual filesystem.
+A Go virtual shell and browser Explorer for reading project documentation and exercising backend services.
 
-**Technology:** Go, Docker, HTML, CSS, JavaScript, GitHub Actions
+## Implemented
 
-- Tokenizer, parser, pipelines, and composable Unix-like commands
-- Session-isolated paths, history, and completion
-- Atlas search and Forge telemetry with graceful degradation
-- Click-driven folders, Markdown and diagram previews, and compact Back/Home
-  navigation on desktop and mobile
-- Virtual filesystem only: no host command execution or host filesystem access
+- Tokenizer, parser, pipelines, composable commands, session-isolated paths, history, and completion.
+- Read-only virtual filesystem, document browsing, Markdown previews, and Mermaid diagrams.
+- Optional Atlas search and Forge telemetry and dashboard integrations.
+
+## Design decisions
+
+Commands run inside the Go process against mounted content. No host shell or host filesystem is exposed. Explorer reads the same filesystem through a read-only API; sessions are bounded, local, and expiring.
+
+## Status and limits
+
+Active project. Search and live analytics depend on Atlas and Forge availability. Session state is lost on restart; Markdown preview supports a deliberate subset of Markdown.
+
+Source: [Vaultsh](https://github.com/mateoRc/vaultsh) · [Architecture](../docs/architecture/vaultsh.md) · [Roadmap](../docs/roadmaps/vault.md)
