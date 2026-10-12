@@ -36,9 +36,18 @@ optional arguments; angle brackets mark required arguments.
 
 - `search <query>` — Search portfolio content with Atlas.
 - `metrics` — Show the Forge analytics summary.
-- `dashboard` — Show 24-hour analytics, service health, deployment, and
-  Sentinel status.
+- `dashboard [--window 24h|7d|30d|all] [--include-invalid]` — Show Forge
+  analytics, service health, deployment, and Sentinel status. The default is
+  24 hours. `all` covers every event Forge still retains. Unknown command
+  names (exit code `127`) are omitted from the popular-commands list unless
+  `--include-invalid` is set; request and error totals still include them.
 - `deployments` — Show the latest production deployment.
+
+```sh
+dashboard --window all
+dashboard --window 7d
+dashboard --window all --include-invalid
+```
 
 ### Profile
 
