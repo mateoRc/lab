@@ -154,7 +154,7 @@ because POSIX shells already use `export` for environment variables.
 
 ## Open Decisions
 
-- Cache ownership: local volume, host directory, or object storage
+- Cache ownership: local volume / host directory / object storage
 - Snapshot retention and rollback policy
 - Public-only versus explicitly allowlisted private repositories
 - Poll interval and history limits
