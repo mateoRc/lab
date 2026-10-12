@@ -49,7 +49,8 @@ with a five-second busy timeout. Compose mounts `/app/data` from the
 
 `FORGE_RETENTION_DAYS` removes expired rows. If the database and WAL exceed
 `FORGE_MAX_DATABASE_BYTES`, Forge deletes the oldest rows in bounded batches
-and compacts the database. Defaults are 30 days and 128 MiB.
+and compacts the database. Defaults are 365 days and 256 MiB; the size limit
+may remove events before they reach one year old.
 
 ## Failure behavior
 

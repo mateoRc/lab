@@ -72,6 +72,8 @@ Explorer renders Markdown and Mermaid diagrams in the browser. Shell commands
 continue to return raw text. Breadcrumbs navigate ancestor paths; Back opens
 the current item's parent folder. Explorer paths are shareable through the
 `?doc=` URL parameter, with browser history and relative document links.
+The project tree starts closed on desktop and mobile; Show tree opens it while
+the current path remains visible in the sidebar.
 
 ## State
 

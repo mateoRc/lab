@@ -26,6 +26,7 @@ is used in the integrated stack; direct development can use in-memory SQLite.
 - [x] Separate runtime errors from user command failures in summaries
 - [x] Count Vaultsh commands separately from Atlas search operations
 - [x] Report the exact timestamp of the oldest retained event
+- [ ] incrase default retention limit to 256
 
 ## Explicitly deferred
 

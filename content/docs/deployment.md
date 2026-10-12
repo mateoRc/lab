@@ -30,8 +30,8 @@ Set the generated values and deployment domain:
 DOMAIN=portfolio.example.com
 ATLAS_AUTH_TOKEN=<first-generated-token>
 FORGE_AUTH_TOKEN=<second-generated-token>
-FORGE_RETENTION_DAYS=30
-FORGE_MAX_DATABASE_BYTES=134217728
+FORGE_RETENTION_DAYS=365
+FORGE_MAX_DATABASE_BYTES=268435456
 SESSION_LIMIT=5000
 ```
 
@@ -99,8 +99,9 @@ Do not add host `ports` entries to Vaultsh, Atlas, or Forge.
 ## Forge data
 
 Forge stores accepted events in `/app/data/forge.db` on the `forge_data` named
-volume. The default policy retains 30 days and limits the SQLite database plus
-WAL to 128 MiB. Normal `docker compose down` preserves this volume; do not use
+volume. The default policy retains up to 365 days and limits the SQLite
+database plus WAL to 256 MiB. The size limit may remove older events before a
+year. Normal `docker compose down` preserves this volume; do not use
 `down --volumes` unless deleting analytics is intentional.
 
 Create a consistent backup file while Forge remains online:
