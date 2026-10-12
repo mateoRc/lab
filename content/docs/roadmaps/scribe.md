@@ -1,6 +1,6 @@
 # Scribe Roadmap
 
-**Status:** Proposal. The Scribe repository contains a README only; no sync
+**Status:** Proposal/TODO. No sync
 service, snapshot publisher, or Lab integration has been implemented. Vaultsh
 and Atlas currently read Lab's authored Markdown directly.
 
