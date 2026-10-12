@@ -5,31 +5,45 @@ the API result. The command's normal text output is unchanged.
 
 ## Commands
 
-| Command | Usage | Purpose |
-| --- | --- | --- |
-| `help` | `help [command]` | List commands or show command-specific usage |
-| `welcome` | `welcome` | Show the terminal introduction |
-| `about` | `about` | Describe Vaultsh |
-| `pwd` | `pwd` | Print the current virtual directory |
-| `ls` | `ls [-alR] [path]` | List files and directories |
-| `cd` | `cd [directory]` | Change the current virtual directory |
-| `cat` | `cat [-n] [file]` | Print a file or pipeline input |
-| `tree` | `tree [-a] [-L depth] [path]` | Print a directory tree |
-| `grep` | `grep [-in] <pattern> [file]` | Filter lines using a regular expression |
-| `head` | `head [-n count] [file]` | Print the first lines |
-| `tail` | `tail [-n count] [file]` | Print the last lines |
-| `wc` | `wc [-lwc] [file]` | Count lines, words, and bytes |
-| `sort` | `sort [-r] [file]` | Sort lines |
-| `history` | `history` | List commands from the current session |
-| `clear` | `clear` | Clear the terminal through a backend action |
-| `search` | `search <query>` | Search portfolio content with the Atlas search engine |
-| `metrics` | `metrics` | Show the Forge analytics summary |
-| `dashboard` | `dashboard` | Show 24-hour analytics, services, deployment, and Sentinel status |
-| `deployments` | `deployments` | Show the latest production deployment |
-| `whoami` | `whoami` | Show Mateo's current role and focus |
-| `contact` | `contact` | Show contact links |
+Use `help <command>` for full command-specific usage. Square brackets mark
+optional arguments; angle brackets mark required arguments.
 
-Use `help <command>` inside Vaultsh for command-specific usage.
+### Start and navigate
+
+- `help [command]` — List commands or show usage for one command.
+- `welcome` — Show the terminal introduction.
+- `about` — Describe Vaultsh.
+- `pwd` — Print the current virtual directory.
+- `ls [-alR] [path]` — List files and directories.
+- `cd [directory]` — Change the current virtual directory.
+- `tree [-a] [-L depth] [path]` — Print a directory tree.
+
+### Read and filter
+
+- `cat [-n] [file]` — Print a file or pipeline input.
+- `grep [-in] <pattern> [file]` — Filter lines with a regular expression.
+- `head [-n count] [file]` — Print the first lines.
+- `tail [-n count] [file]` — Print the last lines.
+- `wc [-lwc] [file]` — Count lines, words, and bytes.
+- `sort [-r] [file]` — Sort lines.
+
+### Session
+
+- `history` — List commands from the current session.
+- `clear` — Clear the terminal.
+
+### Search and status
+
+- `search <query>` — Search portfolio content with Atlas.
+- `metrics` — Show the Forge analytics summary.
+- `dashboard` — Show 24-hour analytics, service health, deployment, and
+  Sentinel status.
+- `deployments` — Show the latest production deployment.
+
+### Profile
+
+- `whoami` — Show Mateo's current role and focus.
+- `contact` — Show contact links.
 
 ## Filesystem
 
