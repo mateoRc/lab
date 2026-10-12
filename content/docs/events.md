@@ -89,7 +89,7 @@ oldest row still present in SQLite, not an all-time project history marker.
 
 ## Delivery Guarantees
 
-- Producer queues hold at most 1,000 events by default.
+- Producer queues hold at most 1,000 events by default. - TODO:
 - Enqueueing does not block application requests.
 - Events are dropped if a producer queue is full.
 - Events may be lost while queued by a producer or during delivery.
