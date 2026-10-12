@@ -1,7 +1,7 @@
 # Command Reference
 
 Append `--verbose` to a command or pipeline to include execution metadata in
-the API result. The command's normal text output is unchanged.
+the API result.
 
 ## Commands
 

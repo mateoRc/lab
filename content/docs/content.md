@@ -23,4 +23,4 @@ The `lab` repository owns `content/`. Docker Compose mounts it read-only into Va
 
 Use UTF-8 Markdown, one H1 title per document, short prose, and raw-text-friendly bullets. Relative links resolve inside the virtual filesystem in Explorer.
 
-Vaultsh and Atlas read the same raw files. `cat`, `grep`, `head`, `tail`, and `wc` operate on those files; Explorer renders previews, including existing Mermaid diagrams, without storing a second content copy.
+Vaultsh and Atlas read the same raw files. `cat`, `grep`, `head`, `tail`, and `wc` operate on those files; Explorer renders previews, without storing a second content copy.
