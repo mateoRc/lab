@@ -48,7 +48,8 @@ optional arguments; angle brackets mark required arguments.
   24 hours. `all` covers every event Forge still retains. Unknown command
   names (exit code `127`) are omitted from the popular-commands list unless
   `--include-invalid` is set; request and error totals still include them.
-- `deployments` — Show the latest production deployment.
+- `deployments` — Show the latest production deployment and the Vaultsh,
+  Atlas, Forge, and Oracle versions.
 
 ```sh
 dashboard --window all
