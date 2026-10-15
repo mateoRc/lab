@@ -1,7 +1,7 @@
 # Forge Roadmap
 
 This file tracks delivery status. Current design belongs in
-[Forge architecture](../architecture/forge.md).
+[Forge architecture](architecture.md).
 
 **Status:** SQLite-backed telemetry service implemented. File-backed storage
 is used in the integrated stack; direct development can use in-memory SQLite.

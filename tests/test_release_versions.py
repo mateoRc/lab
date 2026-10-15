@@ -9,11 +9,13 @@ V1 = {
     "vault": "1" * 40,
     "atlas": "2" * 40,
     "forge": "3" * 40,
+    "oracle": "7" * 40,
 }
 V2 = {
     "vault": "4" * 40,
     "atlas": "5" * 40,
     "forge": "6" * 40,
+    "oracle": "8" * 40,
 }
 
 
@@ -28,6 +30,7 @@ class ReleaseVersionsTest(unittest.TestCase):
 
         self.assertIn(f"VAULT_IMAGE=ghcr.io/mateorc/vaultsh:{V1['vault']}", environment)
         self.assertIn(f"ATLAS_IMAGE=ghcr.io/mateorc/atlas:{V1['atlas']}", environment)
+        self.assertIn(f"ORACLE_IMAGE=ghcr.io/mateorc/oracle:{V1['oracle']}", environment)
 
     def test_targeted_release_changes_one_service(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

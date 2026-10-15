@@ -1,7 +1,7 @@
 # Atlas Roadmap
 
 This file tracks delivery status. Current design belongs in
-[Atlas architecture](../architecture/atlas.md).
+[Atlas architecture](architecture.md).
 
 **Status:** Search service implemented; search remains a linear scan of the
 shared Markdown content.

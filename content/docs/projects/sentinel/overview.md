@@ -18,4 +18,4 @@ Deterministic policy owns pass/fail decisions. The analysis provider can explain
 
 Active, pre-1.0. The Lab policy is advisory. Production LLM analysis and a protected approval workflow are roadmap items; the current analysis provider is a mock.
 
-Source: [Sentinel](https://github.com/mateoRc/sentinel) · [Architecture](../docs/architecture/sentinel.md) · [Roadmap](../docs/roadmaps/sentinel.md)
+Source: [Sentinel](https://github.com/mateoRc/sentinel) · [Architecture](architecture.md) · [Roadmap](roadmap.md)

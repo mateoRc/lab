@@ -1,7 +1,7 @@
 # Sentinel Roadmap
 
 This file tracks delivery status. Current design belongs in
-[Sentinel architecture](../architecture/sentinel.md).
+[Sentinel architecture](architecture.md).
 
 **Status:** Advisory CI assessment is integrated. The mock provider remains
 active; Sentinel does not gate deployment.

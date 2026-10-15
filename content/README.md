@@ -5,7 +5,7 @@ A read-only virtual shell and browser Explorer for Backend Lab engineering work.
 ## Start here
 
 ```sh
-ls /projects
+ls /docs/projects
 help search
 ```
 

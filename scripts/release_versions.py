@@ -4,11 +4,12 @@ import os
 import re
 from pathlib import Path
 
-SERVICES = ("vault", "atlas", "forge")
+SERVICES = ("vault", "atlas", "forge", "oracle")
 IMAGE_REPOSITORIES = {
     "vault": "vaultsh",
     "atlas": "atlas",
     "forge": "forge",
+    "oracle": "oracle",
 }
 _SHA = re.compile(r"^[0-9a-f]{40}$")
 
@@ -71,7 +72,7 @@ def _publish(runtime: Path, release: dict[str, str]) -> None:
 
 def _validate_versions(release: dict[str, str]) -> None:
     if set(release) != set(SERVICES):
-        raise ValueError("release manifest must contain vault, atlas, and forge")
+        raise ValueError("release manifest must contain vault, atlas, forge, and oracle")
     for service, version in release.items():
         if not _SHA.fullmatch(version):
             raise ValueError(f"{service} version must be a full Git SHA")
@@ -96,6 +97,7 @@ def main() -> int:
     parser.add_argument("--vault")
     parser.add_argument("--atlas")
     parser.add_argument("--forge")
+    parser.add_argument("--oracle")
     parser.add_argument("--version", default="")
     arguments = parser.parse_args()
     if arguments.action == "rollback":
@@ -105,6 +107,7 @@ def main() -> int:
             "vault": arguments.vault or "",
             "atlas": arguments.atlas or "",
             "forge": arguments.forge or "",
+            "oracle": arguments.oracle or "",
         }
         release = prepare(
             arguments.runtime,

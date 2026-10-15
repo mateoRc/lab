@@ -17,4 +17,4 @@ Scan the read-only content mount on each request. This keeps results current and
 
 Active project. Search is linear and has no ranking or index. Telemetry failure does not fail search.
 
-Source: [Atlas](https://github.com/mateoRc/atlas) · [Architecture](../docs/architecture/atlas.md) · [Roadmap](../docs/roadmaps/atlas.md)
+Source: [Atlas](https://github.com/mateoRc/atlas) · [Architecture](architecture.md) · [Roadmap](roadmap.md)

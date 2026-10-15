@@ -17,10 +17,22 @@ def heading_id(text):
 
 class ContentLinksTest(unittest.TestCase):
     def test_consolidated_entry_points(self):
-        self.assertTrue((CONTENT / "projects/overview.md").is_file())
+        self.assertTrue((CONTENT / "docs/projects/overview.md").is_file())
         self.assertTrue((CONTENT / "cv/experience.md").is_file())
         self.assertFalse((CONTENT / "cv/experience").exists())
-        self.assertFalse((CONTENT / "projects/lab.md").exists())
+
+    def test_projects_are_grouped_with_their_documents(self):
+        for project in ("atlas", "forge", "oracle", "sentinel", "vaultsh"):
+            for document in ("overview.md", "roadmap.md", "architecture.md"):
+                self.assertTrue(
+                    (CONTENT / "docs/projects" / project / document).is_file(),
+                    f"missing docs/projects/{project}/{document}",
+                )
+
+    def test_legacy_document_folders_are_gone(self):
+        self.assertFalse((CONTENT / "projects").exists())
+        self.assertFalse((CONTENT / "docs/architecture").exists())
+        self.assertFalse((CONTENT / "docs/roadmaps").exists())
 
     def test_local_markdown_links(self):
         for source in CONTENT.rglob("*.md"):

@@ -18,4 +18,4 @@ Store only sanitized, bounded event fields. SQLite fits the single-instance depl
 
 Active project. Producer queues are best-effort, so events can be lost before Forge accepts them. Accepted events survive service restarts.
 
-Source: [Forge](https://github.com/mateoRc/forge) · [Architecture](../docs/architecture/forge.md) · [Roadmap](../docs/roadmaps/forge.md)
+Source: [Forge](https://github.com/mateoRc/forge) · [Architecture](architecture.md) · [Roadmap](roadmap.md)

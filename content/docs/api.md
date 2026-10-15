@@ -51,9 +51,9 @@ response contains its children:
   "kind": "directory",
   "children": [
     {
-      "name": "architecture",
+      "name": "projects",
       "kind": "directory",
-      "path": "/docs/architecture"
+      "path": "/docs/projects"
     }
   ]
 }

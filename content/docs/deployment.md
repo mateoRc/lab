@@ -2,10 +2,12 @@
 
 The production Compose stack exposes only Caddy. Caddy terminates HTTPS and
 proxies requests to Vaultsh over a private frontend network. Atlas and Forge
-are attached only to an internal backend network.
+are attached only to an internal backend network. Oracle joins the backend
+network and an egress network so it can reach the language model provider.
 
 ```text
 Internet -> Caddy :443 -> Vaultsh -> Atlas / Forge
+                                  \-> Oracle -> language model provider
 ```
 
 ## Prerequisites
@@ -13,6 +15,7 @@ Internet -> Caddy :443 -> Vaultsh -> Atlas / Forge
 - A Linux server with Docker Engine and Docker Compose v2
 - A public domain with `A` and/or `AAAA` records pointing to the server
 - Inbound TCP ports 80 and 443 and UDP port 443 allowed by the firewall
+- Outbound HTTPS so Oracle can reach the language model provider
 
 ## Configuration
 
@@ -30,6 +33,16 @@ Set the generated values and deployment domain:
 DOMAIN=portfolio.example.com
 ATLAS_AUTH_TOKEN=<first-generated-token>
 FORGE_AUTH_TOKEN=<second-generated-token>
+ORACLE_AUTH_TOKEN=<third-generated-token>
+ORACLE_PROVIDER=groq
+ORACLE_MODEL=openai/gpt-oss-20b
+# API key for the selected provider. Production refuses to start without it.
+ORACLE_API_KEY=<groq-key>
+# OpenRouter-only rotation list, used when ORACLE_PROVIDER=openrouter
+# ORACLE_MODELS=google/gemma-4-26b-a4b-it:free,dots-studio/dots-3-note-preview:free
+# Provider-specific keys are optional when ORACLE_API_KEY is set
+# GROQ_API_KEY=<groq-key>
+# OPENROUTER_API_KEY=<openrouter-key>
 FORGE_RETENTION_DAYS=365
 FORGE_MAX_DATABASE_BYTES=268435456
 SESSION_LIMIT=5000
@@ -53,11 +66,11 @@ assessment for that exact service commit.
 
 ## Immutable Images
 
-Vaultsh, Atlas, and Forge CI publish GHCR images tagged with the full Git commit
-SHA. Production Compose contains no service build contexts; it reads pinned
-image references from `runtime/versions.env`.
+Vaultsh, Atlas, Forge, and Oracle CI publish GHCR images tagged with the full
+Git commit SHA. Production Compose contains no service build contexts; it reads
+pinned image references from `runtime/versions.env`.
 
-During the initial migration, merge and run all three service CI workflows
+During the initial migration, merge and run all four service CI workflows
 before deploying the image-only Lab Compose configuration. The first Lab
 deployment fails safely if any resolved SHA has not been published.
 
@@ -68,7 +81,7 @@ Lab's deployment workflow:
 3. Pulls the immutable images.
 4. Starts either the full release or one selected service.
 5. Waits for health checks and verifies public HTTPS.
-6. Publishes the release and all three service versions to Vaultsh.
+6. Publishes the release and all four service versions to Vaultsh.
 
 Caddy automatically obtains and renews the domain's HTTPS certificate. Check
 the deployment:
@@ -94,7 +107,7 @@ docker compose \
   -f docker-compose.prod.yml down
 ```
 
-Do not add host `ports` entries to Vaultsh, Atlas, or Forge.
+Do not add host `ports` entries to Vaultsh, Atlas, Forge, or Oracle.
 
 ## Forge data
 
@@ -159,6 +172,7 @@ Vaultsh enforces:
 - 16 KB maximum JSON request body
 - 4,096-byte command and completion input limit
 - 30 execution requests per minute per client, burst 10
+- 10 assistant requests per minute per client, burst 3
 - 120 completion requests per minute per client, burst 20
 - 120 service-status requests per minute per client, burst 20
 - 5,000 active sessions by default
@@ -180,7 +194,8 @@ Cloudflare proxy:
 
 - Set SSL/TLS mode to `Full (strict)`.
 - Keep the Caddy origin certificate active.
-- Add Cloudflare rate-limiting rules for `/api/exec` and `/api/complete`.
+- Add Cloudflare rate-limiting rules for `/api/exec` and `/api/complete`; the
+  assistant shares `/api/exec` and is additionally limited inside Vaultsh.
 - Restrict origin ports 80 and 443 to Cloudflare IP ranges if the origin must
   not be reachable directly.
 - Configure trusted proxy ranges before relying on forwarded client addresses
@@ -201,7 +216,8 @@ Cloudflare availability and rule quotas depend on the selected account plan.
 Use the Lab `Deploy` workflow.
 
 - A push to Lab `main` deploys the latest successful service SHAs together.
-- A manual `deploy` run can target `vault`, `atlas`, `forge`, or `all`.
+- A manual `deploy` run can target `vault`, `atlas`, `forge`, `oracle`, or
+  `all`.
 - A targeted run can optionally select an existing full Git SHA.
 
 Review logs and health status after every update. Do not automatically prune

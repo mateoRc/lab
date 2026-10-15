@@ -18,4 +18,4 @@ Commands run inside the Go process against mounted content. No host shell or hos
 
 Active project. Search and live analytics depend on Atlas and Forge availability. Session state is lost on restart; Markdown preview supports a deliberate subset of Markdown.
 
-Source: [Vaultsh](https://github.com/mateoRc/vaultsh) · [Architecture](../docs/architecture/vaultsh.md) · [Roadmap](../docs/roadmaps/vault.md)
+Source: [Vaultsh](https://github.com/mateoRc/vaultsh) · [Architecture](architecture.md) · [Roadmap](roadmap.md)

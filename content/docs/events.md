@@ -50,9 +50,12 @@ Emitted after every Vaultsh command execution.
 ```
 
 `name` contains the first command in the submitted command line, including
-built-ins such as `cat`, `grep`, `ls`, `search`, `metrics`, `dashboard`,
-`contact`, and `welcome`. The browser's automatic welcome does not emit an
-event; a manually entered `welcome` command does.
+built-ins such as `cat`, `grep`, `ls`, `search`, `invoke`, `ask`, `metrics`,
+`dashboard`, `contact`, and `welcome`. The browser's automatic welcome does not
+emit an event; a manually entered `welcome` command does.
+
+`invoke` and `ask` are recorded here as `command.executed`; Oracle does not emit
+its own events.
 
 ## Atlas Events
 

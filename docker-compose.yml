@@ -9,8 +9,10 @@ services:
       CONTENT_PATH: /app/content
       ATLAS_URL: http://atlas:8080
       FORGE_URL: http://forge:8080
+      ORACLE_URL: http://oracle:8080
       ATLAS_AUTH_TOKEN: ${ATLAS_AUTH_TOKEN:?set ATLAS_AUTH_TOKEN in .env}
       FORGE_AUTH_TOKEN: ${FORGE_AUTH_TOKEN:?set FORGE_AUTH_TOKEN in .env}
+      ORACLE_AUTH_TOKEN: ${ORACLE_AUTH_TOKEN:?set ORACLE_AUTH_TOKEN in .env}
       TELEMETRY_QUEUE_SIZE: ${TELEMETRY_QUEUE_SIZE:-1000}
       DEPLOYMENT_METADATA_PATH: /app/runtime/deployment.json
       SENTINEL_METADATA_PATH: /app/runtime/sentinel.json
@@ -66,6 +68,35 @@ services:
       FORGE_MAX_DATABASE_BYTES: ${FORGE_MAX_DATABASE_BYTES:-268435456}
     volumes:
       - forge_data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  oracle:
+    image: ${ORACLE_IMAGE:-oracle:local}
+    build:
+      context: ${ORACLE_BUILD_CONTEXT:-../oracle}
+    environment:
+      ORACLE_CONTENT_ROOT: /app/content
+      ORACLE_AUTH_TOKEN: ${ORACLE_AUTH_TOKEN:?set ORACLE_AUTH_TOKEN in .env}
+      ORACLE_PROVIDER: ${ORACLE_PROVIDER:-openrouter}
+      ORACLE_MODEL: ${ORACLE_MODEL:-google/gemma-4-26b-a4b-it:free}
+      ORACLE_MODELS: ${ORACLE_MODELS:-}
+      ORACLE_API_KEY: ${ORACLE_API_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GROQ_BASE_URL: ${GROQ_BASE_URL:-}
+    volumes:
+      - ./content:/app/content:ro
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/healthz')"]
       interval: 5s

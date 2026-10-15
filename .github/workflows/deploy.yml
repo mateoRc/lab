@@ -13,7 +13,7 @@ on:
       service:
         description: Service to deploy; rollback always restores the full release
         type: choice
-        options: [all, vault, atlas, forge]
+        options: [all, vault, atlas, forge, oracle]
         default: all
       version:
         description: Optional full Git SHA for a targeted service deployment
@@ -73,6 +73,7 @@ jobs:
           sync_repo vaultsh
           sync_repo atlas
           sync_repo forge
+          sync_repo oracle
           SCRIPT
 
       - name: Resolve immutable service versions
@@ -84,6 +85,7 @@ jobs:
           echo "vault=$(ssh deploy@"$SERVER_HOST" git -C /home/deploy/backend_lab/vaultsh rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "atlas=$(ssh deploy@"$SERVER_HOST" git -C /home/deploy/backend_lab/atlas rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "forge=$(ssh deploy@"$SERVER_HOST" git -C /home/deploy/backend_lab/forge rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "oracle=$(ssh deploy@"$SERVER_HOST" git -C /home/deploy/backend_lab/oracle rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Upload lab repository
         env:
@@ -99,6 +101,12 @@ jobs:
         env:
           ATLAS_AUTH_TOKEN: ${{ secrets.ATLAS_AUTH_TOKEN }}
           FORGE_AUTH_TOKEN: ${{ secrets.FORGE_AUTH_TOKEN }}
+          ORACLE_AUTH_TOKEN: ${{ secrets.ORACLE_AUTH_TOKEN }}
+          ORACLE_PROVIDER: ${{ vars.ORACLE_PROVIDER || 'groq' }}
+          ORACLE_MODEL: ${{ vars.ORACLE_MODEL || 'openai/gpt-oss-20b' }}
+          ORACLE_API_KEY: ${{ secrets.ORACLE_API_KEY || secrets.GROQ_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
         run: |
           umask 077
@@ -106,6 +114,12 @@ jobs:
             'DOMAIN=mateolabs.dev' \
             "ATLAS_AUTH_TOKEN=$ATLAS_AUTH_TOKEN" \
             "FORGE_AUTH_TOKEN=$FORGE_AUTH_TOKEN" \
+            "ORACLE_AUTH_TOKEN=$ORACLE_AUTH_TOKEN" \
+            "ORACLE_PROVIDER=$ORACLE_PROVIDER" \
+            "ORACLE_MODEL=$ORACLE_MODEL" \
+            "ORACLE_API_KEY=$ORACLE_API_KEY" \
+            "GROQ_API_KEY=$GROQ_API_KEY" \
+            "OPENROUTER_API_KEY=$OPENROUTER_API_KEY" \
             'SESSION_LIMIT=5000' > production.env
           scp production.env deploy@"$SERVER_HOST":/home/deploy/backend_lab/lab/.env
 
@@ -132,10 +146,12 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           TARGET: ${{ github.event_name == 'push' && 'all' || inputs.service }}
           VAULT_VERSION: ${{ steps.versions.outputs.vault }}
+          ORACLE_VERSION: ${{ steps.versions.outputs.oracle }}
         run: |
           ssh deploy@"$SERVER_HOST" bash -s -- \
             "$ACTION" "$TARGET" "$REQUESTED_VERSION" \
-            "$VAULT_VERSION" "$ATLAS_VERSION" "$FORGE_VERSION" <<'SCRIPT'
+            "$VAULT_VERSION" "$ATLAS_VERSION" "$FORGE_VERSION" \
+            "$ORACLE_VERSION" <<'SCRIPT'
           set -euo pipefail
           action="$1"
           target="$2"
@@ -143,6 +159,7 @@ jobs:
           vault="$4"
           atlas="$5"
           forge="$6"
+          oracle="$7"
           cd /home/deploy/backend_lab/lab
 
           if [ "$action" = "rollback" ]; then
@@ -154,7 +171,7 @@ jobs:
           release = json.loads(
               Path("runtime/previous-release.json").read_text(encoding="utf-8")
           )
-          for service in ("vault", "atlas", "forge"):
+          for service in ("vault", "atlas", "forge", "oracle"):
               image = "vaultsh" if service == "vault" else service
               print(f"ghcr.io/mateorc/{image}:{release[service]}")
           PY
@@ -164,6 +181,7 @@ jobs:
               "ghcr.io/mateorc/vaultsh:$vault"
               "ghcr.io/mateorc/atlas:$atlas"
               "ghcr.io/mateorc/forge:$forge"
+              "ghcr.io/mateorc/oracle:$oracle"
             )
           else
             [ "$requested" = "__none__" ] && requested=""
@@ -171,6 +189,7 @@ jobs:
               vault) image=vaultsh; version="${requested:-$vault}" ;;
               atlas) image=atlas; version="${requested:-$atlas}" ;;
               forge) image=forge; version="${requested:-$forge}" ;;
+              oracle) image=oracle; version="${requested:-$oracle}" ;;
               *) echo "Unsupported deployment target: $target" >&2; exit 2 ;;
             esac
             images=("ghcr.io/mateorc/$image:$version")
@@ -191,11 +210,13 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           TARGET: ${{ github.event_name == 'push' && 'all' || inputs.service }}
           VAULT_VERSION: ${{ steps.versions.outputs.vault }}
+          ORACLE_VERSION: ${{ steps.versions.outputs.oracle }}
         run: |
           # TODO: Replace positional SSH arguments with structured input.
           ssh deploy@"$SERVER_HOST" bash -s -- \
             "$ACTION" "$TARGET" "$REQUESTED_VERSION" \
-            "$VAULT_VERSION" "$ATLAS_VERSION" "$FORGE_VERSION" <<'SCRIPT'
+            "$VAULT_VERSION" "$ATLAS_VERSION" "$FORGE_VERSION" \
+            "$ORACLE_VERSION" <<'SCRIPT'
           set -euo pipefail
           action="$1"
           target="$2"
@@ -204,6 +225,7 @@ jobs:
           vault="$4"
           atlas="$5"
           forge="$6"
+          oracle="$7"
           cd /home/deploy/backend_lab/lab
           install -d -m 755 runtime
           if [ "$action" = "rollback" ]; then
@@ -215,7 +237,8 @@ jobs:
               --version "$requested" \
               --vault "$vault" \
               --atlas "$atlas" \
-              --forge "$forge"
+              --forge "$forge" \
+              --oracle "$oracle"
           fi
           SCRIPT
 

@@ -1,7 +1,7 @@
 # Lab
 
 Orchestration, deployment configuration, and shared content for Vaultsh,
-Atlas, Forge, and Sentinel.
+Atlas, Forge, Oracle, and Sentinel.
 
 This repository owns Docker Compose, Caddy, environment configuration, release
 policy, and `content/`. Each service repository owns its code, tests,
@@ -52,15 +52,16 @@ telemetry.
 
 ## Documentation
 
-- [Architecture overview](content/docs/architecture/overview.md)
+- [System overview](content/docs/projects/overview.md)
 - [HTTP API](content/docs/api.md)
 - [Command reference](content/docs/commands.md)
 - [Event catalog](content/docs/events.md)
 - [Content format](content/docs/content.md)
-- [Roadmaps](content/docs/roadmaps/)
+- [Projects](content/docs/projects/)
 
-Service-specific architecture is under
-[`content/docs/architecture/`](content/docs/architecture/). Development
+Each project owns a folder under
+[`content/docs/projects/<name>/`](content/docs/projects/) holding its
+`overview.md`, `roadmap.md`, and `architecture.md`. Development
 commands belong in each service repository README.
 
 ### Ownership

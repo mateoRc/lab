@@ -66,7 +66,7 @@ The terminal uses session-backed command and completion endpoints. Explorer
 uses `GET /api/browse` to read the same in-memory virtual filesystem without
 creating or changing a shell session. Directory responses provide child names,
 types, and virtual paths; file responses provide raw Markdown. See the
-[browse API](../api.md#browse-content) for the response contract.
+[browse API](../../api.md#browse-content) for the response contract.
 
 Explorer renders Markdown and Mermaid diagrams in the browser. Shell commands
 continue to return raw text. Breadcrumbs navigate ancestor paths; Back opens

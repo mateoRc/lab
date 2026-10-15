@@ -35,6 +35,13 @@ optional arguments; angle brackets mark required arguments.
 ### Search and status
 
 - `search <query>` — Search portfolio content with Atlas.
+- `invoke <question>` — Invoke the Oracle in its lore voice about Mateo and
+  Backend Lab. Answers are grounded in the portfolio content and list the source
+  paths used. If Oracle is unavailable, the shell reports the outage in the
+  Oracle's own voice.
+- `ask <question>` — Ask the Oracle plainly, without the lore voice, about Mateo
+  and Backend Lab. Answers use the same grounded content and source paths. If
+  Oracle is unavailable, the shell prints a plain availability notice.
 - `metrics` — Show the Forge analytics summary.
 - `dashboard [--window 24h|7d|30d|all] [--include-invalid]` — Show Forge
   analytics, service health, deployment, and Sentinel status. The default is
@@ -47,6 +54,8 @@ optional arguments; angle brackets mark required arguments.
 dashboard --window all
 dashboard --window 7d
 dashboard --window all --include-invalid
+invoke "how does Atlas search work?"
+ask "which languages does Mateo use?"
 ```
 
 ### Profile
@@ -77,7 +86,7 @@ Paths can be absolute or relative:
 
 ```sh
 cat /cv/about.md
-cat projects/vaultsh.md
+cat docs/projects/vaultsh/overview.md
 cd /cv
 cd ..
 ```
@@ -134,7 +143,7 @@ history | tail -n 5
 Reverse-sort Vaultsh feature and decision bullets:
 
 ```sh
-cat /projects/vaultsh.md | grep "^- [^*]" | sort -r
+cat /docs/projects/vaultsh/overview.md | grep "^- [^*]" | sort -r
 ```
 
 Commands that accept `[file]` can read a virtual file directly or consume
@@ -150,7 +159,7 @@ More pipeline examples:
 ```sh
 cat /cv/skills.md | grep "Languages"
 cat /cv/experience.md | grep "ReversingLabs"
-search "Technology" | grep "/projects/"
+search "Technology" | grep "/docs/projects/"
 tree | grep ".md" | sort
 ```
 

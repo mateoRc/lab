@@ -1,8 +1,8 @@
 # Vaultsh Roadmap
 
 This file tracks delivery status. Current behavior belongs in
-[Vaultsh architecture](../architecture/vaultsh.md) and the
-[command reference](../commands.md).
+[Vaultsh architecture](architecture.md) and the
+[command reference](../../commands.md).
 
 **Status:** Browser terminal and Explorer are implemented. Sessions and the
 virtual filesystem remain process-local and read-only, respectively.
@@ -22,6 +22,7 @@ virtual filesystem remain process-local and read-only, respectively.
 - [x] Compact parent-folder and Home navigation in folder and document views
 - [x] Terminal/Explorer switch that sticks after scrolling past the page title
 - [x] Session-scoped hire and counter-offer command sequence
+- [x] Read-only `invoke` and `ask` commands backed by the Oracle assistant
 
 ## Shell and state
 
@@ -44,7 +45,7 @@ virtual filesystem remain process-local and read-only, respectively.
 - [ ] Export selected canonical Markdown documents to deterministic PDFs outside
   the searchable content tree.
 - [ ] Evaluate an `open <path.md>` command for generated documents.
-- [ ] Mount cached provider content from the proposed [Scribe service](scribe.md).
+- [ ] Mount cached provider content from the proposed [Scribe service](../scribe/roadmap.md).
 
 ## Operations
 
