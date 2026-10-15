@@ -2,15 +2,13 @@
 
 Orchestration, deployment configuration, and shared content for Vaultsh,
 Atlas, Forge, Oracle, and Sentinel.
-
 This repository owns Docker Compose, Caddy, environment configuration, release
 policy, and `content/`. Each service repository owns its code, tests,
 dependencies, Dockerfile, and development instructions.
 
 ## Run locally
 
-Prerequisites: Docker Engine or Docker Desktop with Compose v2, plus sibling
-clones of `vaultsh`, `atlas`, and `forge`.
+Prerequisites: Docker Engine or Docker Desktop with Compose v2
 
 ```sh
 cp .env.example .env
