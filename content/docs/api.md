@@ -29,7 +29,8 @@ Response:
 ```json
 {
   "atlas": true,
-  "forge": true
+  "forge": true,
+  "oracle": true
 }
 ```
 
