@@ -42,6 +42,19 @@ class ReleaseVersionsTest(unittest.TestCase):
             self.assertEqual(release["atlas"], V2["atlas"])
             self.assertEqual(release["forge"], V1["forge"])
 
+    def test_legacy_release_gains_oracle_and_stays_rollback_ready(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            runtime = Path(directory)
+            legacy = {name: V1[name] for name in ("vault", "atlas", "forge")}
+            (runtime / "release.json").write_text(json.dumps(legacy), encoding="utf-8")
+
+            self.assertEqual(prepare(runtime, V2, "all"), V2)
+            self.assertEqual(
+                load_release(runtime / "previous-release.json"),
+                {**legacy, "oracle": V2["oracle"]},
+            )
+            self.assertEqual(rollback(runtime), {**legacy, "oracle": V2["oracle"]})
+
     def test_rollback_swaps_current_and_previous(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             runtime = Path(directory)

@@ -25,7 +25,10 @@ def prepare(
         raise ValueError(f"unsupported deployment target: {target}")
     if target == "all" and requested_version:
         raise ValueError("a requested version requires a targeted service")
-    current = load_release(runtime / "release.json", required=False)
+    current = load_release(runtime / "release.json", required=False, allow_legacy=True)
+    if current and "oracle" not in current:
+        # The pre-Oracle release stays usable for rollback after migration.
+        current["oracle"] = latest["oracle"]
     release = dict(current or latest)
     if target == "all":
         release = dict(latest)
@@ -46,7 +49,9 @@ def rollback(runtime: Path) -> dict[str, str]:
     return previous
 
 
-def load_release(path: Path, required: bool = True) -> dict[str, str]:
+def load_release(
+    path: Path, required: bool = True, allow_legacy: bool = False
+) -> dict[str, str]:
     if not path.is_file():
         if required:
             raise ValueError(f"release manifest does not exist: {path}")
@@ -55,7 +60,7 @@ def load_release(path: Path, required: bool = True) -> dict[str, str]:
     if not isinstance(value, dict):
         raise ValueError("release manifest must be an object")
     release = {str(name): str(version) for name, version in value.items()}
-    _validate_versions(release)
+    _validate_versions(release, allow_legacy=allow_legacy)
     return release
 
 
@@ -70,8 +75,10 @@ def _publish(runtime: Path, release: dict[str, str]) -> None:
     _atomic_text(runtime / "versions.env", "\n".join(lines) + "\n")
 
 
-def _validate_versions(release: dict[str, str]) -> None:
-    if set(release) != set(SERVICES):
+def _validate_versions(release: dict[str, str], allow_legacy: bool = False) -> None:
+    if set(release) != set(SERVICES) and not (
+        allow_legacy and set(release) == set(SERVICES) - {"oracle"}
+    ):
         raise ValueError("release manifest must contain vault, atlas, forge, and oracle")
     for service, version in release.items():
         if not _SHA.fullmatch(version):
