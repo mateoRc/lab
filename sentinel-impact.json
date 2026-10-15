@@ -32,12 +32,14 @@
       "atlas/**",
       "forge/**",
       "lab/content/**",
-      "lab/docker-compose*.yml"
+      "lab/docker-compose*.yml",
+      "lab/.github/workflows/sentinel.yml"
     ],
     "deployment": [
       "lab/Caddyfile",
       "lab/docker-compose.prod.yml",
-      "lab/.github/workflows/deploy.yml"
+      "lab/.github/workflows/deploy.yml",
+      "lab/.github/workflows/sentinel.yml"
     ],
     "sentinel": [
       "sentinel/**",

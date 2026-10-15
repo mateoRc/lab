@@ -56,6 +56,13 @@ jobs:
           path: forge
           persist-credentials: false
 
+      - name: Check out Oracle
+        uses: actions/checkout@v4
+        with:
+          repository: mateoRc/oracle
+          path: oracle
+          persist-credentials: false
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -246,6 +253,7 @@ jobs:
           echo "vault=$(git -C vaultsh rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "atlas=$(git -C atlas rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "forge=$(git -C forge rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "oracle=$(git -C oracle rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Create check plan
         env:
@@ -271,6 +279,7 @@ jobs:
           VAULT_VERSION: ${{ steps.versions.outputs.vault }}
           ATLAS_VERSION: ${{ steps.versions.outputs.atlas }}
           FORGE_VERSION: ${{ steps.versions.outputs.forge }}
+          ORACLE_VERSION: ${{ steps.versions.outputs.oracle }}
         run: |
           python - <<'PY'
           import json
@@ -414,6 +423,8 @@ jobs:
                       "environment": {
                           "ATLAS_AUTH_TOKEN": "sentinel-validation",
                           "FORGE_AUTH_TOKEN": "sentinel-validation",
+                          "ORACLE_AUTH_TOKEN": "sentinel-validation",
+                          "ORACLE_PROVIDER": "mock",
                       },
                   },
                   {
@@ -428,9 +439,12 @@ jobs:
                           "DOMAIN": "example.invalid",
                           "ATLAS_AUTH_TOKEN": "sentinel-validation",
                           "FORGE_AUTH_TOKEN": "sentinel-validation",
+                          "ORACLE_AUTH_TOKEN": "sentinel-validation",
+                          "ORACLE_API_KEY": "sentinel-validation",
                           "VAULT_IMAGE": "ghcr.io/example/vaultsh:1111111111111111111111111111111111111111",
                           "ATLAS_IMAGE": "ghcr.io/example/atlas:2222222222222222222222222222222222222222",
                           "FORGE_IMAGE": "ghcr.io/example/forge:3333333333333333333333333333333333333333",
+                          "ORACLE_IMAGE": "ghcr.io/example/oracle:4444444444444444444444444444444444444444",
                       },
                   },
               ])
@@ -440,6 +454,8 @@ jobs:
               environment = {
                   "ATLAS_AUTH_TOKEN": "sentinel-validation",
                   "FORGE_AUTH_TOKEN": "sentinel-validation",
+                  "ORACLE_AUTH_TOKEN": "sentinel-validation",
+                  "ORACLE_PROVIDER": "mock",
               }
               images = {
                   "vaultsh": (
@@ -466,15 +482,18 @@ jobs:
                       )
                       else f"ghcr.io/mateorc/forge:{os.environ['FORGE_VERSION']}"
                   ),
+                  "oracle": f"ghcr.io/mateorc/oracle:{os.environ['ORACLE_VERSION']}",
               }
               environment.update({
                   "VAULT_IMAGE": images["vaultsh"],
                   "ATLAS_IMAGE": images["atlas"],
                   "FORGE_IMAGE": images["forge"],
+                  "ORACLE_IMAGE": images["oracle"],
               })
               for service, image in images.items():
                   if (
-                      os.environ["EVENT_NAME"] == "repository_dispatch"
+                      service == "oracle"
+                      or os.environ["EVENT_NAME"] == "repository_dispatch"
                       or os.environ[f"{service.upper()}_BUILD_AFFECTED"] != "true"
                   ):
                       checks.append({
@@ -515,6 +534,14 @@ jobs:
                       "json": {"line": "dashboard"},
                       "expected": {"exit_code": 0},
                       "contains": {"output": "ACTIVITY · LAST 24 HOURS"},
+                  },
+                  {
+                      "kind": "http_json",
+                      "name": "vaultsh-oracle-contract",
+                      "url": "http://127.0.0.1:8080/api/exec",
+                      "json": {"line": "ask which languages does Mateo use?"},
+                      "expected": {"exit_code": 0},
+                      "contains": {"output": "/cv/skills.md"},
                   },
                   {
                       "kind": "http_json",
@@ -642,6 +669,8 @@ jobs:
         env:
           ATLAS_AUTH_TOKEN: sentinel-validation
           FORGE_AUTH_TOKEN: sentinel-validation
+          ORACLE_AUTH_TOKEN: sentinel-validation
+          ORACLE_PROVIDER: mock
         run: docker compose -f docker-compose.yml down --volumes --remove-orphans
 
       - name: Run mock analysis
