@@ -139,7 +139,7 @@ services:
       ORACLE_CONTENT_ROOT: /app/content
       ORACLE_AUTH_TOKEN: ${ORACLE_AUTH_TOKEN:?set ORACLE_AUTH_TOKEN in .env}
       ORACLE_PROVIDER: ${ORACLE_PROVIDER:-openrouter}
-      ORACLE_MODEL: ${ORACLE_MODEL:-google/gemma-4-26b-a4b-it:free}
+      ORACLE_MODEL: ${ORACLE_MODEL:-}
       ORACLE_MODELS: ${ORACLE_MODELS:-}
       # API key for the selected ORACLE_PROVIDER. Set ORACLE_API_KEY, or the
       # provider-specific OPENROUTER_API_KEY / GROQ_API_KEY.

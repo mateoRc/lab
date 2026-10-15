@@ -38,6 +38,36 @@ jobs:
       - name: Test release manifest tooling
         run: python -m unittest tests.test_release_versions --verbose
 
+      - name: Validate production configuration
+        env:
+          ATLAS_AUTH_TOKEN: ${{ secrets.ATLAS_AUTH_TOKEN }}
+          FORGE_AUTH_TOKEN: ${{ secrets.FORGE_AUTH_TOKEN }}
+          ORACLE_AUTH_TOKEN: ${{ secrets.ORACLE_AUTH_TOKEN }}
+          ORACLE_PROVIDER: ${{ vars.ORACLE_PROVIDER || 'groq,openrouter' }}
+          ORACLE_API_KEY: ${{ secrets.ORACLE_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          for name in ATLAS_AUTH_TOKEN FORGE_AUTH_TOKEN ORACLE_AUTH_TOKEN; do
+            if [ -z "${!name}" ]; then
+              echo "Missing production secret: $name" >&2
+              exit 1
+            fi
+          done
+          IFS=, read -ra providers <<< "$ORACLE_PROVIDER"
+          for provider in "${providers[@]}"; do
+            provider="${provider//[[:space:]]/}"
+            case "$provider" in
+              groq) key="$GROQ_API_KEY" ;;
+              openrouter) key="$OPENROUTER_API_KEY" ;;
+              *) echo "Unsupported production Oracle provider: $provider" >&2; exit 1 ;;
+            esac
+            if [ -z "$key" ] && { [ "${#providers[@]}" -gt 1 ] || [ -z "$ORACLE_API_KEY" ]; }; then
+              echo "Missing production API key for Oracle provider: $provider" >&2
+              exit 1
+            fi
+          done
+
       - name: Configure SSH
         env:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
@@ -102,9 +132,10 @@ jobs:
           ATLAS_AUTH_TOKEN: ${{ secrets.ATLAS_AUTH_TOKEN }}
           FORGE_AUTH_TOKEN: ${{ secrets.FORGE_AUTH_TOKEN }}
           ORACLE_AUTH_TOKEN: ${{ secrets.ORACLE_AUTH_TOKEN }}
-          ORACLE_PROVIDER: ${{ vars.ORACLE_PROVIDER || 'groq' }}
-          ORACLE_MODEL: ${{ vars.ORACLE_MODEL || 'openai/gpt-oss-20b' }}
-          ORACLE_API_KEY: ${{ secrets.ORACLE_API_KEY || secrets.GROQ_API_KEY }}
+          ORACLE_PROVIDER: ${{ vars.ORACLE_PROVIDER || 'groq,openrouter' }}
+          ORACLE_MODEL: ${{ vars.ORACLE_MODEL || '' }}
+          ORACLE_MODELS: ${{ vars.ORACLE_MODELS || '' }}
+          ORACLE_API_KEY: ${{ secrets.ORACLE_API_KEY || secrets.GROQ_API_KEY || secrets.OPENROUTER_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
@@ -117,6 +148,7 @@ jobs:
             "ORACLE_AUTH_TOKEN=$ORACLE_AUTH_TOKEN" \
             "ORACLE_PROVIDER=$ORACLE_PROVIDER" \
             "ORACLE_MODEL=$ORACLE_MODEL" \
+            "ORACLE_MODELS=$ORACLE_MODELS" \
             "ORACLE_API_KEY=$ORACLE_API_KEY" \
             "GROQ_API_KEY=$GROQ_API_KEY" \
             "OPENROUTER_API_KEY=$OPENROUTER_API_KEY" \
@@ -197,7 +229,16 @@ jobs:
 
           for image in "${images[@]}"; do
             echo "Verifying $image"
-            docker pull "$image"
+            for attempt in {1..12}; do
+              if docker pull "$image"; then
+                break
+              fi
+              if [ "$attempt" -eq 12 ]; then
+                echo "Image unavailable after 12 attempts: $image" >&2
+                exit 1
+              fi
+              sleep 10
+            done
           done
           SCRIPT
 
